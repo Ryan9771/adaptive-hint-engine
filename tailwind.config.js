@@ -16,6 +16,8 @@ export default {
         "output": "#F3F4F6",
         "hint": "#FEFCE8",
         "hint-title": "#854D0E",
+        "hint-border": "#FEF08A",
+        "hint-text": "#A16207"
       },
       fontFamily: {
         'inter': ["Inter", "sans-serif"],

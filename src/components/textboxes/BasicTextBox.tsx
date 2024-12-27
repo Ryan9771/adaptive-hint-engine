@@ -12,7 +12,7 @@ function BasicTextBox({ text }: Props) {
 }
 
 const styles = {
-  ctn: ["flex", "w-full", "p-4", "bg-white", "shadow-sm"],
+  ctn: ["flex", "w-full", "p-4", "bg-white", "shadow-sm", "rounded-md"],
   txt: ["text-text-default", "leading-5"],
 };
 

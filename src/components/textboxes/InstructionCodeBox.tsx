@@ -16,7 +16,16 @@ function InstructionCodeBox({ title, text }: Props) {
 }
 
 const styles = {
-  ctn: ["flex", "flex-col", "w-full", "p-4", "bg-white", "shadow-sm", "gap-4"],
+  ctn: [
+    "flex",
+    "flex-col",
+    "w-full",
+    "p-4",
+    "bg-white",
+    "shadow-sm",
+    "gap-4",
+    "rounded-md",
+  ],
   txt: ["text-text-default", "leading-5"],
   title: ["font-semibold"],
 };

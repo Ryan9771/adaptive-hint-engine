@@ -25,6 +25,7 @@ const styles = {
     "border-hint-border",
     "bg-hint",
     "gap-3",
+    "rounded-md",
   ],
   titleDiv: ["flex", "gap-3", "items-center"],
   title: ["text-hint-title", "font-medium"],

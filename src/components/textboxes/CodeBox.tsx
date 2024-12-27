@@ -9,6 +9,18 @@ function CodeBox() {
   const editorRef = useRef<any>(null);
   const [editorHeight, setEditorHeight] = useState(MIN_HEIGHT);
 
+  // Define a custom theme
+  const defineCustomTheme = (monaco: any) => {
+    monaco.editor.defineTheme("customTheme", {
+      base: "vs-dark", // Use the dark base theme
+      inherit: true, // Inherit default vs-dark settings
+      rules: [], // Define any syntax-specific styling here
+      colors: {
+        "editor.background": "#212936", // Set custom background color
+      },
+    });
+  };
+
   const handleEditorDidMount: OnMount = (editor, monaco) => {
     editorRef.current = editor;
 
@@ -27,6 +39,9 @@ function CodeBox() {
 
     // Adjust height on mount
     updateHeight();
+
+    defineCustomTheme(monaco);
+    monaco.editor.setTheme("customTheme");
   };
 
   const resetCode = () => {

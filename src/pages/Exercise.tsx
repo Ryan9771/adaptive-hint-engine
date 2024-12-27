@@ -50,7 +50,14 @@ const styles = {
     "border-border",
     "gap-5",
   ],
-  exerciseBody: ["w-full", "flex", "flex-col", "gap-6"],
+  exerciseBody: [
+    "w-full",
+    "flex",
+    "flex-col",
+    "gap-6",
+    "max-w-screen-lg",
+    "lg:gap-8",
+  ],
   title: ["text-2xl", "font-bold", "leading-7"],
 };
 

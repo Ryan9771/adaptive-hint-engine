@@ -74,6 +74,7 @@ function CodeBox() {
           value={"# Write your code here\nage = \nname = \nis_student = "}
           onMount={handleEditorDidMount}
           options={{
+            fontSize: 14,
             minimap: { enabled: false },
             lineNumbers: "on",
             scrollBeyondLastLine: false,

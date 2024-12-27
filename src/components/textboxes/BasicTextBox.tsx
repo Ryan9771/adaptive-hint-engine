@@ -12,8 +12,18 @@ function BasicTextBox({ text }: Props) {
 }
 
 const styles = {
-  ctn: ["flex", "w-full", "p-4", "bg-white", "shadow-sm", "rounded-md"],
-  txt: ["text-text-default", "leading-5"],
+  ctn: [
+    "flex",
+    "w-full",
+    "p-4",
+    "bg-white",
+    "shadow-sm",
+    "rounded-md",
+    "lg:bg-transparent",
+    "lg:p-0",
+    "lg:shadow-none",
+  ],
+  txt: ["text-text-default", "leading-5", "md:leading-6"],
 };
 
 export default BasicTextBox;

@@ -26,8 +26,8 @@ const styles = {
     "gap-4",
     "rounded-md",
   ],
-  txt: ["text-text-default", "leading-5"],
-  title: ["font-semibold"],
+  txt: ["text-text-default", "leading-5", "md:leading-6"],
+  title: ["font-semibold", "lg:text-lg"],
 };
 
 export default InstructionCodeBox;

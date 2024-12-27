@@ -1,4 +1,5 @@
 import style from "../../util/Styles";
+import CodeBox from "./CodeBox";
 
 interface Props {
   title: string;
@@ -9,6 +10,7 @@ function InstructionCodeBox({ title, text }: Props) {
     <div className={style(styles, "ctn")}>
       <div className={style(styles, "title")}>{title}</div>
       <div className={style(styles, "txt")}>{text}</div>
+      <CodeBox />
     </div>
   );
 }

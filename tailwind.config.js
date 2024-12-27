@@ -17,7 +17,11 @@ export default {
         "hint": "#FEFCE8",
         "hint-title": "#854D0E",
         "hint-border": "#FEF08A",
-        "hint-text": "#A16207"
+        "hint-text": "#A16207",
+        "editor-blue": "#121826",
+        "run-blue": "#3B82F6",
+        "reset-gray": "#9CA3AF"
+
       },
       fontFamily: {
         'inter': ["Inter", "sans-serif"],

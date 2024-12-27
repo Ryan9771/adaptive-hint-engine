@@ -1,5 +1,7 @@
 import { useRef, useState } from "react";
 import { Editor, OnMount } from "@monaco-editor/react";
+import style from "../../util/Styles";
+import { RunBtn, ResetBtn } from "../Buttons";
 
 function CodeBox() {
   const MIN_HEIGHT = 150;
@@ -54,32 +56,47 @@ function CodeBox() {
   };
 
   return (
-    <div
-      className={"flex flex-col w-full rounded-md overflow-hidden"}
-      style={{
-        height: `${editorHeight}px`,
-      }}
-    >
-      <Editor
-        height="100%"
-        language="kotlin"
-        theme="vs-dark"
-        value={"# Write your code here\nage = \nname = \nis_student = "}
-        onMount={handleEditorDidMount}
-        options={{
-          minimap: { enabled: false },
-          lineNumbers: "on",
-          scrollBeyondLastLine: false,
-          wordWrap: "on",
-          scrollbar: { vertical: "hidden", horizontal: "hidden" },
+    <div className={style(styles, "ctn")}>
+      <div className={style(styles, "btnCtn")}>
+        <RunBtn handleBtn={resetCode} />
+        <ResetBtn handleBtn={resetCode} />
+      </div>
+      <div
+        className={style(styles, "editorCtn")}
+        style={{
+          height: `${editorHeight}px`,
         }}
-      />
-      {/* <button
+      >
+        <Editor
+          height="100%"
+          language="kotlin"
+          theme="vs-dark"
+          value={"# Write your code here\nage = \nname = \nis_student = "}
+          onMount={handleEditorDidMount}
+          options={{
+            minimap: { enabled: false },
+            lineNumbers: "on",
+            scrollBeyondLastLine: false,
+            wordWrap: "on",
+            scrollbar: {
+              vertical: editorHeight === MAX_HEIGHT ? "auto" : "hidden",
+            },
+            padding: { top: 20 },
+          }}
+        />
+        {/* <button
         className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
         onClick={resetCode}
       ></button> */}
+      </div>
     </div>
   );
 }
+
+const styles = {
+  ctn: ["flex", "flex-col", "bg-editor-blue", "p-4", "gap-4", "rounded-lg"],
+  btnCtn: ["flex", "items-center", "justify-end", "gap-5"],
+  editorCtn: ["flex", "flex-col", "w-full", "rounded-md", "overflow-hidden"],
+};
 
 export default CodeBox;

@@ -20,6 +20,7 @@ const styles = {
     "p-4",
     "border",
     "border-border",
+    "lg:hidden",
   ],
   icon: ["w-6", "h-6", "fill-icon-fill", "cursor-pointer"],
 };

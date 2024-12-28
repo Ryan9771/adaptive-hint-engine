@@ -4,15 +4,17 @@ import ExercisePath from "../components/ExercisePath";
 import BasicTextBox from "../components/textboxes/BasicTextBox";
 import InstructionCodeBox from "../components/textboxes/InstructionCodeBox";
 import HintBox from "../components/HintBox";
+import Sidebar from "../components/sidebar/Sidebar";
 
 /* Would eventually need to pass in exercise data */
 function Exercise() {
   return (
     <div className={style(styles, "ctn")}>
       <Navbar />
+      <Sidebar />
       <div className={style(styles, "bodyCtn")}>
-        <ExercisePath />
         <div className={style(styles, "exerciseBody")}>
+          <ExercisePath />
           <p className={style(styles, "title")}>
             Higher Order Functions in Kotlin
           </p>
@@ -38,7 +40,7 @@ const instructionCodeBoxText =
   "Add a method 'includes' to class Circle to determine whether a certain point is inside or outside the circle.";
 
 const styles = {
-  ctn: ["flex", "w-full", "flex-col", "h-full", "items-center"],
+  ctn: ["flex", "w-full", "flex-col", "h-full", "items-center", "lg:flex-row"],
   bodyCtn: [
     "w-full",
     "h-full",
@@ -49,6 +51,7 @@ const styles = {
     "border",
     "border-border",
     "gap-5",
+    // "lg:items-start",
   ],
   exerciseBody: [
     "w-full",

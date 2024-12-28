@@ -1,5 +1,6 @@
 import style from "../../util/Styles";
 import pfp from "/src/assets/images/profile.png";
+import Tab from "./Tab";
 
 function Sidebar() {
   return (
@@ -9,6 +10,10 @@ function Sidebar() {
         <div className={style(styles, "pfpTextCtn")}>
           <p className={style(styles, "pfpText")}>Peter Griffin</p>
           <p className={style(styles, "pfpShortCode")}>pgr21</p>
+        </div>
+        <div className={style(styles, "tabCtn")}>
+          <Tab active={true} text="Exercises" />
+          <Tab active={false} text="Logout" />
         </div>
       </div>
     </div>
@@ -37,6 +42,7 @@ const styles = {
   pfpTextCtn: ["w-full", "flex", "flex-col", "items-center", "gap-1"],
   pfpText: ["text-sm", "font-medium", "text-black", "hidden", "xl:block"],
   pfpShortCode: ["text-xs", "font-medium", "text-text-default"],
+  tabCtn: ["py-5", "gap-5", "w-full", "flex", "flex-col", "items-center"],
 };
 
 export default Sidebar;

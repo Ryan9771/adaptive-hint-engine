@@ -1,17 +1,10 @@
-from flask import Flask, jsonify, request
-from dotenv import load_dotenv
-
-# Load Secrets
-load_dotenv()
-
-# Setup App
-app = Flask(__name__)
-
-
-@app.route("/")
-def home():
-    return "Flask app really really works on reloading!"
+from agent_trials.single_agent_cot import SingleHintAgent
+from example_exercises.exercise_1 import exercise_1
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5001, debug=True)
+    print("== Initialising Agent ==")
+    agent = SingleHintAgent()
+    input_state = exercise_1
+
+    agent.run(state=input_state)

@@ -1,12 +1,12 @@
 import style from "../../util/Styles";
 import ProfileCtn from "./ProfileCtn";
-import { IoMdExit } from "react-icons/io";
+import { CgProfile } from "react-icons/cg";
 
 function Navbar() {
   return (
     <div className={style(styles, "ctn")}>
       <ProfileCtn />
-      <IoMdExit className={style(styles, "icon")} />
+      <CgProfile className="w-16 h-16" />
     </div>
   );
 }

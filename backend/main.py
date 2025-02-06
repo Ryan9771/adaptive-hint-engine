@@ -1,10 +1,23 @@
-from agent_trials.single_agent_cot import SingleHintAgent
 from example_exercises.exercise_1 import exercise_1
+from langchain_openai import ChatOpenAI
+from langchain_core.messages import HumanMessage, SystemMessage
+from example_exercises.exercise_1 import exercise_1
+from agent_trials.multi_agent import MultiAgent
 
+
+class Features:
+    features: list[str]
+
+
+llm = ChatOpenAI(model="gpt-4o")
 
 if __name__ == "__main__":
     print("== Initialising Agent ==")
-    agent = SingleHintAgent()
-    input_state = exercise_1
+    agent = MultiAgent()
 
-    agent.run(state=input_state)
+    student_code = exercise_1['student_code']
+    question = exercise_1['question']
+    skel_code = exercise_1['skel_code']
+
+    agent.run({"skel_code": skel_code, "question": question,
+              "student_code": student_code})

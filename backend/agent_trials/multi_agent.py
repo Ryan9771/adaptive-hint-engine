@@ -16,6 +16,11 @@ class Features(BaseModel):
     features: list[str]
 
 
+# class HintGeneratorOutput(BaseModel):
+#     hint: str
+#     skill_level
+
+
 class InputState(TypedDict):
     skel_code: str
     question: str
@@ -33,6 +38,7 @@ class OverallState(TypedDict):
     student_code: str
     student_code_features: Features
     hint: str
+    skill_level: str
 
 
 # OpenAI's GPT-4o model
@@ -126,6 +132,49 @@ def hint_generator_agent(state: OverallState) -> OutputState:
 
     Stores the generated hint into db
     """
+    hint_generator_prompt = """
+    You are an AI hint generator for an introductory programming course, assisting students in solving programming exercises. Your primary goal is to guide students through their learning process without revealing the answer. Instead, you should provide incremental hints tailored to the student's skill level, the current state of their code, and any potential errors they are making.
+
+    You will receive the following input:
+        Current Code Snippet: The student's latest attempt at solving the exercise.
+        Logical Features: A list of extracted logical and syntactical characteristics of the student's code.
+        Exercise Question: A clear problem statement that the student is trying to solve.
+        Skeleton Code: The initial code structure provided to the student.
+        Skill Level: The estimated proficiency level of the student (e.g., Beginner, Intermediate).
+
+    Your Task:
+    - Identify errors or inefficiencies in the student's code by analyzing its logical and syntactical features.
+    - Provide an incremental hint that gently guides the student towards the right direction, based on their current understanding and mistakes.
+    - Do NOT give away the solution. Instead, offer a nudge that helps them think critically and make the next step independently.
+
+    Adjust the complexity of the hint based on the student's skill level:
+    - Beginners may need conceptual guidance, analogies, or hints on syntax.
+    - Intermediate students may benefit from questions that prompt them to reconsider their logic.
+
+    Based on all the instructions above, generate as the output, a short and crisp hint for the student
+    """
+    system_prompt = SystemMessage(content=hint_generator_prompt)
+
+    input_prompt = """
+    Current Student Code attempt:
+    {student_code}
+
+    Programming question:
+    {question}
+
+    Code Features:
+    {features}
+
+    Skeleton Code:
+    {skel_code}
+
+    Student Skill Level:
+    {skill_level}
+    """
+
+    formatted_input_prompt = input_prompt.format(
+        student_code=state['student_code'], question=state['question'], features=state['features'], skel_code=state['skel_code'], skill_level=state['skill_level'])
+
     pass
 
 

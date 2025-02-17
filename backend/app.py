@@ -1,12 +1,19 @@
 from flask import Flask, jsonify, request
 from dotenv import load_dotenv
-from agent_trials.single_agent_cot import HintAgent
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.dialects.postgresql import JSON
+import os
 
 # Load Secrets
 load_dotenv()
 
+print(os.environ["SQLALCHEMY_DATABASE_URI"])
 # Setup App
 app = Flask(__name__)
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["SQLALCHEMY_DATABASE_URI"]
+db = SQLAlchemy(app)
+
+# Database
 
 
 @app.route("/")

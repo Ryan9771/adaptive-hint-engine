@@ -3,6 +3,7 @@ from sqlalchemy import create_engine, Column, String, Text
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.ext.mutable import MutableDict
 
 engine = create_engine("sqlite:///exercise.db", echo=True)
 db_session = scoped_session(sessionmaker(
@@ -19,19 +20,19 @@ class ExerciseEntry(Base):
     skel_code = Column(Text, nullable=False)
 
     # The list of features extracted from student code attempts.
-    feature_attempts = Column(JSON, default=[])
+    feature_attempts = Column(MutableDict.as_mutable(JSON), default={})
 
     def __init__(self, exercise_key, exercise_text, skel_code):
         """Initialise a question with empty attempts"""
         self.exercise_key = exercise_key
         self.exercise_text = exercise_text
         self.skel_code = skel_code
-        self.feature_attempts = []
+        self.feature_attempts = {}
 
     def add_feature_attempt(self, feature_list):
         """Adds a feature attempt with an incrementing index"""
-        attempt_index = len(self.attempts) + 1
-        self.attempts[attempt_index] = feature_list
+        attempt_index = len(self.feature_attempts) + 1
+        self.feature_attempts[attempt_index] = feature_list
         db_session.add(self)
         db_session.commit()
 
@@ -71,7 +72,9 @@ def get_feature_attempts(exercise_key, last_n):
     exercise = get_exercise(exercise_key=exercise_key)
 
     if exercise:
-        return exercise.feature_attempts[-last_n:]
+        all_feature_attempts = exercise.feature_attempts.values()
+
+        return list(all_feature_attempts)[-last_n:]
 
     return None
 

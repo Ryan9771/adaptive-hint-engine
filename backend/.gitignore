@@ -3,3 +3,5 @@ venv/
 *.pyc
 __pycache__/
 exercise.db
+
+git rm --cached agent_trials/__pycache__/multi_agent.cpython-312.pyc

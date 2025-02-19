@@ -9,6 +9,7 @@ from typing_extensions import TypedDict
 from langgraph.graph import START, END, StateGraph
 from typing import Annotated
 import operator
+from setup_db import get_feature_attempts, add_feature_attempt, db_session
 
 
 # == Define States and Types ==
@@ -23,7 +24,8 @@ class Features(BaseModel):
 
 class InputState(TypedDict):
     skel_code: str
-    question: str
+    exercise_key: str
+    exercise_text: str
     student_code: str
 
 
@@ -34,9 +36,10 @@ class OutputState(TypedDict):
 
 class OverallState(TypedDict):
     skel_code: str
-    question: str
+    exercise_key: str
+    exercise_text: str
     student_code: str
-    student_code_features: Features
+    feature_attempt: Features
     hint: str
     skill_level: str
 
@@ -81,14 +84,14 @@ def feature_extractor_agent(state: InputState) -> OverallState:
     """
 
     formatted_input_prompt = input_prompt.format(
-        question=state['question'], student_code=state['student_code'])
+        question=state['exercise_text'], student_code=state['student_code'])
 
     llm_input = [system_prompt] + \
         [HumanMessage(content=formatted_input_prompt)]
 
     features: Features = llm.with_structured_output(Features).invoke(llm_input)
 
-    return {"student_code_features": features.features}
+    return {"feature_attempt": features.features}
 
 
 def skill_progress_tracker_agent(state: OverallState) -> OverallState:
@@ -103,6 +106,9 @@ def skill_progress_tracker_agent(state: OverallState) -> OverallState:
     - Receives some sort of notion of time with the metadata of the provided 
     features
     """
+    past_feature_attempts = get_feature_attempts(state['exercise_key'])
+    if past_feature_attempts:
+        pass
     pass
 
 

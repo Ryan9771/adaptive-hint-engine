@@ -79,6 +79,8 @@ def get_feature_attempts(exercise_key, last_n):
     return None
 
 
+# Delete the database
+# Base.metadata.drop_all(bind=engine)
+
 # Create the database
-Base.metadata.drop_all(bind=engine)
 Base.metadata.create_all(bind=engine)

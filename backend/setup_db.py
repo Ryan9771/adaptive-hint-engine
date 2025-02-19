@@ -67,7 +67,7 @@ def add_feature_attempt(exercise_key, feature_attempt: list[str]):
         exercise.add_feature_attempt(feature_attempt)
 
 
-def get_feature_attempts(exercise_key, last_n):
+def get_feature_attempts(exercise_key, last_n=3):
     """Gets the latest n list of features"""
     exercise = get_exercise(exercise_key=exercise_key)
 

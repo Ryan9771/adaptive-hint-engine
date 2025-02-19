@@ -7,28 +7,28 @@ from setup_db import add_exercise, get_exercise, add_feature_attempt, get_featur
 
 # Kotlin Exercise 1
 
-student_code = exercise_1['student_code']
-question = exercise_1['question']
-skel_code = exercise_1['skel_code']
-exercise_1_key = "kotlin_exercise_1"
+# student_code = exercise_1['student_code']
+# question = exercise_1['question']
+# skel_code = exercise_1['skel_code']
+# exercise_1_key = "kotlin_exercise_1"
 
-exercise = add_exercise(exercise_key=exercise_1_key,
-                        exercise_text=question, skel_code=skel_code)
+# exercise = add_exercise(exercise_key=exercise_1_key,
+#                         exercise_text=question, skel_code=skel_code)
 
-three_sample_feature_attempts = [
-    ["syntax_error", "missing_colon", "runtime_error", "undeclared_variable"],
-    ["incorrect_logic", "off_by_one_error",
-        "hardcoded_values", "missing_modulo_check"],
-    ["inefficient_loop", "unnecessary_conditionals",
-        "repetitive_code", "poor_variable_naming"]
-]
+# three_sample_feature_attempts = [
+#     ["syntax_error", "missing_colon", "runtime_error", "undeclared_variable"],
+#     ["incorrect_logic", "off_by_one_error",
+#         "hardcoded_values", "missing_modulo_check"],
+#     ["inefficient_loop", "unnecessary_conditionals",
+#         "repetitive_code", "poor_variable_naming"]
+# ]
 
-for feature_attempt in three_sample_feature_attempts:
-    add_feature_attempt(exercise_key=exercise_1_key,
-                        feature_attempt=feature_attempt)
+# for feature_attempt in three_sample_feature_attempts:
+#     add_feature_attempt(exercise_key=exercise_1_key,
+#                         feature_attempt=feature_attempt)
 
 
-print(get_feature_attempts(exercise_key=exercise_1_key, last_n=3))
+# print(get_feature_attempts(exercise_key=exercise_1_key, last_n=3))
 
 # == Agent Run Attempt ==
 

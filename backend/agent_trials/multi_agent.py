@@ -39,7 +39,8 @@ class OverallState(TypedDict):
     exercise_key: str
     exercise_text: str
     student_code: str
-    feature_attempt: Features
+    current_feature_attempt: Features
+    feature_change_analysis: str
     hint: str
     skill_level: str
 
@@ -94,6 +95,11 @@ def feature_extractor_agent(state: InputState) -> OverallState:
     return {"feature_attempt": features.features}
 
 
+class SkillProgressOutput(BaseModel):
+    analysis: str
+    skill_level: str
+
+
 def skill_progress_tracker_agent(state: OverallState) -> OverallState:
     """
     - Polls from the db for past / current features 
@@ -106,10 +112,92 @@ def skill_progress_tracker_agent(state: OverallState) -> OverallState:
     - Receives some sort of notion of time with the metadata of the provided 
     features
     """
-    past_feature_attempts = get_feature_attempts(state['exercise_key'])
+
+    feature_prompt = """
+    You are an expert programming instructor tasked with analyzing a student's coding progress. You will receive:
+
+    1. A list of lists containing features from the student's past code attempts.
+    2. A list of features from the student's current code attempt.
+    3. The programming question the student is trying to solve.
+
+    Your task is to:
+
+    1. Analyze the patterns and differences between the past attempts and the current attempt (if there are any past attempts, else use the skeleton code).
+    2. Evaluate the student's trajectory and determine if they are on the right path to solve the question.
+    3. Provide a concise description of the changes the student has made compared to the last attempt (if applicable, otherwise compare it to the skeleton code).
+    4. Assess whether previous attempts were better and specify which one(s), if applicable.
+
+    Your analysis should be brief and aimed at helping a teacher understand the student's progress. The output will be used to generate a hint for the student, so focus on key insights that can guide their learning.
+
+    Please format your response as follows:
+
+    1. Trajectory: [Brief assessment of whether the student is on the right path]
+    2. Changes: [Concise description of main changes in the current attempt]
+    3. Comparison: [Brief evaluation of current attempt vs. previous attempts]
+    4. Key Insights: [1-2 sentences highlighting the most important observations]
+    5. Determine the user's programming proficiency as either “low,” “medium,” or “high,” and store it in the skill_level variable. Use this classification to guide the teacher in adjusting the hint's complexity.
+
+    Programming Question: 
+    {exercise_text}
+
+    Past Attempts Features:
+    {formatted_past_attempts} 
+
+    Current Attempt Features:
+    {current_feature_attempt}
+
+    Skeleton Code:
+    {skel_code}
+
+    Analyze the provided information and generate your response based on the format above.
+    """
+
+    past_feature_attempts = get_feature_attempts(
+        exercise_key=state['exercise_key'], n=2)
     if past_feature_attempts:
-        pass
-    pass
+        # Format the previous features
+        formatted_attempts = []
+        num_attempts = len(past_feature_attempts)
+
+        for i, attempt in enumerate(past_feature_attempts):
+            attempt_num = num_attempts - i  # Convert index to "n attempts ago"
+            formatted_attempts.append(
+                f"{attempt_num} attempt{'s' if attempt_num > 1 else ''} ago:")
+            formatted_attempts.extend(f"- {feature}" for feature in attempt)
+            formatted_attempts.append("")  # Add a newline for spacing
+
+        formatted_past_attempts = "\n".join(formatted_attempts).strip()
+
+    else:
+        formatted_past_attempts = ""
+
+    # Format current feature attempt
+    curr_formatted_attempt = []
+    curr_formatted_attempt.append(
+        "\n".join(state['current_feature_attempt']).strip())
+
+    # Format the prompt
+    formatted_prompt = feature_prompt.format(
+        exercise_text=state['exercise_text'],
+        formatted_past_attempts=formatted_past_attempts,
+        current_feature_attempt=curr_formatted_attempt,
+        skel_code=state['skel_code']
+    )
+
+    skill_progress_output = llm.with_structured_output(
+        SkillProgressOutput).invoke([HumanMessage(content=formatted_prompt)])
+
+    feature_change_analysis = skill_progress_output.analysis
+    skill_level = skill_progress_output.skill_level
+
+    print(
+        f"Skill Progress Output: {feature_change_analysis}\nSkill Level: {skill_level}")
+
+    # Push the current features to db
+    add_feature_attempt(state["exercise_key"],
+                        state['current_feature_attempt'])
+
+    return {"feature_change_analysis": feature_change_analysis, "skill_level": skill_level}
 
 
 def solution_completeness_evaluator_agent(state: OverallState) -> OverallState:
@@ -143,10 +231,11 @@ def hint_generator_agent(state: OverallState) -> OutputState:
 
     You will receive the following input:
         Current Code Snippet: The student's latest attempt at solving the exercise.
-        Logical Features: A list of extracted logical and syntactical characteristics of the student's code.
+        Past vs current code features analysis: An analysis of what code feature changes have been made from previous attempts of the student 
         Exercise Question: A clear problem statement that the student is trying to solve.
         Skeleton Code: The initial code structure provided to the student.
-        Skill Level: The estimated proficiency level of the student (e.g., Beginner, Intermediate).
+        Skill Level: The estimated proficiency level of the student (e.g., low, medium, high).
+        
 
     Your Task:
     - Identify errors or inefficiencies in the student's code by analyzing its logical and syntactical features.
@@ -162,14 +251,14 @@ def hint_generator_agent(state: OverallState) -> OutputState:
     system_prompt = SystemMessage(content=hint_generator_prompt)
 
     input_prompt = """
+    Past Vs current Code features analysis:
+    {feature_change_analysis}
+
     Current Student Code attempt:
     {student_code}
 
     Programming question:
-    {question}
-
-    Code Features:
-    {features}
+    {exercise_text}
 
     Skeleton Code:
     {skel_code}
@@ -179,9 +268,18 @@ def hint_generator_agent(state: OverallState) -> OutputState:
     """
 
     formatted_input_prompt = input_prompt.format(
-        student_code=state['student_code'], question=state['question'], features=state['features'], skel_code=state['skel_code'], skill_level=state['skill_level'])
+        feature_change_analysis=state['feature_change_analysis'],
+        student_code=state['student_code'],
+        exercise_text=state['exercise_text'],
+        skel_code=state['skel_code'],
+        skill_level=state['skill_level']
+    )
+    llm_input = [system_prompt] + \
+        [HumanMessage(content=formatted_input_prompt)]
 
-    pass
+    hint = llm.invoke(llm_input)
+
+    return {"hint": hint.response}
 
 
 def feedback_generator_agent(state: OverallState) -> OutputState:
@@ -201,10 +299,17 @@ class MultiAgent:
 
         # == Add Nodes ==
         builder.add_node("feature_extractor_agent", feature_extractor_agent)
+        builder.add_node("skill_progress_tracker_agent",
+                         skill_progress_tracker_agent)
+        builder.add_node("hint_generator_agent", hint_generator_agent)
 
         # == Add Edges ==
         builder.add_edge(START, "feature_extractor_agent")
-        builder.add_edge("feature_extractor_agent", END)
+        builder.add_edge("feature_extractor_agent",
+                         "skill_progress_tracker_agent")
+        builder.add_edge("skill_progress_tracker_agent",
+                         "hint_generator_agent")
+        builder.add_edge("hint_generator_agent", END)
 
         self.graph = builder.compile()
 

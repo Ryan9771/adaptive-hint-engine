@@ -23,6 +23,7 @@ class Features(BaseModel):
 
 
 class InputState(TypedDict):
+    language: str
     skel_code: str
     exercise_key: str
     exercise_text: str
@@ -35,6 +36,7 @@ class OutputState(TypedDict):
 
 
 class OverallState(TypedDict):
+    language: str
     skel_code: str
     exercise_key: str
     exercise_text: str
@@ -77,22 +79,27 @@ def feature_extractor_agent(state: InputState) -> OverallState:
     system_prompt = SystemMessage(content=feature_extractor_prompt)
 
     input_prompt = """
+    Programming Language:
+    {language}
+
     Programming Question:
-    {question}
+    {exercise_text}
 
     Student Code:
     {student_code}
     """
 
     formatted_input_prompt = input_prompt.format(
-        question=state['exercise_text'], student_code=state['student_code'])
+        exercise_text=['exercise_text'], student_code=state['student_code'], language=state['language'])
 
     llm_input = [system_prompt] + \
         [HumanMessage(content=formatted_input_prompt)]
 
     features: Features = llm.with_structured_output(Features).invoke(llm_input)
 
-    return {"feature_attempt": features.features}
+    print(f"==== STATE ====\n{state}==== ====")
+
+    return {"current_feature_attempt": features.features}
 
 
 class SkillProgressOutput(BaseModel):
@@ -137,6 +144,9 @@ def skill_progress_tracker_agent(state: OverallState) -> OverallState:
     4. Key Insights: [1-2 sentences highlighting the most important observations]
     5. Determine the user's programming proficiency as either “low,” “medium,” or “high,” and store it in the skill_level variable. Use this classification to guide the teacher in adjusting the hint's complexity.
 
+    Programming Language:
+    {language}
+
     Programming Question: 
     {exercise_text}
 
@@ -153,7 +163,7 @@ def skill_progress_tracker_agent(state: OverallState) -> OverallState:
     """
 
     past_feature_attempts = get_feature_attempts(
-        exercise_key=state['exercise_key'], n=2)
+        exercise_key=state['exercise_key'], last_n=2)
     if past_feature_attempts:
         # Format the previous features
         formatted_attempts = []
@@ -178,6 +188,7 @@ def skill_progress_tracker_agent(state: OverallState) -> OverallState:
 
     # Format the prompt
     formatted_prompt = feature_prompt.format(
+        language=state['language'],
         exercise_text=state['exercise_text'],
         formatted_past_attempts=formatted_past_attempts,
         current_feature_attempt=curr_formatted_attempt,
@@ -243,7 +254,7 @@ def hint_generator_agent(state: OverallState) -> OutputState:
     - Do NOT give away the solution. Instead, offer a nudge that helps them think critically and make the next step independently.
 
     Adjust the complexity of the hint based on the student's skill level:
-    - Beginners may need conceptual guidance, analogies, or hints on syntax.
+    - Beginners may need conceptual guidance, analogies, or hints on syntax. Though remember, this should only be the NEXT STEP hint, not a brief hint for solving the entire question at one go.
     - Intermediate students may benefit from questions that prompt them to reconsider their logic.
 
     Based on all the instructions above, generate as the output, a short and crisp hint for the student
@@ -251,6 +262,9 @@ def hint_generator_agent(state: OverallState) -> OutputState:
     system_prompt = SystemMessage(content=hint_generator_prompt)
 
     input_prompt = """
+    Programming Language:
+    {language}
+
     Past Vs current Code features analysis:
     {feature_change_analysis}
 
@@ -268,6 +282,7 @@ def hint_generator_agent(state: OverallState) -> OutputState:
     """
 
     formatted_input_prompt = input_prompt.format(
+        language=state['language'],
         feature_change_analysis=state['feature_change_analysis'],
         student_code=state['student_code'],
         exercise_text=state['exercise_text'],
@@ -279,7 +294,7 @@ def hint_generator_agent(state: OverallState) -> OutputState:
 
     hint = llm.invoke(llm_input)
 
-    return {"hint": hint.response}
+    return {"hint": hint.content}
 
 
 def feedback_generator_agent(state: OverallState) -> OutputState:

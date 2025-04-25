@@ -15,10 +15,12 @@ def fizzbuzz(n):
 student_code = """
 def fizzbuzz(n):
     for i in range(1, n+1):
-        if i / 3 == 0:
+        if i % 3 == 0:
             print("Fizz")
         else:
             print("Buzz")
+
+        print("FizzBuzz)
 }
 """
 

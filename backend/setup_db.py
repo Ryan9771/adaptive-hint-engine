@@ -37,6 +37,11 @@ class ExerciseEntry(Base):
         db_session.commit()
 
 
+def exercise_exists(exercise_key: str) -> bool:
+    """Check if an exercise exists by its key"""
+    return db_session.query(ExerciseEntry.exercise_key).filter_by(exercise_key=exercise_key).first() is not None
+
+
 def add_exercise(exercise_key, exercise_text, skel_code):
     """
     Adds an exercise to the database with:
@@ -64,7 +69,10 @@ def add_feature_attempt(exercise_key, feature_attempt: list[str]):
     exercise = get_exercise(exercise_key=exercise_key)
 
     if exercise:
+        print("\n== Adding new feature successful ==")
         exercise.add_feature_attempt(feature_attempt)
+    else:
+        print("\n== Could not add new feature ==")
 
 
 def get_feature_attempts(exercise_key, last_n=3):
@@ -81,6 +89,3 @@ def get_feature_attempts(exercise_key, last_n=3):
 
 # Delete the database
 # Base.metadata.drop_all(bind=engine)
-
-# Create the database
-Base.metadata.create_all(bind=engine)

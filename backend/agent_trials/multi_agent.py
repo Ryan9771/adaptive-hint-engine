@@ -9,7 +9,7 @@ from typing_extensions import TypedDict
 from langgraph.graph import START, END, StateGraph
 from typing import Annotated
 import operator
-from setup_db import get_feature_attempts, add_feature_attempt, db_session
+from setup_db import get_feature_attempts, add_feature_attempt, add_exercise, exercise_exists
 
 
 # == Define States and Types ==
@@ -109,7 +109,7 @@ class SkillProgressOutput(BaseModel):
 
 def skill_progress_tracker_agent(state: OverallState) -> OverallState:
     """
-    - Polls from the db for past / current features 
+    - Polls from the db for past features 
 
     - Recieves the features from current code. Analyses which concepts are newly 
     introduced or missing. 
@@ -162,24 +162,30 @@ def skill_progress_tracker_agent(state: OverallState) -> OverallState:
     Analyze the provided information and generate your response based on the format above.
     """
 
-    past_feature_attempts = get_feature_attempts(
-        exercise_key=state['exercise_key'], last_n=2)
-    if past_feature_attempts:
-        # Format the previous features
-        formatted_attempts = []
-        num_attempts = len(past_feature_attempts)
+    if exercise_exists(state['exercise_key']):
+        past_feature_attempts = get_feature_attempts(
+            exercise_key=state['exercise_key'], last_n=2)
+        if past_feature_attempts:
+            # Format the previous features
+            formatted_attempts = []
+            num_attempts = len(past_feature_attempts)
 
-        for i, attempt in enumerate(past_feature_attempts):
-            attempt_num = num_attempts - i  # Convert index to "n attempts ago"
-            formatted_attempts.append(
-                f"{attempt_num} attempt{'s' if attempt_num > 1 else ''} ago:")
-            formatted_attempts.extend(f"- {feature}" for feature in attempt)
-            formatted_attempts.append("")  # Add a newline for spacing
+            for i, attempt in enumerate(past_feature_attempts):
+                attempt_num = num_attempts - i  # Convert index to "n attempts ago"
+                formatted_attempts.append(
+                    f"{attempt_num} attempt{'s' if attempt_num > 1 else ''} ago:")
+                formatted_attempts.extend(
+                    f"- {feature}" for feature in attempt)
+                formatted_attempts.append("")  # Add a newline for spacing
 
-        formatted_past_attempts = "\n".join(formatted_attempts).strip()
-
+            formatted_past_attempts = "\n".join(formatted_attempts).strip()
     else:
+        add_exercise(state['exercise_key'],
+                     state['exercise_text'], state['skel_code'])
         formatted_past_attempts = ""
+
+    print(
+        f"\n===== PAST FEATURE ATTEMPTS =====\n{formatted_past_attempts}\n===== =====")
 
     # Format current feature attempt
     curr_formatted_attempt = []

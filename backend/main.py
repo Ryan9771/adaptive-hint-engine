@@ -2,7 +2,7 @@ from example_exercises.kotlin.exercise_1 import exercise_1
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage
 # from example_exercises.kotlin.exercise_1 import exercise_1
-from agent_trials.agents.multi_agent import MultiAgent
+from agent_trials.agents.prev_multi_agent import MultiAgent
 from example_exercises.python.exercise_1 import exercise_1
 from example_exercises.python.exercise_2 import exercise_2
 from example_exercises.python.exercise_3 import exercise_3

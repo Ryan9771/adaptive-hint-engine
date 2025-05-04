@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from typing import List, Dict
+from typing_extensions import TypedDict
 
 
 class AttemptContext(BaseModel):
@@ -17,6 +18,10 @@ class FeatureOutput(BaseModel):
     missing_concepts: str
     correctness_issues: str
     redundant_concepts: str
+
+
+class ExerciseRequirements(BaseModel):
+    exercise_requirements: List[str]
 
 
 class IssueConfidenceOutput(BaseModel):
@@ -59,3 +64,14 @@ class HintDirective(BaseModel):
 class HintOutput(BaseModel):
     """The final hint delivered to the student"""
     hint_text: str
+
+
+class GraphState(TypedDict):
+    attempt_context: AttemptContext
+    feature_output: FeatureOutput
+    issue_confidence_output: IssueConfidenceOutput
+    concept_proficiency_model: ConceptProficiencyModel
+    code_comparison_ouput: CodeComparisonOutput
+    learning_trajectory: LearningTrajectory
+    hint_directive: HintDirective
+    hint_output: HintOutput

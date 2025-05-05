@@ -29,7 +29,7 @@ def exercise_requirement_agent(state: GraphState):
     requirements: ExerciseRequirements = llm.with_structured_output(
         ExerciseRequirements).invoke(llm_input)
 
-    print(requirements)
+    print(f"\n== requirements ==\n{requirements.exercise_requirements}\n")
 
 
 class HintEngine:

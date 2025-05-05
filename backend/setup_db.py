@@ -77,10 +77,9 @@ def add_feature_attempt(exercise_key, feature_attempt: list[str]):
     exercise = get_exercise(exercise_key=exercise_key)
 
     if exercise:
-        print("\n== Adding new feature successful ==")
         exercise.add_feature_attempt(feature_attempt)
     else:
-        print("\n== Could not add new feature ==")
+        print("\n== Could not find exercise ==")
 
 
 def get_feature_attempts(exercise_key, last_n=3):
@@ -91,6 +90,11 @@ def get_feature_attempts(exercise_key, last_n=3):
         return exercise.feature_attempts[-last_n:]
 
     return None
+
+
+def required_concepts_exists(exercise_key: str) -> bool:
+    """Check if an exercise exists by its key"""
+    return db_session.query(ExerciseEntry.required_concepts).filter_by(exercise_key=exercise_key).first() is not None
 
 
 def set_required_concepts(exercise_key: str, required_concepts: List[str]):

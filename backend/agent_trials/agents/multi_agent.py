@@ -8,7 +8,7 @@ from instances.llm_instance import LLM_instance
 from util.types import AttemptContext, FeatureOutput, ExerciseRequirements, IssueConfidenceOutput, ConceptProficiencyModel, CodeComparisonOutput, LearningTrajectory, HintDirective, HintOutput, GraphState
 from util.prompts import exercise_requirements_prompt, feature_extractor_prompt
 
-from setup_db import add_exercise, required_concepts_exists, set_required_concepts, get_required_concepts, get_student_profile, update_student_profile
+from setup_db import add_exercise, required_concepts_exists, set_required_concepts, get_required_concepts, get_student_profile, update_student_profile, initialise_student_profile
 
 from langchain_core.messages import HumanMessage
 from langgraph.graph import START, END, StateGraph
@@ -62,11 +62,9 @@ def exercise_requirement_agent(state: GraphState):
         required_concepts=requirements.exercise_requirements
     )
 
-    default_student_profile = {key: []
-                               for key in requirements.exercise_requirements}
-    update_student_profile(
+    initialise_student_profile(
         exercise_key=exercise_key,
-        student_profile=default_student_profile
+        concepts=requirements.exercise_requirements
     )
 
     print(f"\n== requirements ==\n{requirements.exercise_requirements}\n")

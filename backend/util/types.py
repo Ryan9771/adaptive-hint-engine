@@ -55,7 +55,7 @@ class StudentProfile(BaseModel):
     {
         "concept_name": {
             "scores": [1, 3, 4],
-            "proficiency": 0.75
+            "ema": 0.75
         }
     } 
     """

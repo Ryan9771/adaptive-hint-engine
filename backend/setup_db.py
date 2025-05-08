@@ -129,16 +129,48 @@ def set_no_progress_count(exercise_key: str, no_progress_count: int):
         print("\n=== Exercise doesn't exist ===\n")
 
 
-def update_student_profile(exercise_key: str, updated_scores: dict):
+def initialise_student_profile(exercise_key: str, concepts: list):
     exercise = get_exercise(exercise_key=exercise_key)
 
     if exercise:
         student_profile = exercise.student_profile
-        for concept, score in updated_scores.items():
-            if concept in student_profile["concepts"]:
-                student_profile["concepts"][concept].append(score)
-            else:
-                student_profile["concepts"][concept] = [score]
+
+        for concept in concepts:
+            student_profile["concepts"][concept] = {
+                "scores": [],
+                "ema": 0
+            }
+    else:
+        print("\n=== Exercise doesn't exist ===\n")
+
+
+def update_student_profile(exercise_key: str, updated_scores: dict = {}, updated_emas: dict = {}):
+    exercise = get_exercise(exercise_key=exercise_key)
+
+    if exercise:
+        student_profile = exercise.student_profile
+
+        if updated_scores:
+            for concept, score in updated_scores.items():
+                if concept in student_profile["concepts"]:
+                    student_profile["concepts"][concept]["scores"].append(
+                        score)
+                else:
+                    student_profile["concepts"][concept] = {
+                        "scores": [score],
+                        "ema": 0
+                    }
+
+        if updated_emas:
+            for concept, ema in updated_emas.items():
+                if concept in student_profile["concepts"]:
+                    student_profile["concepts"][concept]["ema"] = ema
+                else:
+                    student_profile["concepts"][concept] = {
+                        "scores": [],
+                        "ema": ema
+                    }
+
         db_session.add(exercise)
         db_session.commit()
 

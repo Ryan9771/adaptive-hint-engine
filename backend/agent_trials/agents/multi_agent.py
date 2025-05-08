@@ -6,7 +6,7 @@ create a more modular design.
 """
 from instances.llm_instance import LLM_instance
 from util.types import AttemptContext, FeatureOutput, ExerciseRequirements, IssueConfidenceOutput, ConceptProficiencyModel, CodeComparisonOutput, LearningTrajectory, HintDirective, HintOutput, GraphState
-from util.prompts import exercise_requirements_prompt
+from util.prompts import exercise_requirements_prompt, feature_extractor_prompt
 
 from setup_db import add_exercise, add_feature_attempt, get_feature_attempts, required_concepts_exists, set_required_concepts, get_required_concepts
 
@@ -56,7 +56,28 @@ def exercise_requirement_agent(state: GraphState):
 
 
 def feature_extractor_agent(state: GraphState):
-    pass
+    print("\n== Feature Extractor Agent ==\n")
+
+    exercise_requirements = get_required_concepts(
+        exercise_key=state['attempt_context'].exercise_key
+    )
+
+    print(f"\n== exercise requirements ==\n{exercise_requirements}\n")
+
+    prompt = feature_extractor_prompt(
+        exercise_requirements=exercise_requirements,
+        exercise_text=state['attempt_context'].exercise_text,
+        skel_code=state['attempt_context'].skel_code,
+        student_code=state['attempt_context'].student_code
+    )
+
+    llm_input = [HumanMessage(content=prompt)]
+
+    feature_output: FeatureOutput = llm.with_structured_output(
+        FeatureOutput).invoke(llm_input)
+    print(f"\n== feature output ==\n{feature_output}\n")
+
+    return {"feature_output": feature_output}
 
 
 class HintEngine:
@@ -68,9 +89,18 @@ class HintEngine:
         builder.add_node("exercise_requirement_agent",
                          exercise_requirement_agent)
 
+        builder.add_node("feature_extractor_agent",
+                         feature_extractor_agent)
+
         # == Add Edges ==
-        builder.add_edge(START, "exercise_requirement_agent")
-        builder.add_edge("exercise_requirement_agent", END)
+        builder.add_conditional_edges(
+            START, decide_exercise_requirements_exists
+        )
+
+        builder.add_edge("exercise_requirement_agent",
+                         "feature_extractor_agent")
+
+        builder.add_edge("feature_extractor_agent", END)
 
         self.graph = builder.compile()
 
@@ -82,12 +112,14 @@ class HintEngine:
         exercise_text = state['attempt_context'].exercise_text
         skel_code = state['attempt_context'].skel_code
         language = state['attempt_context'].language
+
         add_exercise(
             exercise_key=exercise_key,
             exercise_text=exercise_text,
-            skel_code=skel_code
+            skel_code=skel_code,
+            language=language
         )
 
         graph = self.graph.invoke(state)
 
-        print(graph)
+        # print(graph)

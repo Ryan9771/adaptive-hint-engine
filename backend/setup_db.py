@@ -22,11 +22,12 @@ class ExerciseEntry(Base):
     required_concepts = Column(MutableList.as_mutable(JSON), default=list)
     feature_attempts = Column(MutableList.as_mutable(JSON), default=list)
 
-    def __init__(self, exercise_key, exercise_text, skel_code):
+    def __init__(self, exercise_key, exercise_text, skel_code, language):
         """Initialise a question with empty attempts"""
         self.exercise_key = exercise_key
         self.exercise_text = exercise_text
         self.skel_code = skel_code
+        self.langugae = language
         self.required_concepts = []
         self.feature_attempts = []
 
@@ -36,7 +37,6 @@ class ExerciseEntry(Base):
         db_session.commit()
 
     def add_feature_attempt(self, feature_list):
-        """Adds a feature attempt with an incrementing index"""
         self.feature_attempts.append(feature_list)
         db_session.add(self)
         db_session.commit()
@@ -47,7 +47,7 @@ def exercise_exists(exercise_key: str) -> bool:
     return db_session.query(ExerciseEntry.exercise_key).filter_by(exercise_key=exercise_key).first() is not None
 
 
-def add_exercise(exercise_key, exercise_text, skel_code):
+def add_exercise(exercise_key, exercise_text, skel_code, language):
     """
     Adds an exercise to the database with:
         exercise_key: primary key
@@ -55,7 +55,8 @@ def add_exercise(exercise_key, exercise_text, skel_code):
         skel_code: The skeleton code
     """
     if not exercise_exists(exercise_key=exercise_key):
-        exercise = ExerciseEntry(exercise_key, exercise_text, skel_code)
+        exercise = ExerciseEntry(
+            exercise_key, exercise_text, skel_code, language)
         db_session.add(exercise)
         db_session.commit()
 
@@ -94,7 +95,10 @@ def get_feature_attempts(exercise_key, last_n=3):
 
 def required_concepts_exists(exercise_key: str) -> bool:
     """Check if an exercise exists by its key"""
-    return db_session.query(ExerciseEntry.required_concepts).filter_by(exercise_key=exercise_key).first() is not None
+    required_concepts = db_session.query(
+        ExerciseEntry.required_concepts).filter_by(exercise_key=exercise_key).first()
+
+    return len(required_concepts[0]) > 0
 
 
 def set_required_concepts(exercise_key: str, required_concepts: List[str]):

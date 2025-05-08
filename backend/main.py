@@ -22,7 +22,7 @@ llm = ChatOpenAI(model="gpt-4o")
 if __name__ == "__main__":
     # Initialise db
     # Create the database
-    # Base.metadata.create_all(bind=engine)
+    Base.metadata.create_all(bind=engine)
 
     print("== Initialising Agent ==")
     agent = HintEngine()

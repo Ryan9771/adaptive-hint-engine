@@ -10,4 +10,4 @@ class LLM_instance:
 
     @classmethod
     def get_instance(cls):
-        return ChatOpenAI(model="gpt-4o")
+        return ChatOpenAI(model="gpt-4o", temperature=0.0)

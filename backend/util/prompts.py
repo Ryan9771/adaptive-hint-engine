@@ -33,13 +33,42 @@ def exercise_requirements_prompt(exercise_text, skel_code):
     return prompt
 
 
-def feature_extractor_prompt(exercise_text, skel_code, student_code):
+def feature_extractor_prompt(exercise_requirements, exercise_text, skel_code, student_code):
     prompt = f"""
-    Analyse this student submission for key programming concepts:
-    Exercise Description: {exercise_text}
-    Skeleton:
+    You are an expert code reviewer for beginner programming students. 
+    Your task is to analyze a student's code submission for a given exercise.
+
+    Instructions:
+
+    1. For each core functional concept used in the student's code:
+        a. Aassign a score between 1 and 4:
+            1 = completely wrong
+            2 = partially correct
+            3 = mostly correct
+            4 = completely correct
+        b. If the score is less than 4, briefly describe the issue (max one sentence)
+        c. Try to match the concept to one of the following canonical exercise
+        requirement tags. If the concept doesn't match, invent a new tag using
+        snake_case: 
+        Exercise Requirements: {exercise_requirements}
+    
+    2. List any missing concepts from the exercise requirements. If additional 
+    concepts are needed, include them in snake_case format.
+
+    3. List any redundant concepts used in the student code that are not required. 
+        a. For each redundant concept, assign a severity score between 1
+        and 3 where:
+            score 1 = minor (does not affect correctness)
+            score 2 = moderate (affects correctness but can be addressed later)
+            score 3 = critical (affects correctness and needs immediate attention)
+        b. Briefly explain why it is redundant (max one sentence).
+
+    Exercise Description:
+    {exercise_text}
+    Skeleton Code:
     {skel_code}
-    Submission:
+    Student Code:
     {student_code}
     """
-    pass
+
+    return prompt

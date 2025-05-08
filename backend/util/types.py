@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List, Dict
+from typing import List, Dict, Optional
 from typing_extensions import TypedDict
 
 
@@ -12,12 +12,22 @@ class AttemptContext(BaseModel):
     student_code: str
 
 
+class FeatureDetail(BaseModel):
+    score: int
+    tag: str
+    detail: Optional[str]
+
+
+class RedunantConcepts(BaseModel):
+    severity: int
+    detail: str
+
+
 class FeatureOutput(BaseModel):
     """Extracted features from the student's code snippet"""
-    included_concepts: str
-    missing_concepts: str
-    correctness_issues: str
-    redundant_concepts: str
+    implemented_concepts: List[FeatureDetail]
+    missing_concepts: List[str]
+    redundant_concepts: List[RedunantConcepts]
 
 
 class ExerciseRequirements(BaseModel):

@@ -4,9 +4,7 @@ Description: Print numbers from 1 to n. For multiples of 3, print "Fizz", for mu
 
 skel_code = """
 def fizzbuzz(n):
-    for i in range(1, n + 1):
-        # Your logic here
-        pass
+    pass
 """
 
 # Note: Here is a code that passes all the tests but is not functionally correct
@@ -14,15 +12,21 @@ def fizzbuzz(n):
 
 student_code = """
 def fizzbuzz(n):
-    for i in range(1, n+1):
-        if i % 3 == 0:
-            print("Fizz")
-        else:
-            print("Buzz")
-
-        print("FizzBuzz)
-}
+    for i in range(n):
+        print(i)
 """
+
+# student_code = """
+# def fizzbuzz(n):
+#     for i in range(1, n+1):
+#         if i % 3 == 0:
+#             print("Fizz")
+#         else:
+#             print("Buzz")
+
+#         print("FizzBuzz)
+# }
+# """
 
 exercise_1 = {
     "exercise_key": "python_exercise_1",

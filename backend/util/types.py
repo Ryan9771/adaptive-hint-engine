@@ -14,7 +14,7 @@ class AttemptContext(BaseModel):
 
 class FeatureDetail(BaseModel):
     def __str__(self):
-        return f"raw_tag: {self.raw_tag}\n\t\tscore: {self.score}\n\t\ttag: {self.tag}\n\t\tdetail: {self.detail}\n"
+        return f"tag: {self.tag}\n\t\tscore: {self.score}\n\t\tdetail: {self.detail}\n"
     raw_tag: str
     score: int
     tag: str
@@ -48,6 +48,10 @@ class FeatureOutput(BaseModel):
 
 class ExerciseRequirements(BaseModel):
     exercise_requirements: List[str]
+
+
+class StudentProfile(BaseModel):
+    concepts: Dict[str, List[float]]
 
 
 class IssueConfidenceOutput(BaseModel):

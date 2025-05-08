@@ -13,18 +13,34 @@ class AttemptContext(BaseModel):
 
 
 class FeatureDetail(BaseModel):
+    def __str__(self):
+        return f"raw_tag: {self.raw_tag}\n\t\tscore: {self.score}\n\t\ttag: {self.tag}\n\t\tdetail: {self.detail}\n"
+    raw_tag: str
     score: int
     tag: str
     detail: Optional[str]
 
 
 class RedunantConcepts(BaseModel):
+    def __str__(self):
+        return f"concept: {self.concept}\n\t\tseverity: {self.severity}\n\t\tdetail: {self.detail}"
+    concept: str
     severity: int
     detail: str
 
 
 class FeatureOutput(BaseModel):
     """Extracted features from the student's code snippet"""
+
+    def __str__(self):
+        return (
+            f"implemented_concepts: [\n\t" +
+            "\n\t".join(str(c) for c in self.implemented_concepts) +
+            f"\n]\nmissing_concepts: {self.missing_concepts}" +
+            f"\nredundant_concepts: [\n\t" +
+            "\n\t".join(str(c) for c in self.redundant_concepts) + "\n]"
+        )
+
     implemented_concepts: List[FeatureDetail]
     missing_concepts: List[str]
     redundant_concepts: List[RedunantConcepts]

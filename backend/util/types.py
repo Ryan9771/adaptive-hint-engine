@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Union
 from typing_extensions import TypedDict
 
 
@@ -51,7 +51,15 @@ class ExerciseRequirements(BaseModel):
 
 
 class StudentProfile(BaseModel):
-    concepts: Dict[str, List[float]]
+    """
+    {
+        "concept_name": {
+            "scores": [1, 3, 4],
+            "proficiency": 0.75
+        }
+    } 
+    """
+    concepts: Dict[str, Dict[str, Union[List[float], float]]]
 
 
 class IssueConfidenceOutput(BaseModel):

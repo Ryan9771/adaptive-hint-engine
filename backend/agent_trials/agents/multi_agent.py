@@ -108,11 +108,15 @@ def student_profile_agent(state: GraphState):
     """Updates and tracks student proficiency of concepts by maintaining
     a exponential moving average of the scores of the concepts """
 
+    print("\n== Student Profile Agent ==\n")
+
     # Get the past concepts scores
     past_concepts_scores = get_past_concept_scores(
         exercise_key=state['attempt_context'].exercise_key,
         last_n=HISTORY_WINDOW
     )
+
+    print(f"\n== past concepts scores ==\n{past_concepts_scores}\n")
 
     # Get the concepts the students have implemented
     implemented_concepts: List[FeatureDetail] = state['feature_output'].implemented_concepts
@@ -121,9 +125,13 @@ def student_profile_agent(state: GraphState):
     implemented_concepts = {
         concept.tag: concept.score for concept in implemented_concepts}
 
+    print(f"\n== implemented concepts ==\n{implemented_concepts}\n")
+
     # Filter from the past concepts, the scores that are in implemented
     filtered_past_concepts = {
         key: past_concepts_scores[key] for key in implemented_concepts if key in past_concepts_scores}
+
+    print(f"\n== filtered past concepts ==\n{filtered_past_concepts}\n")
 
     ema_build = {}  # Helper dict to build the ema scores
     concept_emas = {}  # The ema scores for the concepts
@@ -155,6 +163,8 @@ def student_profile_agent(state: GraphState):
     concept_ema_scores = {concept: {
         "score": implemented_concepts[concept], "ema": concept_emas[concept]} for concept in implemented_concepts}
 
+    print(f"\n== concept ema scores ==\n{concept_ema_scores}\n")
+
     return {"student_profile_output": StudentProfileOutput(concept_ema_scores)}
 
 
@@ -175,6 +185,8 @@ class HintEngine:
         builder.add_node("feature_extractor_agent",
                          feature_extractor_agent)
 
+        builder.add_node("student_profile_agent", student_profile_agent)
+
         # == Add Edges ==
         builder.add_conditional_edges(
             START, decide_exercise_requirements_exists
@@ -183,7 +195,9 @@ class HintEngine:
         builder.add_edge("exercise_requirement_agent",
                          "feature_extractor_agent")
 
-        builder.add_edge("feature_extractor_agent", END)
+        builder.add_edge("feature_extractor_agent", "student_profile_agent")
+
+        builder.add_edge("student_profile_agent", END)
 
         self.graph = builder.compile()
 

@@ -134,12 +134,17 @@ def initialise_student_profile(exercise_key: str, concepts: list):
 
     if exercise:
         student_profile = exercise.student_profile
+        student_profile["concepts"] = {}
 
         for concept in concepts:
             student_profile["concepts"][concept] = {
                 "scores": [],
                 "ema": 0.0
             }
+
+        exercise.student_profile = student_profile
+        db_session.add(exercise)
+        db_session.commit()
     else:
         print("\n=== Exercise doesn't exist ===\n")
 

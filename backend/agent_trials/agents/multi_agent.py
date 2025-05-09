@@ -142,7 +142,7 @@ def student_profile_agent(state: GraphState):
 
     # Add the current scores to the ema_build
     for concept, score in implemented_concepts.items():
-        ema_build[concept].setdefault(concept, []).append(score)
+        ema_build.setdefault(concept, []).append(score)
 
     # Calculate the EMA for each concept
     for concept, scores in ema_build.items():
@@ -165,7 +165,7 @@ def student_profile_agent(state: GraphState):
 
     print(f"\n== concept ema scores ==\n{concept_ema_scores}\n")
 
-    return {"student_profile_output": StudentProfileOutput(concept_ema_scores)}
+    return {"student_profile_output": StudentProfileOutput(implemented_ema_scores=concept_ema_scores)}
 
 
 def issue_confidence_agent(state: GraphState):

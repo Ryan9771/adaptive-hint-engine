@@ -12,13 +12,13 @@ def exercise_requirements_prompt(exercise_text, skel_code):
     For example, for a FizzBuzz problem, the output should look something like:
     [
         "loops",
+        "range_function",
         "modulo_operator",
         "conditional_statements",
         "comparison_operations",
         "print_statements",
         "integer_literals",
         "boolean_logic",
-        "range_function",
         "nested_conditionals",
         "string_output_construction"
     ]
@@ -41,11 +41,12 @@ def feature_extractor_prompt(exercise_requirements, exercise_text, skel_code, st
     Instructions:
 
     1. For each core functional concept used in the student's code:
-        a. Aassign a score between 1 and 4:
-            1 = completely wrong
-            2 = partially correct
-            3 = mostly correct
-            4 = completely correct
+        a. Aassign a score between 1 and 4 based on your judgment on the 
+        excercise goals and constraints:
+            - 4 = used correctly and appropriately
+            - 3 = mostly correct, but with minor mistakes (e.g. loop has bounds off by one)
+            - 2 = attempted but significantly incorrect
+            - 1 = present but fundamentally wrong or misused
         b. If the score is less than 4, briefly describe the issue (max one sentence)
         c. Try to match the concept to one of the following canonical exercise
         requirement tags. If the concept doesn't match, invent a new tag using
@@ -58,9 +59,9 @@ def feature_extractor_prompt(exercise_requirements, exercise_text, skel_code, st
     3. List any redundant concepts used in the student code that are not required. 
         a. For each redundant concept, assign a severity score between 1
         and 3 where:
-            score 1 = minor (does not affect correctness)
-            score 2 = moderate (affects correctness but can be addressed later)
             score 3 = critical (affects correctness and needs immediate attention)
+            score 2 = moderate (affects correctness but can be addressed later)
+            score 1 = minor (does not affect correctness)
         b. Briefly explain why it is redundant (max one sentence).
 
     Exercise Description:

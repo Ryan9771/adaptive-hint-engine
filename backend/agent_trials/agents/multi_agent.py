@@ -123,18 +123,20 @@ def student_profile_agent(state: GraphState):
 
     # Implemented concept scores
     implemented_concepts = {
-        concept.tag: concept.score for concept in implemented_concepts}
+        concept.tag: concept.score for concept in implemented_concepts
+    }
 
     print(f"\n== implemented concepts ==\n{implemented_concepts}\n")
 
     # Filter from the past concepts, the scores that are in implemented
     filtered_past_concepts = {
-        key: past_concepts_scores[key] for key in implemented_concepts if key in past_concepts_scores}
+        key: past_concepts_scores[key] for key in implemented_concepts if key in past_concepts_scores
+    }
 
     print(f"\n== filtered past concepts ==\n{filtered_past_concepts}\n")
 
     ema_build = {}  # Helper dict to build the ema scores
-    concept_emas = {}  # The ema scores for the concepts
+    concept_emas = {}  # The emas for the concepts
 
     # Add the filtered past concept scores to the ema_build
     for concept, scores in filtered_past_concepts.items():

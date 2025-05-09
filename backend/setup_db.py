@@ -175,6 +175,7 @@ def update_student_profile(exercise_key: str, updated_scores: dict = {}, updated
                         "scores": [],
                         "ema": ema
                     }
+        exercise.student_profile = student_profile
 
         db_session.add(exercise)
         db_session.commit()

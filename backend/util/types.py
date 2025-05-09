@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List, Dict, Optional, Union
+from typing import List, Dict, Optional, Union, Tuple
 from typing_extensions import TypedDict
 
 
@@ -71,9 +71,9 @@ class IssueConfidenceOutput(BaseModel):
     confidence_scores: Dict[str, float]
 
 
-class ConceptProficiencyModel(BaseModel):
+class StudentProfileOutput(BaseModel):
     """Scores how proficient a student is in each concept for an exercise"""
-    concept_proficiency: Dict[str, float]
+    implemented_ema_scores: Dict[str, Dict[str, Union[int, float]]]
 
 
 class CodeComparisonOutput(BaseModel):
@@ -108,7 +108,7 @@ class GraphState(TypedDict):
     attempt_context: AttemptContext
     feature_output: FeatureOutput
     issue_confidence_output: IssueConfidenceOutput
-    concept_proficiency_model: ConceptProficiencyModel
+    student_profile_output: StudentProfileOutput
     code_comparison_ouput: CodeComparisonOutput
     learning_trajectory: LearningTrajectory
     hint_directive: HintDirective

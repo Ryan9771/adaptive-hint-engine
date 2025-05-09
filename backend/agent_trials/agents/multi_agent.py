@@ -4,11 +4,13 @@ create a more modular design.
 
 
 """
+from typing import List, Dict
+
 from instances.llm_instance import LLM_instance
-from util.types import AttemptContext, FeatureOutput, ExerciseRequirements, IssueConfidenceOutput, ConceptProficiencyModel, CodeComparisonOutput, LearningTrajectory, HintDirective, HintOutput, GraphState
+from util.types import AttemptContext, FeatureOutput, ExerciseRequirements, IssueConfidenceOutput, StudentProfileOutput, CodeComparisonOutput, LearningTrajectory, HintDirective, HintOutput, GraphState, FeatureDetail
 from util.prompts import exercise_requirements_prompt, feature_extractor_prompt
 
-from setup_db import add_exercise, required_concepts_exists, set_required_concepts, get_required_concepts, get_student_profile, update_student_profile, initialise_student_profile
+from setup_db import add_exercise, required_concepts_exists, set_required_concepts, get_required_concepts, get_past_concept_scores, update_student_profile, initialise_student_profile
 
 from langchain_core.messages import HumanMessage
 from langgraph.graph import START, END, StateGraph
@@ -107,22 +109,26 @@ def student_profile_agent(state: GraphState):
     a exponential moving average of the scores of the concepts """
 
     # Get the past concepts scores
-    past_concepts_scores = get_student_profile(
+    past_concepts_scores = get_past_concept_scores(
         exercise_key=state['attempt_context'].exercise_key,
         last_n=HISTORY_WINDOW
     )
 
     # Get the concepts the students have implemented
-    implemented_concepts = state['feature_output'].implemented_concepts
+    implemented_concepts: List[FeatureDetail] = state['feature_output'].implemented_concepts
+
+    # Implemented concept scores
+    implemented_concepts = {
+        concept.tag: concept.score for concept in implemented_concepts}
 
     # Filter from the past concepts, the scores that are in implemented
     filtered_past_concepts = {
         key: past_concepts_scores[key] for key in implemented_concepts if key in past_concepts_scores}
 
     ema_build = {}  # Helper dict to build the ema scores
-    ema_scores = {}  # The ema scores for the concepts
+    concept_emas = {}  # The ema scores for the concepts
 
-    # Add the filtered past concepts to the ema_build
+    # Add the filtered past concept scores to the ema_build
     for concept, scores in filtered_past_concepts.items():
         ema_build[concept] = scores
 
@@ -136,13 +142,20 @@ def student_profile_agent(state: GraphState):
         for score in scores[1:]:
             ema = (HISTORY_DECAY * ema) + ((1 - HISTORY_DECAY) * score / 4.0)
 
-        ema_scores[concept] = ema
+        concept_emas[concept] = round(ema, 2)
 
-    # for feature_concept in implemented_concepts:
-    #     tag = feature_concept.tag
-    #     score = feature_concept.score
+    # Update student profile with new scores
+    update_student_profile(
+        exercise_key=state['attempt_context'].exercise_key,
+        updated_scores=implemented_concepts,
+        updated_emas=concept_emas
+    )
 
-    pass
+    # Holds the ema and scores for the implemented concepts
+    concept_ema_scores = {concept: {
+        "score": implemented_concepts[concept], "ema": concept_emas[concept]} for concept in implemented_concepts}
+
+    return {"student_profile_output": StudentProfileOutput(concept_ema_scores)}
 
 
 def issue_confidence_agent(state: GraphState):

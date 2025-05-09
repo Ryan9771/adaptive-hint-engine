@@ -138,7 +138,7 @@ def initialise_student_profile(exercise_key: str, concepts: list):
         for concept in concepts:
             student_profile["concepts"][concept] = {
                 "scores": [],
-                "ema": 0
+                "ema": 0.0
             }
     else:
         print("\n=== Exercise doesn't exist ===\n")
@@ -175,7 +175,7 @@ def update_student_profile(exercise_key: str, updated_scores: dict = {}, updated
         db_session.commit()
 
 
-def get_student_profile(exercise_key: str, last_n: int = 5):
+def get_past_concept_scores(exercise_key: str, last_n: int = 5):
     exercise = get_exercise(exercise_key=exercise_key)
     result = {}
 
@@ -183,8 +183,24 @@ def get_student_profile(exercise_key: str, last_n: int = 5):
         student_profile = exercise.student_profile
         result = {}
 
-        for concept, scores in student_profile["concepts"].items():
-            result[concept] = scores[-last_n:]
+        for concept, info in student_profile["concepts"].items():
+            result[concept] = info["scores"][-last_n:]
+    else:
+        print("\n=== Exercise doesn't exist ===\n")
+
+    return result
+
+
+def get_previous_concept_emas(exercise_key: str):
+    exercise = get_exercise(exercise_key=exercise_key)
+    result = {}
+
+    if exercise:
+        student_profile = exercise.student_profile
+        result = {}
+
+        for concept, info in student_profile["concepts"].items():
+            result[concept] = info["ema"]
     else:
         print("\n=== Exercise doesn't exist ===\n")
 

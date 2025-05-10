@@ -62,13 +62,14 @@ class StudentProfile(BaseModel):
     concepts: Dict[str, Dict[str, Union[List[float], float]]]
 
 
-class IssueConfidenceOutput(BaseModel):
+class IssueIdentifierOutput(BaseModel):
     """
     Scores how confident an issue is based on the student's attempts on
     a particular exercise
     """
     issues: List[str]
-    confidence_scores: Dict[str, float]
+    improving_concepts: List[str]
+    struggling_concepts: List[str]
 
 
 class StudentProfileOutput(BaseModel):
@@ -107,7 +108,7 @@ class HintOutput(BaseModel):
 class GraphState(TypedDict):
     attempt_context: AttemptContext
     feature_output: FeatureOutput
-    issue_confidence_output: IssueConfidenceOutput
+    issue_identifier_output: IssueIdentifierOutput
     student_profile_output: StudentProfileOutput
     code_comparison_ouput: CodeComparisonOutput
     learning_trajectory: LearningTrajectory

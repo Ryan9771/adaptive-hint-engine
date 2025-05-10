@@ -41,7 +41,7 @@ def feature_extractor_prompt(exercise_requirements, exercise_text, skel_code, st
     Instructions:
 
     1. For each core functional concept used in the student's code:
-        a. Aassign a score between 1 and 4 based on your judgment on the 
+        a. Assign a score between 1 and 4 based on your judgement on the 
         excercise goals and constraints:
             - 4 = used correctly and appropriately
             - 3 = mostly correct, but with minor mistakes (e.g. loop has bounds off by one)
@@ -66,8 +66,10 @@ def feature_extractor_prompt(exercise_requirements, exercise_text, skel_code, st
 
     Exercise Description:
     {exercise_text}
+    
     Skeleton Code:
     {skel_code}
+
     Student Code:
     {student_code}
     """

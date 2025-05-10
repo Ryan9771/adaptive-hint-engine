@@ -23,6 +23,9 @@ llm = LLM_instance.get_instance()
 HISTORY_WINDOW = 5
 HISTORY_DECAY = 0.8
 MAX_SCORE = 4.0
+STRUGGLE_EMA_THRESHOLD = 0.
+IMPROVE_DELTA = 0.2
+MAX_ISSUES = 3
 
 # == Conditional Edges ==
 
@@ -170,9 +173,39 @@ def student_profile_agent(state: GraphState):
     return {"student_profile_output": StudentProfileOutput(implemented_ema_scores=concept_ema_scores)}
 
 
-def issue_confidence_agent(state: GraphState):
+def issue_identifier_agent(state: GraphState):
     """Determines which concepts require attention"""
-    pass
+    concept_ema_scores = state['student_profile_output'].implemented_ema_scores
+
+    struggling_concepts = []
+    improving_concepts = []
+    issues = []
+
+    # Compute confidence scores and determine struggling/improving concepts
+    for concept, scores in concept_ema_scores.items():
+        score = scores["score"]
+        ema = scores["ema"]
+
+        # Compute the confidence that the issue is a misconception
+        confidence = round(1 - ema, 2)
+
+        if score < MAX_SCORE and ema < STRUGGLE_EMA_THRESHOLD:
+            struggling_concepts.append(concept)
+        if score / MAX_SCORE > ema + IMPROVE_DELTA:
+            improving_concepts.append(concept)
+
+        if score < MAX_SCORE:
+            issues.append((concept, confidence))
+
+    # Sort issues based on confidence scores
+    issues = [issue[0] for issue in issues.sort(
+        key=lambda x: x[1], reverse=True)][:MAX_ISSUES]
+
+    return {"issue_identifier_output": IssueConfidenceOutput(
+        issues=issues,
+        improving_concepts=improving_concepts,
+        struggling_concepts=struggling_concepts,
+    )}
 
 
 class HintEngine:

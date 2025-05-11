@@ -15,9 +15,8 @@ class AttemptContext(BaseModel):
 class FeatureDetail(BaseModel):
     def __str__(self):
         return f"tag: {self.tag}\n\t\tscore: {self.score}\n\t\tdetail: {self.detail}\n"
-    raw_tag: str
-    score: int
     tag: str
+    score: int
     detail: Optional[str]
 
 
@@ -82,6 +81,7 @@ class IssueIdentifierOutput(BaseModel):
 class StudentProfileOutput(BaseModel):
     """Scores how proficient a student is in each concept for an exercise"""
     implemented_ema_scores: Dict[str, Dict[str, Union[int, float]]]
+    average_ema: float
 
 
 class CodeComparisonOutput(BaseModel):
@@ -92,19 +92,11 @@ class CodeComparisonOutput(BaseModel):
     reasoning: str
 
 
-class LearningTrajectory(BaseModel):
-    """
-    The trajectory of how the student has progressed based on their past
-    attempt of the exercise
-    """
-    trajectory: str
-    changes_summary: str
-
-
 class HintDirective(BaseModel):
     """Decides the type of hint that should be delivered to the student"""
     strategy: str
-    reasoning: str
+    rationale: str
+    tone: str
 
 
 class HintOutput(BaseModel):
@@ -118,6 +110,5 @@ class GraphState(TypedDict):
     issue_identifier_output: IssueIdentifierOutput
     student_profile_output: StudentProfileOutput
     code_comparison_ouput: CodeComparisonOutput
-    learning_trajectory: LearningTrajectory
     hint_directive: HintDirective
     hint_output: HintOutput

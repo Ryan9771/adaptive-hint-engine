@@ -7,7 +7,7 @@ create a more modular design.
 from typing import List, Dict
 
 from instances.llm_instance import LLM_instance
-from util.types import AttemptContext, FeatureOutput, ExerciseRequirements, IssueConfidenceOutput, StudentProfileOutput, CodeComparisonOutput, LearningTrajectory, HintDirective, HintOutput, GraphState, FeatureDetail
+from util.types import AttemptContext, FeatureOutput, ExerciseRequirements, IssueIdentifierOutput, StudentProfileOutput, CodeComparisonOutput, LearningTrajectory, HintDirective, HintOutput, GraphState, FeatureDetail
 from util.prompts import exercise_requirements_prompt, feature_extractor_prompt
 
 from setup_db import add_exercise, required_concepts_exists, set_required_concepts, get_required_concepts, get_past_concept_scores, update_student_profile, initialise_student_profile
@@ -198,14 +198,18 @@ def issue_identifier_agent(state: GraphState):
             issues.append((concept, confidence))
 
     # Sort issues based on confidence scores
-    issues = [issue[0] for issue in issues.sort(
-        key=lambda x: x[1], reverse=True)][:MAX_ISSUES]
+    issues.sort(key=lambda x: x[1], reverse=True)
+    issues = [issue[0] for issue in issues][:MAX_ISSUES]
 
-    return {"issue_identifier_output": IssueConfidenceOutput(
+    issue_identifier_output = IssueIdentifierOutput(
         issues=issues,
         improving_concepts=improving_concepts,
         struggling_concepts=struggling_concepts,
-    )}
+    )
+
+    print(issue_identifier_output)
+
+    return {"issue_identifier_output": issue_identifier_output}
 
 
 class HintEngine:
@@ -222,6 +226,8 @@ class HintEngine:
 
         builder.add_node("student_profile_agent", student_profile_agent)
 
+        builder.add_node("issue_identifier_agent", issue_identifier_agent)
+
         # == Add Edges ==
         builder.add_conditional_edges(
             START, decide_exercise_requirements_exists
@@ -232,7 +238,9 @@ class HintEngine:
 
         builder.add_edge("feature_extractor_agent", "student_profile_agent")
 
-        builder.add_edge("student_profile_agent", END)
+        builder.add_edge("student_profile_agent", "issue_identifier_agent")
+
+        builder.add_edge("issue_identifier_agent", END)
 
         self.graph = builder.compile()
 

@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine, Column, String, Text, Integer
 from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.orm.attributes import flag_modified
 from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.mutable import MutableDict, MutableList
@@ -24,7 +25,8 @@ class ExerciseEntry(Base):
 
     required_concepts = Column(MutableList.as_mutable(JSON), default=list)
 
-    student_profile = Column(MutableDict.as_mutable(JSON), default=dict)
+    student_profile = Column(MutableDict.as_mutable(
+        JSON), default=lambda: MutableDict({"concepts": MutableDict()}))
     no_progress_count = Column(Integer, default=0)
 
     def __init__(self, exercise_key, exercise_text, skel_code, language):
@@ -33,13 +35,6 @@ class ExerciseEntry(Base):
         self.exercise_text = exercise_text
         self.skel_code = skel_code
         self.language = language
-
-        self.required_concepts = []
-        self.feature_attempts = []
-
-        # TODO: migrate to a new table when working with different students
-        self.no_progress_count = 0
-        self.student_profile = {}
 
     def set_required_concepts(self, required_concepts: List[str]):
         self.required_concepts = required_concepts
@@ -133,16 +128,14 @@ def initialise_student_profile(exercise_key: str, concepts: list):
     exercise = get_exercise(exercise_key=exercise_key)
 
     if exercise:
-        student_profile = exercise.student_profile
-        student_profile["concepts"] = {}
+        exercise.student_profile = MutableDict({"concepts": MutableDict()})
 
         for concept in concepts:
-            student_profile["concepts"][concept] = {
-                "scores": [],
+            exercise.student_profile["concepts"][concept] = MutableDict({
+                "scores": MutableList([]),
                 "ema": 0.0
-            }
+            })
 
-        exercise.student_profile = student_profile
         db_session.add(exercise)
         db_session.commit()
     else:
@@ -153,31 +146,31 @@ def update_student_profile(exercise_key: str, updated_scores: dict = {}, updated
     exercise = get_exercise(exercise_key=exercise_key)
 
     if exercise:
-        student_profile = exercise.student_profile
-
         if updated_scores:
             for concept, score in updated_scores.items():
-                if concept in student_profile["concepts"]:
-                    student_profile["concepts"][concept]["scores"].append(
+                if concept in exercise.student_profile["concepts"]:
+                    exercise.student_profile["concepts"][concept]["scores"].append(
                         score)
                 else:
-                    student_profile["concepts"][concept] = {
-                        "scores": [score],
+                    exercise.student_profile["concepts"][concept] = MutableDict({
+                        "scores": MutableList([score]),
                         "ema": 0
-                    }
+                    })
 
         if updated_emas:
             for concept, ema in updated_emas.items():
-                if concept in student_profile["concepts"]:
-                    student_profile["concepts"][concept]["ema"] = ema
+                if concept in exercise.student_profile["concepts"]:
+                    exercise.student_profile["concepts"][concept]["ema"] = ema
                 else:
-                    student_profile["concepts"][concept] = {
-                        "scores": [],
+                    exercise.student_profile["concepts"][concept] = MutableDict({
+                        "scores": MutableList([]),
                         "ema": ema
-                    }
-        exercise.student_profile = student_profile
+                    })
 
-        db_session.add(exercise)
+        print(
+            f"\n=== Updated student profile ===\n{exercise.student_profile}\n")
+
+        flag_modified(exercise, "student_profile")
         db_session.commit()
 
 
@@ -187,6 +180,7 @@ def get_past_concept_scores(exercise_key: str, last_n: int = 5):
 
     if exercise:
         student_profile = exercise.student_profile
+        print(f"\n=== Student profile ===\n{student_profile}\n")
         result = {}
 
         for concept, info in student_profile["concepts"].items():

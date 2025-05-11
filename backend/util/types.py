@@ -67,6 +67,13 @@ class IssueIdentifierOutput(BaseModel):
     Scores how confident an issue is based on the student's attempts on
     a particular exercise
     """
+
+    def __str__(self):
+        return f"\n== Issue Identifier Output ==\n" + \
+            f"issues: {self.issues}\n" + \
+            f"improving_concepts: {self.improving_concepts}\n" + \
+            f"struggling_concepts: {self.struggling_concepts}\n"
+
     issues: List[str]
     improving_concepts: List[str]
     struggling_concepts: List[str]

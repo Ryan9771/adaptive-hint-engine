@@ -36,8 +36,9 @@ from setup_db import (
     initialise_student_profile,
     get_previous_code,
     set_previous_code,
+    increment_no_progress_count,
     get_no_progress_count,
-    set_no_progress_count,
+    reset_no_progress_count
 )
 from langchain_core.messages import HumanMessage
 from langgraph.graph import START, END, StateGraph
@@ -263,6 +264,12 @@ def code_comparison_agent(state: GraphState):
         exercise_key=state['attempt_context'].exercise_key,
         previous_code=state['attempt_context'].student_code
     )
+
+    # Update the no progress count if the logic is identical
+    if code_comparison_output.identical_logic == "true":
+        increment_no_progress_count(
+            exercise_key=state['attempt_context'].exercise_key
+        )
 
     return {"code_comparison_output": code_comparison_output}
 

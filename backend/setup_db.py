@@ -116,11 +116,22 @@ def get_no_progress_count(exercise_key: str):
         print("\n=== Exercise doesn't exist ===\n")
 
 
-def set_no_progress_count(exercise_key: str, no_progress_count: int):
+def increment_no_progress_count(exercise_key: str):
     exercise = _get_exercise(exercise_key=exercise_key)
 
     if exercise:
-        exercise.no_progress_count = no_progress_count
+        exercise.no_progress_count += 1
+        db_session.add(exercise)
+        db_session.commit()
+    else:
+        print("\n=== Exercise doesn't exist ===\n")
+
+
+def reset_no_progress_count(exercise_key: str):
+    exercise = _get_exercise(exercise_key=exercise_key)
+
+    if exercise:
+        exercise.no_progress_count = 0
         db_session.add(exercise)
         db_session.commit()
     else:

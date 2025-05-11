@@ -87,9 +87,9 @@ class StudentProfileOutput(BaseModel):
 class CodeComparisonOutput(BaseModel):
     """Compares the previous and current code implementation to reason about
     the quality of the changes"""
-    better_version: str
+    identical_logic: str
+    change_quality: str
     reasoning: str
-    severity: str
 
 
 class LearningTrajectory(BaseModel):

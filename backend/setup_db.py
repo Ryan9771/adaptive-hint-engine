@@ -25,6 +25,8 @@ class ExerciseEntry(Base):
 
     required_concepts = Column(MutableList.as_mutable(JSON), default=list)
 
+    # TODO: Migrate below to per student table
+    previous_code = Column(Text, default="")
     student_profile = Column(MutableDict.as_mutable(
         JSON), default=lambda: MutableDict({"concepts": MutableDict()}))
     no_progress_count = Column(Integer, default=0)
@@ -35,6 +37,7 @@ class ExerciseEntry(Base):
         self.exercise_text = exercise_text
         self.skel_code = skel_code
         self.language = language
+        self.previous_code = skel_code
 
     def set_required_concepts(self, required_concepts: List[str]):
         self.required_concepts = required_concepts
@@ -47,26 +50,12 @@ class ExerciseEntry(Base):
         db_session.commit()
 
 
-def exercise_exists(exercise_key: str) -> bool:
+def _exercise_exists(exercise_key: str) -> bool:
     """Check if an exercise exists by its key"""
     return db_session.query(ExerciseEntry.exercise_key).filter_by(exercise_key=exercise_key).first() is not None
 
 
-def add_exercise(exercise_key, exercise_text, skel_code, language):
-    """
-    Adds an exercise to the database with:
-        exercise_key: primary key
-        exercise_text: The description / question
-        skel_code: The skeleton code
-    """
-    if not exercise_exists(exercise_key=exercise_key):
-        exercise = ExerciseEntry(
-            exercise_key, exercise_text, skel_code, language)
-        db_session.add(exercise)
-        db_session.commit()
-
-
-def get_exercise(exercise_key):
+def _get_exercise(exercise_key):
     """Gets an exercise using the exercise key"""
     exercise = db_session.query(ExerciseEntry).filter_by(
         exercise_key=exercise_key).first()
@@ -78,6 +67,20 @@ def get_exercise(exercise_key):
     return None
 
 
+def add_exercise(exercise_key, exercise_text, skel_code, language):
+    """
+    Adds an exercise to the database with:
+        exercise_key: primary key
+        exercise_text: The description / question
+        skel_code: The skeleton code
+    """
+    if not _exercise_exists(exercise_key=exercise_key):
+        exercise = ExerciseEntry(
+            exercise_key, exercise_text, skel_code, language)
+        db_session.add(exercise)
+        db_session.commit()
+
+
 def required_concepts_exists(exercise_key: str) -> bool:
     """Check if an exercise exists by its key"""
     required_concepts = db_session.query(
@@ -87,7 +90,7 @@ def required_concepts_exists(exercise_key: str) -> bool:
 
 
 def set_required_concepts(exercise_key: str, required_concepts: List[str]):
-    exercise = get_exercise(exercise_key=exercise_key)
+    exercise = _get_exercise(exercise_key=exercise_key)
 
     if exercise:
         exercise.set_required_concepts(required_concepts=required_concepts)
@@ -96,7 +99,7 @@ def set_required_concepts(exercise_key: str, required_concepts: List[str]):
 
 
 def get_required_concepts(exercise_key: str):
-    exercise = get_exercise(exercise_key=exercise_key)
+    exercise = _get_exercise(exercise_key=exercise_key)
 
     if exercise:
         return exercise.required_concepts
@@ -105,7 +108,7 @@ def get_required_concepts(exercise_key: str):
 
 
 def get_no_progress_count(exercise_key: str):
-    exercise = get_exercise(exercise_key=exercise_key)
+    exercise = _get_exercise(exercise_key=exercise_key)
 
     if exercise:
         return exercise.no_progress_count
@@ -114,7 +117,7 @@ def get_no_progress_count(exercise_key: str):
 
 
 def set_no_progress_count(exercise_key: str, no_progress_count: int):
-    exercise = get_exercise(exercise_key=exercise_key)
+    exercise = _get_exercise(exercise_key=exercise_key)
 
     if exercise:
         exercise.no_progress_count = no_progress_count
@@ -125,7 +128,7 @@ def set_no_progress_count(exercise_key: str, no_progress_count: int):
 
 
 def initialise_student_profile(exercise_key: str, concepts: list):
-    exercise = get_exercise(exercise_key=exercise_key)
+    exercise = _get_exercise(exercise_key=exercise_key)
 
     if exercise:
         exercise.student_profile = MutableDict({"concepts": MutableDict()})
@@ -143,7 +146,7 @@ def initialise_student_profile(exercise_key: str, concepts: list):
 
 
 def update_student_profile(exercise_key: str, updated_scores: dict = {}, updated_emas: dict = {}):
-    exercise = get_exercise(exercise_key=exercise_key)
+    exercise = _get_exercise(exercise_key=exercise_key)
 
     if exercise:
         if updated_scores:
@@ -175,7 +178,7 @@ def update_student_profile(exercise_key: str, updated_scores: dict = {}, updated
 
 
 def get_past_concept_scores(exercise_key: str, last_n: int = 5):
-    exercise = get_exercise(exercise_key=exercise_key)
+    exercise = _get_exercise(exercise_key=exercise_key)
     result = {}
 
     if exercise:
@@ -192,7 +195,7 @@ def get_past_concept_scores(exercise_key: str, last_n: int = 5):
 
 
 def get_previous_concept_emas(exercise_key: str):
-    exercise = get_exercise(exercise_key=exercise_key)
+    exercise = _get_exercise(exercise_key=exercise_key)
     result = {}
 
     if exercise:
@@ -207,5 +210,26 @@ def get_previous_concept_emas(exercise_key: str):
     return result
 
 
-# Delete the database
-# Base.metadata.drop_all(bind=engine)
+def get_previous_code(exercise_key: str):
+    exercise = _get_exercise(exercise_key=exercise_key)
+
+    if exercise:
+        return exercise.previous_code
+    else:
+        print("\n=== Exercise doesn't exist ===\n")
+
+
+def set_previous_code(exercise_key: str, previous_code: str):
+    exercise = _get_exercise(exercise_key=exercise_key)
+
+    if exercise:
+        exercise.previous_code = previous_code
+        db_session.add(exercise)
+        db_session.commit()
+    else:
+        print("\n=== Exercise doesn't exist ===\n")
+
+
+if __name__ == "__main__":
+    # Delete the database
+    Base.metadata.drop_all(bind=engine)

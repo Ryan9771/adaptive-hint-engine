@@ -75,3 +75,36 @@ def feature_extractor_prompt(exercise_requirements, exercise_text, skel_code, st
     """
 
     return prompt
+
+
+def code_comparison_prompt(exercise_text, previous_code, current_code):
+    prompt = f"""
+    You are an expert programming tutor. Your job is to compare a student's 
+    *previous* and *current* code submissions for the same exercise based on
+    the following criteria:
+
+    1. Identical logic - true / false
+        true - the 2 snippets are functionally identical (any differences are only 
+        whitespace, comments or trivial renamings)
+        false - logic or control-flow changed
+
+    2. Change Quality - improving / regressing / same
+        Decide which snippet is closer to a correct, idiomatic solution to the 
+        exercise. 
+    
+    3. Reasoning - If the change quality is improving or regressing, provide one 
+    sentence explaining why, and a one sentence high level overview of what 
+    you think the student is trying to do and how well they are doing it based
+    on the exercise description.
+
+    Exercise Description:
+    {exercise_text}
+
+    Previous Submission:
+    {previous_code}
+
+    Current Submission:
+    {current_code}
+    """
+
+    return prompt

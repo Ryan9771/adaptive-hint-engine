@@ -7,11 +7,38 @@ create a more modular design.
 from typing import List, Dict
 
 from instances.llm_instance import LLM_instance
-from util.types import AttemptContext, FeatureOutput, ExerciseRequirements, IssueIdentifierOutput, StudentProfileOutput, CodeComparisonOutput, LearningTrajectory, HintDirective, HintOutput, GraphState, FeatureDetail
-from util.prompts import exercise_requirements_prompt, feature_extractor_prompt
+from util.types import (
+    AttemptContext,
+    FeatureOutput,
+    ExerciseRequirements,
+    IssueIdentifierOutput,
+    StudentProfileOutput,
+    CodeComparisonOutput,
+    LearningTrajectory,
+    HintDirective,
+    HintOutput,
+    GraphState,
+    FeatureDetail
+)
+from util.prompts import (
+    exercise_requirements_prompt,
+    feature_extractor_prompt,
+    code_comparison_prompt,
+)
 
-from setup_db import add_exercise, required_concepts_exists, set_required_concepts, get_required_concepts, get_past_concept_scores, update_student_profile, initialise_student_profile
-
+from setup_db import (
+    add_exercise,
+    required_concepts_exists,
+    set_required_concepts,
+    get_required_concepts,
+    get_past_concept_scores,
+    update_student_profile,
+    initialise_student_profile,
+    get_previous_code,
+    set_previous_code,
+    get_no_progress_count,
+    set_no_progress_count,
+)
 from langchain_core.messages import HumanMessage
 from langgraph.graph import START, END, StateGraph
 
@@ -212,6 +239,34 @@ def issue_identifier_agent(state: GraphState):
     return {"issue_identifier_output": issue_identifier_output}
 
 
+def code_comparison_agent(state: GraphState):
+    """Compares the student's previous and current code versions to 
+    determine the quality of changes made"""
+    print("\n== Code Comparison Agent ==\n")
+
+    previous_code = get_previous_code(
+        exercise_key=state['attempt_context'].exercise_key
+    )
+    current_code = state['attempt_context'].student_code
+    prompt = code_comparison_prompt(
+        exercise_text=state['attempt_context'].exercise_text,
+        previous_code=previous_code,
+        current_code=current_code
+    )
+
+    llm_input = [HumanMessage(content=prompt)]
+    code_comparison_output: CodeComparisonOutput = llm.with_structured_output(
+        CodeComparisonOutput).invoke(llm_input)
+    print(f"\n== code comparison output ==\n{code_comparison_output}\n")
+
+    set_previous_code(
+        exercise_key=state['attempt_context'].exercise_key,
+        previous_code=state['attempt_context'].student_code
+    )
+
+    return {"code_comparison_output": code_comparison_output}
+
+
 class HintEngine:
     def __init__(self):
         # == Build Graph ==
@@ -228,6 +283,8 @@ class HintEngine:
 
         builder.add_node("issue_identifier_agent", issue_identifier_agent)
 
+        builder.add_node("code_comparison_agent", code_comparison_agent)
+
         # == Add Edges ==
         builder.add_conditional_edges(
             START, decide_exercise_requirements_exists
@@ -240,7 +297,9 @@ class HintEngine:
 
         builder.add_edge("student_profile_agent", "issue_identifier_agent")
 
-        builder.add_edge("issue_identifier_agent", END)
+        builder.add_edge("issue_identifier_agent", "code_comparison_agent")
+
+        builder.add_edge("code_comparison_agent", END)
 
         self.graph = builder.compile()
 

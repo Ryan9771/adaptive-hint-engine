@@ -8,13 +8,11 @@ from typing import List, Dict
 
 from instances.llm_instance import LLM_instance
 from util.types import (
-    AttemptContext,
     FeatureOutput,
     ExerciseRequirements,
     IssueIdentifierOutput,
     StudentProfileOutput,
     CodeComparisonOutput,
-    LearningTrajectory,
     HintDirective,
     HintOutput,
     GraphState,
@@ -312,7 +310,7 @@ def hint_directive_agent(state: GraphState):
         tone = "clear"
     elif average_ema > PROFICIENT_THRESHOLD:
         tone = "technical"
-        rationale = "Student is overally proficient. Perhaps a question to prompt deeper thinking. "
+        rationale = "Student seems proficient. Perhaps a question to prompt deeper thinking. "
 
     # Gather issues and their details
     issue_details: Dict[str, str] = {}
@@ -348,6 +346,9 @@ def hint_directive_agent(state: GraphState):
         strategy = "reflective"
         rationale += "No issues detected. Encourage self-reflection."
 
+    print(
+        f"\n== Hint Directive Output ==\nStrategy: {strategy}\nTone: {tone}\nRationale: {rationale}\n")
+
     return {
         "hint_directive": HintDirective(
             strategy=strategy,
@@ -375,6 +376,8 @@ class HintEngine:
 
         builder.add_node("code_comparison_agent", code_comparison_agent)
 
+        builder.add_node("hint_directive_agent", hint_directive_agent)
+
         # == Add Edges ==
         builder.add_conditional_edges(
             START, decide_exercise_requirements_exists
@@ -389,7 +392,9 @@ class HintEngine:
 
         builder.add_edge("issue_identifier_agent", "code_comparison_agent")
 
-        builder.add_edge("code_comparison_agent", END)
+        builder.add_edge("code_comparison_agent", "hint_directive_agent")
+
+        builder.add_edge("hint_directive_agent", END)
 
         self.graph = builder.compile()
 

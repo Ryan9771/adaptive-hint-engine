@@ -19,12 +19,13 @@ def remove_duplicates(numbers: list[int]) -> list[int]:
 student_code = """
 def remove_duplicates(numbers: list[int]) -> list[int]:
     list_without_duplicates = []
-    another_list = []
 
-    for n in numbers:
-        another_list.append(n)
-        if n in another_list:
-            list_without_duplicates.append(n)
+    for number in numbers:
+        if number not in list_without_duplicates:
+            list_without_duplicates.append(number)
+
+    
+
 
     return list_without_duplicates
 """

@@ -319,18 +319,19 @@ class MultiAgent:
         builder = StateGraph(OverallState)
 
         # == Add Nodes ==
-        builder.add_node("feature_extractor_agent", feature_extractor_agent)
-        builder.add_node("skill_progress_tracker_agent",
-                         skill_progress_tracker_agent)
-        builder.add_node("hint_generator_agent", hint_generator_agent)
+        # builder.add_node("feature_extractor_agent", feature_extractor_agent)
+        # builder.add_node("skill_progress_tracker_agent",
+        #                  skill_progress_tracker_agent)
+        # # builder.add_node("hint_generator_agent", hint_generator_agent)
 
         # == Add Edges ==
         builder.add_edge(START, "feature_extractor_agent")
-        builder.add_edge("feature_extractor_agent",
-                         "skill_progress_tracker_agent")
-        builder.add_edge("skill_progress_tracker_agent",
-                         "hint_generator_agent")
-        builder.add_edge("hint_generator_agent", END)
+        # builder.add_edge("feature_extractor_agent",
+        #                  "skill_progress_tracker_agent")
+        # builder.add_edge("skill_progress_tracker_agent",
+        #                  "hint_generator_agent")
+        # builder.add_edge("hint_generator_agent", END)
+        builder.add_edge("feature_extractor_agent", END)
 
         self.graph = builder.compile()
 

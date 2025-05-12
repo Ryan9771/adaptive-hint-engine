@@ -3,7 +3,12 @@ import { Editor, OnMount } from "@monaco-editor/react";
 import style from "../../util/Styles";
 import { RunBtn, ResetBtn } from "../Buttons";
 
-function CodeBox() {
+interface Props {
+  code: string;
+  language: string;
+}
+function CodeBox({ code, language }: Props) {
+
   const MIN_HEIGHT = 150;
   const MAX_HEIGHT = 400;
   const LINE_HEIGHT = 20;
@@ -47,8 +52,7 @@ function CodeBox() {
   };
 
   const resetCode = () => {
-    const defaultCode =
-      "# Write your code here\nage = \nname = \nis_student = ";
+    const defaultCode = code;
     if (editorRef.current) {
       editorRef.current.setValue(defaultCode);
       setEditorHeight(MIN_HEIGHT);
@@ -69,9 +73,9 @@ function CodeBox() {
       >
         <Editor
           height="100%"
-          language="kotlin"
+          language={language}
           theme="vs-dark"
-          value={"# Write your code here\nage = \nname = \nis_student = "}
+          value={code}
           onMount={handleEditorDidMount}
           options={{
             fontSize: 14,

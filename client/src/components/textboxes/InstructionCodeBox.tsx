@@ -4,13 +4,15 @@ import CodeBox from "./CodeBox";
 interface Props {
   title: string;
   text: string;
+  code: string;
+  language: string;
 }
-function InstructionCodeBox({ title, text }: Props) {
+function InstructionCodeBox({ title, text, code, language }: Props) {
   return (
     <div className={style(styles, "ctn")}>
       <div className={style(styles, "title")}>{title}</div>
       <div className={style(styles, "txt")}>{text}</div>
-      <CodeBox />
+      <CodeBox code={code} language={language} />
     </div>
   );
 }

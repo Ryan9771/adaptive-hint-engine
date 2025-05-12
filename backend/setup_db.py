@@ -18,6 +18,7 @@ Base.query = db_session.query_property()
 class ExerciseEntry(Base):
     __tablename__ = "exercises"
 
+    exercise_title = Column(String(255), nullable=False)
     exercise_key = Column(String(255), primary_key=True)
     exercise_text = Column(Text, nullable=False)
     skel_code = Column(Text, nullable=False)

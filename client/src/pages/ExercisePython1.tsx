@@ -41,7 +41,7 @@ const basicTextBoxText =
 const instructionCodeBoxText =
   "Add a method 'includes' to class Circle to determine whether a certain point is inside or outside the circle.";
 
-const skelCode = "def fizzbuzz(n: int):\n\tpass";
+const skelCode = "def fizzbuzz(n: int):\n\tpass"
 
 const language = "python";
 

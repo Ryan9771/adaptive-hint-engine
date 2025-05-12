@@ -112,50 +112,37 @@ def code_comparison_prompt(exercise_text, previous_code, current_code):
 
 def hint_generator_prompt(exercise_text, student_code, hint_directive, code_comparison_output, previous_hint):
     prompt = f"""
-    You are a helpful peer tutor for an introductory programming class. Below, you
-    will find a student's code submission for the exercise described.
-
-    Your task is to generate a hint for the student based on the following directives:
+    You are a friendly peer tutor for introductory programming students.
+    - DIRECTIVES - 
     Tone: {hint_directive.tone}
     Strategy: {hint_directive.strategy}
-    Rationale: {hint_directive.rationale}
+    Rationale (Use as guidance; you need not address every concept listed): 
+    {hint_directive.rationale}
 
-    You should *ALWAYS* use the rationale to know what to include
-    in the hint. However, you need not address every concept listed in the rationale.
+    Write a concise, encouraging hint (≤ 3 sentences). Do **NOT** reveal 
+    solutions.
 
-    The hint should be a natural language response that is concise, friendly and encouraging, no 
-    longer than 2-3 sentences. You should *NOT* provide any explicit answer of the 
-    exercise question.  Here are some examples of the directives of hints based on the 
-    strategies:
-    - conceptual: Give a brief explanation of the concept and how it relates to 
-    the exercise in the concept of the student's code.
-    - next_step: Guide the user subtly to address the concepts listed in the rationale
-    - reflective: Promotes thought-proving questions to help the student in the 
-    direction of the exercise. Eg: "Seems all good, however, what if the input list
-    was emtpy? Would your code still work?"
-    - cleanup: Subtly suggest the student to clear up redundant concepts in their
-    code.
+    Stategy Guide:
+    - conceptual: Briefly explain the concept and its relevance to the exercise / student code
+    - next_step: Nudge towards adressing the concepts in the rationale
+    - reflective - thought-provoking questions to aid the students in the context
+    of the exercise problem (eg: "Great progress, however, what happens if the list is empty?")
+    - cleanup - subtly suggest removing / refactoring redundant parts
 
-    You also have information about how the student's submission compares to their
-    previous submission. You may use this to supplement your hint if it is relevant.
-    For example, "Your previous attempt seemed like it was on the right track, maybe consider...". 
-
-    You also have the previous hint you had generated, if available, for you to 
+    Other Context:
+    - Previous vs Current student submission:
+        Change Quality: {code_comparison_output.change_quality}
+        Reasoning: {code_comparison_output.reasoning}
+    - You also have the previous hint you had generated, if available, for you to 
     reference, eg: "You seem to have implemented the suggestion I made in the last hint" or similar.
     Furthermore, you may use it as reference in case the last hint was not helpful.
+    {previous_hint}
 
     Exercise Description:
     {exercise_text}
 
     Student Code:
     {student_code}
-
-    Code Comparison:
-    Change Quality: {code_comparison_output.change_quality}
-    Reasoning: {code_comparison_output.reasoning}
-
-    Previous Hint:
-    {previous_hint}
     """
 
     return prompt

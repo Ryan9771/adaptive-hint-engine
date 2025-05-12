@@ -27,11 +27,11 @@ if __name__ == "__main__":
     print("== Initialising Agent ==")
     agent = HintEngine()
 
-    exercise_key = exercise_1["exercise_key"]
-    student_code = exercise_1['student_code']
-    exercise_text = exercise_1['exercise_text']
-    skel_code = exercise_1['skel_code']
-    language = exercise_1['language']
+    exercise_key = exercise_2["exercise_key"]
+    student_code = exercise_2['student_code']
+    exercise_text = exercise_2['exercise_text']
+    skel_code = exercise_2['skel_code']
+    language = exercise_2['language']
 
     attempt_context: AttemptContext = AttemptContext(
         exercise_key=exercise_key,

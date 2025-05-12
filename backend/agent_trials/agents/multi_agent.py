@@ -121,7 +121,7 @@ def feature_extractor_agent(state: GraphState):
         exercise_key=state['attempt_context'].exercise_key
     )
 
-    print(f"\n== exercise requirements ==\n{exercise_requirements}\n")
+    # print(f"\n== exercise requirements ==\n{exercise_requirements}\n")
 
     prompt = feature_extractor_prompt(
         exercise_requirements=exercise_requirements,
@@ -151,7 +151,7 @@ def student_profile_agent(state: GraphState):
         last_n=HISTORY_WINDOW
     )
 
-    print(f"\n== past concepts scores ==\n{past_concepts_scores}\n")
+    # print(f"\n== past concepts scores ==\n{past_concepts_scores}\n")
 
     # Get the concepts the students have implemented
     implemented_concepts: List[FeatureDetail] = state['feature_output'].implemented_concepts
@@ -161,14 +161,14 @@ def student_profile_agent(state: GraphState):
         concept.tag: concept.score for concept in implemented_concepts
     }
 
-    print(f"\n== implemented concepts ==\n{implemented_concepts}\n")
+    # print(f"\n== implemented concepts ==\n{implemented_concepts}\n")
 
     # Filter from the past concepts, the scores that are in implemented
     filtered_past_concepts = {
         key: past_concepts_scores[key] for key in implemented_concepts if key in past_concepts_scores
     }
 
-    print(f"\n== filtered past concepts ==\n{filtered_past_concepts}\n")
+    # print(f"\n== filtered past concepts ==\n{filtered_past_concepts}\n")
 
     ema_build = {}  # Helper dict to build the ema scores
     concept_emas = {}  # The emas for the concepts
@@ -202,13 +202,15 @@ def student_profile_agent(state: GraphState):
     concept_ema_scores = {concept: {
         "score": implemented_concepts[concept], "ema": concept_emas[concept]} for concept in implemented_concepts}
 
-    print(f"\n== concept ema scores ==\n{concept_ema_scores}\n")
+    # print(f"\n== concept ema scores ==\n{concept_ema_scores}\n")
 
     return {"student_profile_output": StudentProfileOutput(implemented_ema_scores=concept_ema_scores, average_ema=average_ema)}
 
 
 def issue_identifier_agent(state: GraphState):
     """Determines which concepts require attention"""
+    print("\n== Issue Identifier Agent ==\n")
+
     concept_ema_scores = state['student_profile_output'].implemented_ema_scores
 
     struggling_concepts = []
@@ -241,7 +243,7 @@ def issue_identifier_agent(state: GraphState):
         struggling_concepts=struggling_concepts,
     )
 
-    print(issue_identifier_output)
+    # print(issue_identifier_output)
 
     return {"issue_identifier_output": issue_identifier_output}
 
@@ -264,7 +266,7 @@ def code_comparison_agent(state: GraphState):
     llm_input = [HumanMessage(content=prompt)]
     code_comparison_output: CodeComparisonOutput = llm.with_structured_output(
         CodeComparisonOutput).invoke(llm_input)
-    print(f"\n== code comparison output ==\n{code_comparison_output}\n")
+    # print(f"\n== code comparison output ==\n{code_comparison_output}\n")
 
     set_previous_code(
         exercise_key=state['attempt_context'].exercise_key,
@@ -292,7 +294,7 @@ def hint_directive_agent(state: GraphState):
         exercise_key=state['attempt_context'].exercise_key
     )
 
-    print(f"\n== stuck count ==\n{stuck_count}\n")
+    # print(f"\n== stuck count ==\n{stuck_count}\n")
 
     average_ema = state['student_profile_output'].average_ema
     feature_output = state['feature_output']

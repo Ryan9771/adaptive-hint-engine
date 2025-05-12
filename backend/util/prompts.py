@@ -59,9 +59,9 @@ def feature_extractor_prompt(exercise_requirements, exercise_text, skel_code, st
     3. List any redundant concepts used in the student code that are not required. 
         a. For each redundant concept, assign a severity score between 1
         and 3 where:
-            score 3 = critical (affects correctness and needs immediate attention)
-            score 2 = moderate (affects correctness but can be addressed later)
-            score 1 = minor (does not affect correctness)
+            3 = critical (affects correctness and needs immediate attention)
+            2 = moderate (affects correctness but can be addressed later)
+            1 = minor (does not affect correctness)
         b. Briefly explain why it is redundant (max one sentence).
 
     Exercise Description:
@@ -120,7 +120,9 @@ def hint_generator_prompt(exercise_text, student_code, hint_directive, code_comp
     {hint_directive.rationale}
 
     Write a concise, encouraging hint (≤ 3 sentences). Do **NOT** reveal
-    solutions by explicitly writing what to do.
+    solutions by explicitly writing what to do. Eg: Do not illustrate the
+    sequents of steps to solve the exercise. Instead, provide an incremental
+    hint based on the directive and rationale and strategy.
 
     Stategy Guide:
     - conceptual: Briefly explain the concept and its relevance to the exercise / student code

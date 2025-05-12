@@ -8,7 +8,7 @@ from sqlalchemy.ext.mutable import MutableDict, MutableList
 from typing import List
 from util.types import StudentProfile
 
-engine = create_engine("sqlite:///new-exercise.db", echo=True)
+engine = create_engine("sqlite:///new-exercise.db", echo=False)
 db_session = scoped_session(sessionmaker(
     autocommit=False, autoflush=False, bind=engine))
 Base = declarative_base()
@@ -183,8 +183,8 @@ def update_student_profile(exercise_key: str, updated_scores: dict = {}, updated
                         "ema": ema
                     })
 
-        print(
-            f"\n=== Updated student profile ===\n{exercise.student_profile}\n")
+        # print(
+            # f"\n=== Updated student profile ===\n{exercise.student_profile}\n")
 
         flag_modified(exercise, "student_profile")
         db_session.commit()
@@ -196,7 +196,7 @@ def get_past_concept_scores(exercise_key: str, last_n: int = 5):
 
     if exercise:
         student_profile = exercise.student_profile
-        print(f"\n=== Student profile ===\n{student_profile}\n")
+        # print(f"\n=== Student profile ===\n{student_profile}\n")
         result = {}
 
         for concept, info in student_profile["concepts"].items():

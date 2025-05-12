@@ -21,6 +21,7 @@ def remove_duplicates(numbers: list[int]) -> list[int]:
     list_without_duplicates = []
     
 
+
     return list_without_duplicates
 """
 

@@ -57,6 +57,7 @@ IMPROVE_DELTA = 0.15
 MAX_ISSUES = 3
 STUCK_ESCALATE = 2
 PROFICIENT_THRESHOLD = 0.9
+HIGH_CONCEPT_COVERAGE = 0.8
 
 # == Conditional Edges ==
 
@@ -135,7 +136,7 @@ def feature_extractor_agent(state: GraphState):
         FeatureOutput).invoke(llm_input)
     print(f"\n== feature output ==\n{feature_output}\n")
 
-    return {"feature_output": feature_output}
+    return {"feature_output": feature_output, "num_exercise_requirements": len(exercise_requirements)}
 
 
 def student_profile_agent(state: GraphState):
@@ -311,7 +312,7 @@ def hint_directive_agent(state: GraphState):
         rationale = "Student is stuck. The last hint didn't help. A conceptual hint will help. "
     elif average_ema < STRUGGLE_EMA_THRESHOLD:
         tone = "clear"
-    elif average_ema > PROFICIENT_THRESHOLD:
+    elif average_ema > PROFICIENT_THRESHOLD and (len(feature_output.implemented_concepts) / state['num_exercise_requirements']) > HIGH_CONCEPT_COVERAGE:
         tone = "technical"
         rationale = "Student seems proficient. Perhaps a question to prompt deeper thinking. "
 

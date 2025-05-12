@@ -119,8 +119,8 @@ def hint_generator_prompt(exercise_text, student_code, hint_directive, code_comp
     Rationale (Use as guidance; you need not address every concept listed): 
     {hint_directive.rationale}
 
-    Write a concise, encouraging hint (≤ 3 sentences). Do **NOT** reveal 
-    solutions.
+    Write a concise, encouraging hint (≤ 3 sentences). Do **NOT** reveal
+    solutions by explicitly writing what to do.
 
     Stategy Guide:
     - conceptual: Briefly explain the concept and its relevance to the exercise / student code
@@ -134,7 +134,7 @@ def hint_generator_prompt(exercise_text, student_code, hint_directive, code_comp
         Change Quality: {code_comparison_output.change_quality}
         Reasoning: {code_comparison_output.reasoning}
     - You also have the previous hint you had generated, if available, for you to 
-    reference, eg: "You seem to have implemented the suggestion I made in the last hint" or similar.
+    use as context, or to provide a simpler hint, if the student is stuck. Eg: "You seem to have implemented the suggestion I made in the last hint" or similar.
     Furthermore, you may use it as reference in case the last hint was not helpful.
     {previous_hint}
 

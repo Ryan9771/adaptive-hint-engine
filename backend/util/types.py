@@ -107,8 +107,9 @@ class HintOutput(BaseModel):
 class GraphState(TypedDict):
     attempt_context: AttemptContext
     feature_output: FeatureOutput
+    num_exercise_requirements: int
     issue_identifier_output: IssueIdentifierOutput
     student_profile_output: StudentProfileOutput
-    code_comparison_ouput: CodeComparisonOutput
+    code_comparison_output: CodeComparisonOutput
     hint_directive: HintDirective
     hint_output: HintOutput

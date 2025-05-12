@@ -30,6 +30,7 @@ class ExerciseEntry(Base):
     student_profile = Column(MutableDict.as_mutable(
         JSON), default=lambda: MutableDict({"concepts": MutableDict()}))
     no_progress_count = Column(Integer, default=0)
+    previous_hint = Column(Text, default="")
 
     def __init__(self, exercise_key, exercise_text, skel_code, language):
         """Initialise a question with empty attempts"""
@@ -38,6 +39,7 @@ class ExerciseEntry(Base):
         self.skel_code = skel_code
         self.language = language
         self.previous_code = skel_code
+        self.previous_hint = ""
 
     def set_required_concepts(self, required_concepts: List[str]):
         self.required_concepts = required_concepts
@@ -237,6 +239,28 @@ def set_previous_code(exercise_key: str, previous_code: str):
         exercise.previous_code = previous_code
         db_session.add(exercise)
         db_session.commit()
+    else:
+        print("\n=== Exercise doesn't exist ===\n")
+
+
+def set_previous_hint(exercise_key: str, previous_hint: str):
+    exercise = _get_exercise(exercise_key=exercise_key)
+
+    if exercise:
+        exercise.previous_hint = previous_hint
+        db_session.add(exercise)
+        db_session.commit()
+    else:
+        print("\n=== Exercise doesn't exist ===\n")
+
+
+def get_previous_hint(exercise_key: str):
+    exercise = _get_exercise(exercise_key=exercise_key)
+
+    if exercise:
+        if not exercise.previous_hint:
+            return "No previous hint available"
+        return exercise.previous_hint
     else:
         print("\n=== Exercise doesn't exist ===\n")
 

@@ -22,6 +22,7 @@ from util.prompts import (
     exercise_requirements_prompt,
     feature_extractor_prompt,
     code_comparison_prompt,
+    hint_generator_prompt
 )
 
 from setup_db import (
@@ -36,7 +37,9 @@ from setup_db import (
     set_previous_code,
     increment_no_progress_count,
     get_no_progress_count,
-    reset_no_progress_count
+    reset_no_progress_count,
+    get_previous_hint,
+    set_previous_hint
 )
 from langchain_core.messages import HumanMessage
 from langgraph.graph import START, END, StateGraph
@@ -302,10 +305,10 @@ def hint_directive_agent(state: GraphState):
     # Set the tone based on whether the student is stuck or struggling
     if stuck_count > STUCK_ESCALATE and average_ema < STRUGGLE_EMA_THRESHOLD:
         tone = "beginner-friendly"
-        rationale = "Student is stuck and struggling. A short parallel example will help. "
+        rationale = "Student is stuck and struggling. The last hint didn't help. A short parallel example will help. "
     elif stuck_count > STUCK_ESCALATE:
         tone = "beginner-friendly"
-        rationale = "Student is stuck. A conceptual hint will help. "
+        rationale = "Student is stuck. The last hint didn't help. A conceptual hint will help. "
     elif average_ema < STRUGGLE_EMA_THRESHOLD:
         tone = "clear"
     elif average_ema > PROFICIENT_THRESHOLD:
@@ -329,13 +332,13 @@ def hint_directive_agent(state: GraphState):
 
     # Specify the issues
     if issue_identifier_output.issues:
-        strategy = "conceptual"
+        strategy = "conceptual" if average_ema < STRUGGLE_EMA_THRESHOLD else "reflective"
         rationale += "Issues Based on Importance:\n" + "\n".join(
             [f"{concept} - {detail}" for concept,
                 detail in list(issue_details.items())[:MAX_ISSUES]]
         )
     elif feature_output.missing_concepts:
-        strategy = "next_step"
+        strategy = "next_step" if average_ema < STRUGGLE_EMA_THRESHOLD else "reflective"
         rationale += "Missing concepts:\n" + \
             ", ".join(feature_output.missing_concepts[:MAX_ISSUES])
     elif feature_output.redundant_concepts:
@@ -344,7 +347,7 @@ def hint_directive_agent(state: GraphState):
     else:
         print(f"\n== Fallback case where no issues / redundancies / missing_concepts detected ==\n")
         strategy = "reflective"
-        rationale += "No issues detected. Encourage self-reflection."
+        rationale += "No issues detected. Encourage self-reflection, or optimisation techniques"
 
     print(
         f"\n== Hint Directive Output ==\nStrategy: {strategy}\nTone: {tone}\nRationale: {rationale}\n")
@@ -356,6 +359,36 @@ def hint_directive_agent(state: GraphState):
             tone=tone
         )
     }
+
+
+def hint_generator_agent(state: GraphState):
+    """Responsible for generating the hint through an llm"""
+    print("\n== Hint Generator Agent ==\n")
+
+    previous_hint = get_previous_hint(
+        exercise_key=state['attempt_context'].exercise_key
+    )
+    print(f"\n== Previous hint ==\n{previous_hint}\n")
+
+    prompt = hint_generator_prompt(
+        exercise_text=state['attempt_context'].exercise_text,
+        student_code=state['attempt_context'].student_code,
+        hint_directive=state['hint_directive'],
+        code_comparison_output=state['code_comparison_output'],
+        previous_hint=previous_hint
+    )
+    llm_input = [HumanMessage(content=prompt)]
+    hint_output: HintOutput = llm.with_structured_output(
+        HintOutput).invoke(llm_input)
+
+    print(f"\n== FINAL HINT ==\n{hint_output.hint_text}\n")
+
+    set_previous_hint(
+        exercise_key=state['attempt_context'].exercise_key,
+        previous_hint=hint_output.hint_text
+    )
+
+    return {"hint_output": hint_output}
 
 
 class HintEngine:
@@ -378,6 +411,8 @@ class HintEngine:
 
         builder.add_node("hint_directive_agent", hint_directive_agent)
 
+        builder.add_node("hint_generator_agent", hint_generator_agent)
+
         # == Add Edges ==
         builder.add_conditional_edges(
             START, decide_exercise_requirements_exists
@@ -394,7 +429,9 @@ class HintEngine:
 
         builder.add_edge("code_comparison_agent", "hint_directive_agent")
 
-        builder.add_edge("hint_directive_agent", END)
+        builder.add_edge("hint_directive_agent", "hint_generator_agent")
+
+        builder.add_edge("hint_generator_agent", END)
 
         self.graph = builder.compile()
 

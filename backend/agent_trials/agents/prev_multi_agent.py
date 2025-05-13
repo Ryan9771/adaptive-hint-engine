@@ -9,7 +9,7 @@ from typing_extensions import TypedDict
 from langgraph.graph import START, END, StateGraph
 from typing import Annotated
 import operator
-from setup_db import get_feature_attempts, add_feature_attempt, add_exercise, exercise_exists
+from db.setup_db import get_feature_attempts, add_feature_attempt, add_exercise, exercise_exists
 
 
 # == Define States and Types ==

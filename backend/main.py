@@ -10,7 +10,7 @@ from example_exercises.python.exercise_4 import exercise_4
 from example_exercises.python.exercise_5 import exercise_5
 
 # DB
-from setup_db import engine, Base, db_session
+from db.setup_db import engine, Base, db_session
 
 
 class Features:

@@ -1,4 +1,3 @@
-from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine, Column, String, Text, Integer
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.orm.attributes import flag_modified
@@ -6,9 +5,8 @@ from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.mutable import MutableDict, MutableList
 from typing import List
-from util.types import StudentProfile
 
-engine = create_engine("sqlite:///new-exercise.db", echo=False)
+engine = create_engine("sqlite:///db/store.db", echo=False)
 db_session = scoped_session(sessionmaker(
     autocommit=False, autoflush=False, bind=engine))
 Base = declarative_base()
@@ -92,7 +90,7 @@ def get_exercise_details(exercise_key: str):
         return None
 
 
-def add_exercise(exercise_key, exercise_text, skel_code, language):
+def add_exercise(exercise_key, exercise_background, exercise_text, skel_code, language="python"):
     """
     Adds an exercise to the database with:
         exercise_key: primary key
@@ -104,6 +102,13 @@ def add_exercise(exercise_key, exercise_text, skel_code, language):
             exercise_key, exercise_text, skel_code, language)
         db_session.add(exercise)
         db_session.commit()
+
+
+def list_all_exercises():
+    """Lists all exercise titles with their exercise keys"""
+    exercises = db_session.query(
+        ExerciseEntry.exercise_title, ExerciseEntry.exercise_key).all()
+    return [{"title": exercise.exercise_title, "key": exercise.exercise_key} for exercise in exercises]
 
 
 def required_concepts_exists(exercise_key: str) -> bool:

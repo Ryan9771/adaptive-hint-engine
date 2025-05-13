@@ -1,4 +1,4 @@
-from setup_db import add_exercise, required_concepts_exists, set_required_concepts, get_required_concepts, get_past_concept_scores, update_student_profile, initialise_student_profile, engine, Base
+from db.setup_db import add_exercise, required_concepts_exists, set_required_concepts, get_required_concepts, get_past_concept_scores, update_student_profile, initialise_student_profile, engine, Base
 from example_exercises.python.exercise_1 import exercise_1
 
 if __name__ == "__main__":

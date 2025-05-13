@@ -25,7 +25,7 @@ from util.prompts import (
     hint_generator_prompt
 )
 
-from setup_db import (
+from db.setup_db import (
     add_exercise,
     required_concepts_exists,
     set_required_concepts,

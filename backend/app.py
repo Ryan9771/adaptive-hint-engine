@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.dialects.postgresql import JSON
 import os
-from setup_db import get_exercise_details
+from db.setup_db import get_exercise_details
 
 # Load Secrets
 load_dotenv()
@@ -22,18 +22,20 @@ def home():
     return "Flask app really really works on reloading!"
 
 
-@app.route("/exercise/<string:language>/<string:exercise>", methods=["GET"])
-def exercise(language, exercise):
-    language = language.lower()
+@app.route("/exercise/:exercise_id", methods=["GET"])
+def exercise(exercise_id):
     exercise = exercise.lower()
 
     exercise_details = get_exercise_details(
-        exercise_key="_".join([language, exercise])
+        exercise_key=exercise_id
     )
 
-    print(exercise_details)
+    print(f"\n== Exercise Details ==\n{exercise_details}")
 
-    return f"Exercise: {exercise} in {language}"
+    if exercise_details:
+        return jsonify(exercise_details), 200
+
+    return jsonify({"error": "Exercise not found"}), 404
 
 
 if __name__ == "__main__":

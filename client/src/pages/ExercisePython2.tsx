@@ -5,19 +5,9 @@ import BasicTextBox from "../components/textboxes/BasicTextBox";
 import InstructionCodeBox from "../components/textboxes/InstructionCodeBox";
 import HintBox from "../components/HintBox";
 import Sidebar from "../components/sidebar/Sidebar";
-import { useParams } from "react-router-dom";
 
 /* Would eventually need to pass in exercise data */
-function Exercise() {
-
-    type ExerciseParams = { language: string; exercise: string };
-    const { language, exercise } = useParams<ExerciseParams>();
-
-    if (!language || !exercise) return <p>404 - bad link</p>;
-
-    console.log(`${language}, ${exercise}`)
-
-    
+function ExercisePython2() {
   return (
     <div className={style(styles, "ctn")}>
       <Navbar />
@@ -46,12 +36,20 @@ function Exercise() {
 }
 
 const basicTextBoxText =
-  "Kotlin includes a lot of powerful features from functional languages like Haskell. One of the main features that we think of being characteristic of a functional language is the ability to use higher-order functions. Try this out in the exercises below. ";
+    "Think of a list like a guestbook at a busy event—sometimes, people sign in more than once by mistake. As the host, you want a clean record showing who actually attended, without counting anyone twice. Before we tackle the code to remove duplicates from a list, picture yourself flipping through those entries, keeping only the first signature from each guest and crossing out the rest. The goal? A list that's accurate, neat, and clutter-free."
 
-const instructionCodeBoxText =
-  "Add a method 'includes' to class Circle to determine whether a certain point is inside or outside the circle.";
+const instructionCodeBoxText = `
+Return a list of numbers without any duplicates. Eg:
 
-const skelCode = "def fizzbuzz(n: int):\n\tpass";
+remove_duplicates([1, 1, 1, 2, 2, 2]) should equal [1, 2]`
+
+const skelCode = `
+def remove_duplicates(numbers: list[int]) -> list[int]:
+    list_without_duplicates = []
+
+    return list_without_duplicates`
+
+const language = "python";
 
 const styles = {
   ctn: ["flex", "w-full", "flex-col", "h-full", "items-center", "lg:flex-row"],
@@ -78,4 +76,4 @@ const styles = {
   title: ["text-2xl", "font-bold", "leading-7"],
 };
 
-export default Exercise;
+export default ExercisePython2;

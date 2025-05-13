@@ -37,7 +37,7 @@ def invert_image(image):
 """
 
 exercise_4 = {
-    "exercise_key": "python_exercise_4",
+    "exercise_key": "python_exercise4",
     "exercise_text": exercise_text,
     "skel_code": skel_code,
     "student_code": student_code,

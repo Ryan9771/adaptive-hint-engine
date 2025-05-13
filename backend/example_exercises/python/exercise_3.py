@@ -36,7 +36,7 @@ def is_palindrome(numbers: list[int]) -> bool:
 """
 
 exercise_3 = {
-    "exercise_key": "python_exercise_3",
+    "exercise_key": "python_exercise3",
     "exercise_text": exercise_text,
     "skel_code": skel_code,
     "student_code": student_code,

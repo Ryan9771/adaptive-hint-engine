@@ -31,7 +31,7 @@ def remove_duplicates(numbers: list[int]) -> list[int]:
 """
 
 exercise_2 = {
-    "exercise_key": "python_exercise_2",
+    "exercise_key": "python_exercise2",
     "exercise_text": exercise_text,
     "skel_code": skel_code,
     "student_code": student_code,

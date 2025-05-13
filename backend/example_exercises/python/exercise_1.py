@@ -30,7 +30,7 @@ def fizzbuzz(n):
 # """
 
 exercise_1 = {
-    "exercise_key": "python_exercise_1",
+    "exercise_key": "python_exercise1",
     "exercise_text": exercise_text,
     "skel_code": skel_code,
     "student_code": student_code,

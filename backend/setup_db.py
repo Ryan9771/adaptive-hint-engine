@@ -52,6 +52,13 @@ class ExerciseEntry(Base):
         db_session.add(self)
         db_session.commit()
 
+    def _get_exercise_details(self):
+        return {
+            "exercise_title": self.exercise_title,
+            "exercise_text": self.exercise_text,
+            "skel_code": self.skel_code
+        }
+
 
 def _exercise_exists(exercise_key: str) -> bool:
     """Check if an exercise exists by its key"""
@@ -68,6 +75,17 @@ def _get_exercise(exercise_key):
     print("=== Exercise no found ===")
 
     return None
+
+
+def get_exercise_details(exercise_key: str):
+    """Gets the exercise details using the exercise key"""
+    exercise = _get_exercise(exercise_key=exercise_key)
+
+    if exercise:
+        return exercise._get_exercise_details()
+    else:
+        print("\n=== Exercise doesn't exist ===\n")
+        return None
 
 
 def add_exercise(exercise_key, exercise_text, skel_code, language):

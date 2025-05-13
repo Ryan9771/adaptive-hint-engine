@@ -5,19 +5,9 @@ import BasicTextBox from "../components/textboxes/BasicTextBox";
 import InstructionCodeBox from "../components/textboxes/InstructionCodeBox";
 import HintBox from "../components/HintBox";
 import Sidebar from "../components/sidebar/Sidebar";
-import { useParams } from "react-router-dom";
 
 /* Would eventually need to pass in exercise data */
 function Exercise() {
-
-    type ExerciseParams = { language: string; exercise: string };
-    const { language, exercise } = useParams<ExerciseParams>();
-
-    if (!language || !exercise) return <p>404 - bad link</p>;
-
-    console.log(`${language}, ${exercise}`)
-
-    
   return (
     <div className={style(styles, "ctn")}>
       <Navbar />
@@ -52,6 +42,8 @@ const instructionCodeBoxText =
   "Add a method 'includes' to class Circle to determine whether a certain point is inside or outside the circle.";
 
 const skelCode = "def fizzbuzz(n: int):\n\tpass";
+
+const language = "python";
 
 const styles = {
   ctn: ["flex", "w-full", "flex-col", "h-full", "items-center", "lg:flex-row"],

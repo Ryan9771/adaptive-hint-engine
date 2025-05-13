@@ -7,7 +7,7 @@ import HintBox from "../components/HintBox";
 import Sidebar from "../components/sidebar/Sidebar";
 
 /* Would eventually need to pass in exercise data */
-function Exercise() {
+function ExercisePython1() {
   return (
     <div className={style(styles, "ctn")}>
       <Navbar />
@@ -36,10 +36,9 @@ function Exercise() {
 }
 
 const basicTextBoxText =
-  "Kotlin includes a lot of powerful features from functional languages like Haskell. One of the main features that we think of being characteristic of a functional language is the ability to use higher-order functions. Try this out in the exercises below. ";
+    `Imagine you're counting out loud with friends, but to make it fun, you add a twist: every time you hit a number divisible by 3, you say “Fizz” instead, and for 5, it's “Buzz.” For numbers divisible by both, it's “FizzBuzz!” It's a simple game that tests attention and logic—just like how a small change in rules can make basic counting a bit more interesting. Lets bring that logic into code.`
 
-const instructionCodeBoxText =
-  "Add a method 'includes' to class Circle to determine whether a certain point is inside or outside the circle.";
+const instructionCodeBoxText = "Description: Print numbers from 1 to n. For multiples of 3, print \"Fizz\", for multiples of 5, print \"Buzz\", and for multiples of both, print \"FizzBuz\"."
 
 const skelCode = "def fizzbuzz(n: int):\n\tpass"
 
@@ -70,4 +69,4 @@ const styles = {
   title: ["text-2xl", "font-bold", "leading-7"],
 };
 
-export default Exercise;
+export default ExercisePython1;

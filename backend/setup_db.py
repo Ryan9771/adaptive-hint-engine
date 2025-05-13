@@ -19,6 +19,7 @@ class ExerciseEntry(Base):
     __tablename__ = "exercises"
 
     exercise_title = Column(String(255), nullable=False)
+    exercise_background = Column(Text, nullable=False)
     exercise_key = Column(String(255), primary_key=True)
     exercise_text = Column(Text, nullable=False)
     skel_code = Column(Text, nullable=False)
@@ -33,10 +34,12 @@ class ExerciseEntry(Base):
     no_progress_count = Column(Integer, default=0)
     previous_hint = Column(Text, default="")
 
-    def __init__(self, exercise_key, exercise_text, skel_code, language):
+    def __init__(self, exercise_key, exercise_text, skel_code, language, exercise_title, exercise_background=""):
         """Initialise a question with empty attempts"""
         self.exercise_key = exercise_key
+        self.exercise_title = exercise_title
         self.exercise_text = exercise_text
+        self.exercise_background = exercise_background
         self.skel_code = skel_code
         self.language = language
         self.previous_code = skel_code
@@ -56,7 +59,8 @@ class ExerciseEntry(Base):
         return {
             "exercise_title": self.exercise_title,
             "exercise_text": self.exercise_text,
-            "skel_code": self.skel_code
+            "skel_code": self.skel_code,
+            "exercise_background": self.exercise_background,
         }
 
 

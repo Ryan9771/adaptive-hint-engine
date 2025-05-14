@@ -4,6 +4,7 @@ venv/
 __pycache__/
 sketchpad*.py
 playground.py
+instance
 
 
 # git rm --cached agent_trials/__pycache__/multi_agent.cpython-312.pyc

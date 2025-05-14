@@ -1,4 +1,4 @@
-from setup_db import engine, Base, add_exercise, list_all_exercises, delete_exercise
+from setup_db import engine, Base, add_exercise, list_all_exercises, delete_exercise, modify_exercise
 
 """
 Exercise Detail Format:
@@ -18,7 +18,7 @@ if __name__ == "__main__":
     # Create the exercises
 
     # Exercise 2 == Remove Duplicates
-    exercise_key = "python_exercise3"
+    exercise_key = "python_exercise1"
 
     exercise_title = "Palindromes"
 
@@ -36,20 +36,20 @@ if __name__ == "__main__":
     elements from both ends of the list. 
     """
 
-    skel_code = """
-    def is_palindrome(numbers: list[int]) -> bool:
-
-        return False
+    skel_code = """def fizzbuzz(n: int):
+    pass
     """
+
+    modify_exercise(exercise_key=exercise_key, skel_code=skel_code)
 
     # delete_exercise(exercise_key)
 
-    add_exercise(
-        exercise_key=exercise_key,
-        exercise_background=exercise_background,
-        exercise_text=exercise_text,
-        skel_code=skel_code,
-        exercise_title=exercise_title
-    )
+    # add_exercise(
+    #     exercise_key=exercise_key,
+    #     exercise_background=exercise_background,
+    #     exercise_text=exercise_text,
+    #     skel_code=skel_code,
+    #     exercise_title=exercise_title
+    # )
 
     print(f"\n== All Exercises: ==\n{list_all_exercises()}")

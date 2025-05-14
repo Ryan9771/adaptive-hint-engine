@@ -119,6 +119,24 @@ def delete_exercise(exercise_key: str):
         print("\n=== Exercise doesn't exist ===\n")
 
 
+def modify_exercise(exercise_key: str, exercise_text="", exercise_background="", skel_code="", exercise_title=""):
+    exercise = _get_exercise(exercise_key=exercise_key)
+    if exercise:
+        if exercise_text:
+            exercise.exercise_text = exercise_text
+        if exercise_background:
+            exercise.exercise_background = exercise_background
+        if skel_code:
+            exercise.skel_code = skel_code
+        if exercise_title:
+            exercise.exercise_title = exercise_title
+
+        db_session.commit()
+
+    else:
+        print("\n=== Exercise doesn't exist ===\n")
+
+
 def list_all_exercises():
     """Lists all exercise titles with their exercise keys"""
     exercises = db_session.query(

@@ -36,8 +36,6 @@ def exercise(exercise_id):
             exercise_key=exercise
         )
 
-        print(f"\n== Exercise Details ==\n{exercise_details}")
-
         if exercise_details:
             return jsonify(exercise_details), 200
 

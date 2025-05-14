@@ -12,7 +12,7 @@ import { getExerciseDetails } from "../util/util";
 /* Would eventually need to pass in exercise data */
 function Exercise() {
   const { lang, exercise } = useParams();
-  const [exerciseTitle, setExerciseTitle] = useState(exercise);
+  const [exerciseTitle, setExerciseTitle] = useState("");
   const [exerciseDescription, setExerciseDescription] = useState("");
   const [exerciseText, setExerciseText] = useState("");
   const [skelCode, setSkelCode] = useState("");
@@ -29,7 +29,6 @@ function Exercise() {
         setExerciseDescription(exerciseDetails.exerciseDescription);
         setExerciseText(exerciseDetails.exerciseText);
         setSkelCode(exerciseDetails.skelCode);
-        console.log(exerciseDetails);
       } else {
         console.log("Exercise does not exist");
         navigate("/404");
@@ -45,7 +44,9 @@ function Exercise() {
       <Sidebar />
       <div className={style(styles, "bodyCtn")}>
         <div className={style(styles, "exerciseBody")}>
-          <ExercisePath />
+          <ExercisePath
+            exerciseTitle={exerciseTitle.toLowerCase().replace(/ /g, "_")}
+          />
           <p className={style(styles, "title")}>{exerciseTitle}</p>
 
           <BasicTextBox text={exerciseDescription} />

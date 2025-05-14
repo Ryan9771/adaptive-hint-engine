@@ -26,9 +26,10 @@ def home():
     return "Flask app really really works on reloading!"
 
 
-@app.route("/exercise/:exercise_id", methods=["POST"])
+@app.route("/exercise/<exercise_id>", methods=["POST"])
 def exercise(exercise_id):
     try:
+        print(f"\n== RETRIEVING EXERCISE ==\n{exercise_id}")
         exercise = exercise_id.lower()
 
         exercise_details = get_exercise_details(

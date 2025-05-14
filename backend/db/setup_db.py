@@ -90,7 +90,7 @@ def get_exercise_details(exercise_key: str):
         return None
 
 
-def add_exercise(exercise_key, exercise_background, exercise_text, skel_code, language="python"):
+def add_exercise(exercise_key, exercise_background, exercise_text, skel_code, exercise_title, language="python"):
     """
     Adds an exercise to the database with:
         exercise_key: primary key
@@ -99,9 +99,13 @@ def add_exercise(exercise_key, exercise_background, exercise_text, skel_code, la
     """
     if not _exercise_exists(exercise_key=exercise_key):
         exercise = ExerciseEntry(
-            exercise_key, exercise_text, skel_code, language)
-        db_session.add(exercise)
-        db_session.commit()
+            exercise_key, exercise_text, skel_code, language, exercise_title, exercise_background=exercise_background)
+        try:
+            db_session.add(exercise)
+            db_session.commit()
+            print(f"Exercise {exercise_key} Added!")
+        except Exception as e:
+            print(f"\n== Unable to add exercise ==\n{e}")
 
 
 def list_all_exercises():

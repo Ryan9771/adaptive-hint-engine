@@ -5,19 +5,40 @@ import BasicTextBox from "../components/textboxes/BasicTextBox";
 import InstructionCodeBox from "../components/textboxes/InstructionCodeBox";
 import HintBox from "../components/HintBox";
 import Sidebar from "../components/sidebar/Sidebar";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { getExerciseDetails } from "../util/util";
 
 /* Would eventually need to pass in exercise data */
 function Exercise() {
+  const { lang, exercise } = useParams();
+  const [exerciseTitle, setExerciseTitle] = useState(exercise);
+  const [exerciseDescription, setExerciseDescription] = useState("");
+  const [exerciseText, setExerciseText] = useState("");
+  const [skelCode, setSkelCode] = useState("");
 
-    type ExerciseParams = { language: string; exercise: string };
-    const { language, exercise } = useParams<ExerciseParams>();
+  console.log(`Exercise Id: ${lang}_${exercise}`);
 
-    if (!language || !exercise) return <p>404 - bad link</p>;
+  const navigate = useNavigate();
 
-    console.log(`${language}, ${exercise}`)
+  useEffect(() => {
+    const fetchExerciseDetails = async () => {
+      const exerciseDetails = await getExerciseDetails(`${lang}_${exercise}`);
+      if (exerciseDetails.exerciseExists) {
+        setExerciseTitle(exerciseDetails.exerciseTitle);
+        setExerciseDescription(exerciseDetails.exerciseDescription);
+        setExerciseText(exerciseDetails.exerciseText);
+        setSkelCode(exerciseDetails.skelCode);
+        console.log(exerciseDetails);
+      } else {
+        console.log("Exercise does not exist");
+        navigate("/404");
+      }
+    };
 
-    
+    fetchExerciseDetails();
+  }, [lang, exercise]);
+
   return (
     <div className={style(styles, "ctn")}>
       <Navbar />
@@ -52,6 +73,8 @@ const instructionCodeBoxText =
   "Add a method 'includes' to class Circle to determine whether a certain point is inside or outside the circle.";
 
 const skelCode = "def fizzbuzz(n: int):\n\tpass";
+
+const language = "python";
 
 const styles = {
   ctn: ["flex", "w-full", "flex-col", "h-full", "items-center", "lg:flex-row"],

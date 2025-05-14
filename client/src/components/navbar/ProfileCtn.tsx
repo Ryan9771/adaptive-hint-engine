@@ -9,7 +9,7 @@ function ProfileCtn() {
         src={profileImg}
         alt="profile pic"
       />
-      <p className={style(styles, "txt")}>pgr21</p>
+      <p className={style(styles, "txt")}>rkp21</p>
     </div>
   );
 }

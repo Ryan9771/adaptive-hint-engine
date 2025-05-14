@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+ExercisePython1.tsx
+ExercisePython2.tsx

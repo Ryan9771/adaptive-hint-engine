@@ -1,4 +1,4 @@
-from setup_db import engine, Base, add_exercise, list_all_exercises
+from setup_db import engine, Base, add_exercise, list_all_exercises, delete_exercise
 
 """
 Exercise Detail Format:
@@ -18,26 +18,31 @@ if __name__ == "__main__":
     # Create the exercises
 
     # Exercise 2 == Remove Duplicates
-    exercise_key = "python_exercise2"
+    exercise_key = "python_exercise3"
 
-    exercise_title = "Removing Duplicates from a List"
+    exercise_title = "Palindromes"
 
-    exercise_background = """Sometimes a list contains repeated values, but you 
-    only want to keep one copy of each. For example, if a list has the numbers 
-    1, 2, 2, 3, and 1, you may want to create a new list that just has 1, 2, 
-    and 3 in the order they first appeared. This exercise is about going through 
-    a list and collecting only the first occurrence of each number."""
+    exercise_background = """A palindrome is something that reads the same 
+    forward and backward. You may have seen palindromes in words like "level" or 
+    "racecar", but numbers and lists can be palindromes too. For example, the 
+    list [1, 2, 3, 2, 1] is a palindrome because it is the same when read from 
+    left to right and from right to left.
+    """
 
-    exercise_text = """Write a program that takes a list of numbers and returns 
-    a new list with all duplicates removed. You should not use any built-in 
-    functions or data structures that automatically remove duplicates, such as 
-    sets. 
+    exercise_text = """Write a program that checks if a list of numbers is a 
+    palindrome. The program should return true if the list is the same forwards 
+    and backwards, and false otherwise. You should not use any built-in 
+    functions that reverse the list. Use loops and if statements to compare the 
+    elements from both ends of the list. 
     """
 
     skel_code = """
-        def remove_duplicates(numbers: list[int]) -> list[int]:
-            pass
+    def is_palindrome(numbers: list[int]) -> bool:
+
+        return False
     """
+
+    # delete_exercise(exercise_key)
 
     add_exercise(
         exercise_key=exercise_key,

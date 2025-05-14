@@ -25,7 +25,6 @@ class ExerciseEntry(Base):
 
     required_concepts = Column(MutableList.as_mutable(JSON), default=list)
 
-    # TODO: Migrate below to per student table
     previous_code = Column(Text, default="")
     student_profile = Column(MutableDict.as_mutable(
         JSON), default=lambda: MutableDict({"concepts": MutableDict()}))
@@ -106,6 +105,18 @@ def add_exercise(exercise_key, exercise_background, exercise_text, skel_code, ex
             print(f"Exercise {exercise_key} Added!")
         except Exception as e:
             print(f"\n== Unable to add exercise ==\n{e}")
+
+
+def delete_exercise(exercise_key: str):
+    """Deletes an exercise using the exercise key"""
+    exercise = _get_exercise(exercise_key=exercise_key)
+
+    if exercise:
+        db_session.delete(exercise)
+        db_session.commit()
+        print(f"Exercise {exercise_key} Deleted!")
+    else:
+        print("\n=== Exercise doesn't exist ===\n")
 
 
 def list_all_exercises():

@@ -46,15 +46,13 @@ function Exercise() {
       <div className={style(styles, "bodyCtn")}>
         <div className={style(styles, "exerciseBody")}>
           <ExercisePath />
-          <p className={style(styles, "title")}>
-            Higher Order Functions in Kotlin
-          </p>
+          <p className={style(styles, "title")}>{exerciseTitle}</p>
 
-          <BasicTextBox text={basicTextBoxText} />
+          <BasicTextBox text={exerciseDescription} />
 
           <InstructionCodeBox
             title="Instructions"
-            text={instructionCodeBoxText}
+            text={exerciseText}
             code={skelCode}
             language={language}
           />
@@ -65,14 +63,6 @@ function Exercise() {
     </div>
   );
 }
-
-const basicTextBoxText =
-  "Kotlin includes a lot of powerful features from functional languages like Haskell. One of the main features that we think of being characteristic of a functional language is the ability to use higher-order functions. Try this out in the exercises below. ";
-
-const instructionCodeBoxText =
-  "Add a method 'includes' to class Circle to determine whether a certain point is inside or outside the circle.";
-
-const skelCode = "def fizzbuzz(n: int):\n\tpass";
 
 const language = "python";
 
@@ -88,7 +78,6 @@ const styles = {
     "border",
     "border-border",
     "gap-5",
-    // "lg:items-start",
   ],
   exerciseBody: [
     "w-full",

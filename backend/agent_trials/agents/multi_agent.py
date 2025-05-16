@@ -74,6 +74,7 @@ def decide_exercise_requirements_exists(state: GraphState):
 
     return "exercise_requirement_agent"
 
+
 # == Nodes ==
 
 
@@ -383,7 +384,7 @@ def hint_generator_agent(state: GraphState):
     hint_output: HintOutput = llm.with_structured_output(
         HintOutput).invoke(llm_input)
 
-    print(f"\n== FINAL HINT ==\n{hint_output.hint_text}\n")
+    # print(f"\n== FINAL HINT ==\n{hint_output.hint_text}\n")
 
     set_previous_hint(
         exercise_key=state['attempt_context'].exercise_key,

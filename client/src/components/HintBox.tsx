@@ -1,7 +1,12 @@
 import style from "../util/Styles";
 import { FaRegLightbulb } from "react-icons/fa";
 
-function HintBox() {
+interface Props {
+  exerciseId: string;
+  studentCode: string;
+}
+
+function HintBox({ exerciseId, studentCode }: Props) {
   return (
     <div className={style(styles, "ctn")}>
       <div className={style(styles, "titleDiv")}>
@@ -26,6 +31,7 @@ const styles = {
     "bg-hint",
     "gap-3",
     "rounded-md",
+    "cursor-pointer",
   ],
   titleDiv: ["flex", "gap-3", "items-center"],
   title: ["text-hint-title", "font-medium"],

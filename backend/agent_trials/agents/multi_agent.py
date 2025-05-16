@@ -26,7 +26,6 @@ from util.prompts import (
 )
 
 from db.setup_db import (
-    add_exercise,
     required_concepts_exists,
     set_required_concepts,
     get_required_concepts,

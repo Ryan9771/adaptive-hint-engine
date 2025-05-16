@@ -58,6 +58,7 @@ class ExerciseEntry(Base):
             "exercise_text": self.exercise_text,
             "skel_code": self.skel_code,
             "exercise_background": self.exercise_background,
+            "previous_code": self.previous_code
         }
 
 
@@ -119,7 +120,7 @@ def delete_exercise(exercise_key: str):
         print("\n=== Exercise doesn't exist ===\n")
 
 
-def modify_exercise(exercise_key: str, exercise_text="", exercise_background="", skel_code="", exercise_title=""):
+def modify_exercise(exercise_key: str, exercise_text="", exercise_background="", skel_code="", exercise_title="", previous_code=""):
     exercise = _get_exercise(exercise_key=exercise_key)
     if exercise:
         if exercise_text:
@@ -130,8 +131,11 @@ def modify_exercise(exercise_key: str, exercise_text="", exercise_background="",
             exercise.skel_code = skel_code
         if exercise_title:
             exercise.exercise_title = exercise_title
+        if previous_code:
+            exercise.previous_code = previous_code
 
         db_session.commit()
+        print("\n== Modified exercise! ==\n")
 
     else:
         print("\n=== Exercise doesn't exist ===\n")

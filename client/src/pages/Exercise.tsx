@@ -16,6 +16,7 @@ function Exercise() {
   const [exerciseDescription, setExerciseDescription] = useState("");
   const [exerciseText, setExerciseText] = useState("");
   const [skelCode, setSkelCode] = useState("");
+  const [previousCode, setPreviousCode] = useState("");
 
   console.log(`Exercise Id: ${lang}_${exercise}`);
 
@@ -29,6 +30,7 @@ function Exercise() {
         setExerciseDescription(exerciseDetails.exerciseDescription);
         setExerciseText(exerciseDetails.exerciseText);
         setSkelCode(exerciseDetails.skelCode);
+        setPreviousCode(exerciseDetails.previousCode);
       } else {
         console.log("Exercise does not exist");
         navigate("/404");
@@ -54,7 +56,8 @@ function Exercise() {
           <InstructionCodeBox
             title="Instructions"
             text={exerciseText}
-            code={skelCode}
+            skelCode={skelCode}
+            previousCode={previousCode}
             language={language}
           />
 

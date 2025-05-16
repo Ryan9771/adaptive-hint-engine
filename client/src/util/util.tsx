@@ -20,6 +20,7 @@ async function getExerciseDetails(exerciseId: string) {
     exerciseDescription: "",
     exerciseText: "",
     skelCode: "",
+    previousCode: "",
   };
 
   console.log("Response: ", response);
@@ -40,6 +41,7 @@ async function getExerciseDetails(exerciseId: string) {
     exerciseDetails.exerciseDescription = data.exercise_background;
     exerciseDetails.exerciseText = data.exercise_text;
     exerciseDetails.skelCode = data.skel_code;
+    exerciseDetails.previousCode = data.previous_code;
   } else {
     console.log("Failed to fetch entry");
   }
@@ -47,4 +49,16 @@ async function getExerciseDetails(exerciseId: string) {
   return exerciseDetails;
 }
 
-export { post, getExerciseDetails };
+async function resetPreviousCode(exerciseId: string, skelCode: string) {
+  const response = await post(`/exercise/reset/${exerciseId}`, {
+    skel_code: skelCode,
+  });
+
+  if (response.ok) {
+    console.log("Previous code reset successfully");
+  } else {
+    console.log("Failed to reset previous code");
+  }
+}
+
+export { post, getExerciseDetails, resetPreviousCode };

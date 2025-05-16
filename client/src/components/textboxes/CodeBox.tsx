@@ -2,19 +2,24 @@ import { useRef, useState } from "react";
 import { Editor, OnMount } from "@monaco-editor/react";
 import style from "../../util/Styles";
 import { RunBtn, ResetBtn } from "../Buttons";
+import { resetPreviousCode } from "../../util/util";
+import { useParams } from "react-router-dom";
 
 interface Props {
-  code: string;
+  skelCode: string;
+  previousCode: string;
   language: string;
 }
-function CodeBox({ code, language }: Props) {
-
+function CodeBox({ skelCode, previousCode, language }: Props) {
   const MIN_HEIGHT = 150;
   const MAX_HEIGHT = 400;
   const LINE_HEIGHT = 20;
 
   const editorRef = useRef<any>(null);
   const [editorHeight, setEditorHeight] = useState(MIN_HEIGHT);
+
+  const { lang, exercise } = useParams();
+  const exerciseId = `${lang}_${exercise}`;
 
   // Define a custom theme
   const defineCustomTheme = (monaco: any) => {
@@ -52,10 +57,11 @@ function CodeBox({ code, language }: Props) {
   };
 
   const resetCode = () => {
-    const defaultCode = code;
+    const defaultCode = skelCode;
     if (editorRef.current) {
       editorRef.current.setValue(defaultCode);
       setEditorHeight(MIN_HEIGHT);
+      resetPreviousCode(exerciseId, defaultCode);
     }
   };
 
@@ -75,7 +81,7 @@ function CodeBox({ code, language }: Props) {
           height="100%"
           language={language}
           theme="vs-dark"
-          value={code}
+          value={previousCode}
           onMount={handleEditorDidMount}
           options={{
             fontSize: 14,

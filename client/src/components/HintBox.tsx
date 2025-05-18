@@ -1,5 +1,5 @@
 import style from "../util/Styles";
-import { FaRegLightbulb } from "react-icons/fa";
+import { FaRegLightbulb, FaSpinner } from "react-icons/fa";
 import { getHint } from "../util/util";
 import Markdown from "react-markdown";
 import { useState } from "react";
@@ -14,20 +14,32 @@ function HintBox({ exerciseId, studentCode }: Props) {
     "Click here to reveal a helpful hint for solving this exercise"
   );
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const generateHint = async () => {
-    console.log(exerciseId);
-    const hint = await getHint(exerciseId, studentCode);
-    setHintText(hint);
+    setIsLoading(true);
+
+    try {
+      const hint = await getHint(exerciseId, studentCode);
+      setHintText(hint);
+    } catch (e) {
+      setHintText("I wasn't able to generate a hint. Please try again!");
+    }
+    setIsLoading(false);
   };
 
   return (
     <div className={style(styles, "ctn")} onClick={generateHint}>
       <div className={style(styles, "titleDiv")}>
-        <FaRegLightbulb className={style(styles, "icon")} />
+        {isLoading ? (
+          <FaSpinner className="animate-spin h-4 w-4 text-hint-title" />
+        ) : (
+          <FaRegLightbulb className={style(styles, "icon")} />
+        )}
         <div className={style(styles, "title")}>Need a hint? Click here</div>
       </div>
       <div className={style(styles, "txt")}>
-        <Markdown>{hintText}</Markdown>
+        <Markdown>{isLoading ? "Generating a hint..." : hintText}</Markdown>
       </div>
     </div>
   );
@@ -49,6 +61,7 @@ const styles = {
   titleDiv: ["flex", "gap-3", "items-center"],
   title: ["text-hint-title", "font-medium"],
   icon: ["h-4", "fill-hint-title"],
+  spinner: ["animate-spin", "h-4", "w-4", "text-hint-title"],
   txt: ["text-hint-text", "text-sm"],
 };
 

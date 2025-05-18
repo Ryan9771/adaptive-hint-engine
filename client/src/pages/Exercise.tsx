@@ -17,14 +17,15 @@ function Exercise() {
   const [exerciseText, setExerciseText] = useState("");
   const [skelCode, setSkelCode] = useState("");
   const [previousCode, setPreviousCode] = useState("");
+  const [studentCode, setStudentCode] = useState(previousCode);
 
-  console.log(`Exercise Id: ${lang}_${exercise}`);
+  const exerciseId = `${lang}_${exercise}`;
 
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchExerciseDetails = async () => {
-      const exerciseDetails = await getExerciseDetails(`${lang}_${exercise}`);
+      const exerciseDetails = await getExerciseDetails(exerciseId);
       if (exerciseDetails.exerciseExists) {
         setExerciseTitle(exerciseDetails.exerciseTitle);
         setExerciseDescription(exerciseDetails.exerciseDescription);
@@ -59,9 +60,10 @@ function Exercise() {
             skelCode={skelCode}
             previousCode={previousCode}
             language={language}
+            setStudentCode={setStudentCode}
           />
 
-          <HintBox />
+          <HintBox exerciseId={exerciseId} studentCode={studentCode} />
         </div>
       </div>
     </div>

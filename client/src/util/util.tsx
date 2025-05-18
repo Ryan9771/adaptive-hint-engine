@@ -61,4 +61,20 @@ async function resetPreviousCode(exerciseId: string, skelCode: string) {
   }
 }
 
-export { post, getExerciseDetails, resetPreviousCode };
+async function getHint(exerciseId: string, studentCode: string) {
+  const response = await post(`/exercise/hint/${exerciseId}`, {
+    studentCode: studentCode,
+  });
+
+  if (response.ok) {
+    const data = await response.json();
+
+    return data.hint;
+  }
+
+  console.log("Failed to retreive hint");
+
+  return "Seems like unable to generate a hint. Please try again";
+}
+
+export { post, getExerciseDetails, resetPreviousCode, getHint };

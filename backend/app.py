@@ -26,7 +26,7 @@ agent = HintEngine()
 
 @app.route("/")
 def home():
-    return "Flask app really really works on reloading!"
+    return "Flask app is active!"
 
 
 @app.route("/exercise/<exercise_id>", methods=["POST"])
@@ -42,10 +42,10 @@ def get_exercise(exercise_id):
         if exercise_details:
             return jsonify(exercise_details), 200
 
-        return jsonify({"error": "Exercise not found"}), 404
+        return jsonify({"message": "Exercise not found"}), 404
     except Exception as e:
         print("ERROR:", str(e))
-        return jsonify({"error": "Cant get exercise", "details": str(e)}), 500
+        return jsonify({"message": "Cant get exercise", "details": str(e)}), 500
 
 
 @app.route("/exercise/reset/<exercise_id>", methods=["POST"])
@@ -58,13 +58,16 @@ def get_reset_exercise(exercise_id):
         if exercise:
             modify_exercise(exercise_key=exercise_key,
                             previous_code=exercise["skel_code"])
-        else:
-            print(f"\n== No exercise found with {exercise_id} ==\n")
 
-        return jsonify({}), 200
+            return jsonify({}), 200
+
+        print(f"\n== No exercise found with {exercise_id} ==\n")
+
+        return jsonify({"message": f"Exercise {exercise_id} not found"}), 404
+
     except Exception as e:
         print(f"\n== ERROR ==\n{e}")
-        return jsonify({"error": "Can't reset exercise", "details": str(e)}), 500
+        return jsonify({"message": "Can't reset exercise", "details": str(e)}), 500
 
 
 @app.route("/exercise/hint/<exercise_id>", methods=["POST"])
@@ -73,7 +76,7 @@ def get_exercise_hint(exercise_id):
     """
     Request Type:
     {
-        "student_code": string 
+        "studentCode": string 
     }
     """
     try:
@@ -84,24 +87,29 @@ def get_exercise_hint(exercise_id):
 
         if exercise:
             # Update previous_code to current code
-            modify_exercise(previous_code=data["student_code"])
+            modify_exercise(exercise_key=exercise_id,
+                            previous_code=data["studentCode"])
 
             initial_graph_state = AttemptContext(
                 exercise_key=exercise_key,
                 exercise_text=exercise["exercise_text"],
                 skel_code=exercise["skel_code"],
                 language="python",
-                student_code=data["student_code"]
+                student_code=data["studentCode"]
             )
 
             # Get hint
             graph = agent.run(state={"attempt_context": initial_graph_state})
             print(f"\n == HINT ==\n{graph["hint_output"].hint_text}")
-        else:
-            print(f"\n== Exercise {exercise_key} not found ==\n")
-    except Exception as e:
-        print(f"\n== ERROR ==\n{e}")
 
+            return jsonify({"hint": graph["hint_output"].hint_text}), 200
+
+        print(f"\n== Exercise {exercise_key} not found ==\n")
+
+        return jsonify({"message": "Exercise not found"}), 404
+
+    except Exception as e:
+        print(f"\n== ERROR ==\n{e}"), 500
 
     # Get hint
 if __name__ == "__main__":

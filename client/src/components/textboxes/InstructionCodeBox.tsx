@@ -7,6 +7,7 @@ interface Props {
   skelCode: string;
   previousCode: string;
   language: string;
+  setStudentCode: (code: string) => void;
 }
 function InstructionCodeBox({
   title,
@@ -14,6 +15,7 @@ function InstructionCodeBox({
   skelCode,
   previousCode,
   language,
+  setStudentCode,
 }: Props) {
   return (
     <div className={style(styles, "ctn")}>
@@ -23,6 +25,7 @@ function InstructionCodeBox({
         previousCode={previousCode}
         skelCode={skelCode}
         language={language}
+        setStudentCode={setStudentCode}
       />
     </div>
   );

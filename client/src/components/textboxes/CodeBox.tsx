@@ -9,8 +9,9 @@ interface Props {
   skelCode: string;
   previousCode: string;
   language: string;
+  setStudentCode: (code: string) => void;
 }
-function CodeBox({ skelCode, previousCode, language }: Props) {
+function CodeBox({ skelCode, previousCode, language, setStudentCode }: Props) {
   const MIN_HEIGHT = 150;
   const MAX_HEIGHT = 400;
   const LINE_HEIGHT = 20;
@@ -24,11 +25,11 @@ function CodeBox({ skelCode, previousCode, language }: Props) {
   // Define a custom theme
   const defineCustomTheme = (monaco: any) => {
     monaco.editor.defineTheme("customTheme", {
-      base: "vs-dark", // Use the dark base theme
-      inherit: true, // Inherit default vs-dark settings
-      rules: [], // Define any syntax-specific styling here
+      base: "vs-dark",
+      inherit: true,
+      rules: [],
       colors: {
-        "editor.background": "#212936", // Set custom background color
+        "editor.background": "#212936",
       },
     });
   };
@@ -36,7 +37,7 @@ function CodeBox({ skelCode, previousCode, language }: Props) {
   const handleEditorDidMount: OnMount = (editor, monaco) => {
     editorRef.current = editor;
 
-    // Dynamically Adjusts height based on content
+    // Adjust height of the codebox based on code length
     const updateHeight = () => {
       const lineCount = editor.getModel()?.getLineCount() || 1;
       const newHeight = Math.min(
@@ -83,6 +84,7 @@ function CodeBox({ skelCode, previousCode, language }: Props) {
           theme="vs-dark"
           value={previousCode}
           onMount={handleEditorDidMount}
+          onChange={(value) => setStudentCode(value || "")}
           options={{
             fontSize: 14,
             minimap: { enabled: false },
@@ -95,10 +97,6 @@ function CodeBox({ skelCode, previousCode, language }: Props) {
             padding: { top: 20 },
           }}
         />
-        {/* <button
-        className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-        onClick={resetCode}
-      ></button> */}
       </div>
     </div>
   );

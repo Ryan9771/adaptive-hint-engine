@@ -447,6 +447,6 @@ class HintEngine:
         skel_code = state['attempt_context'].skel_code
         language = state['attempt_context'].language
 
-        graph = self.graph.invoke(state)
+        return self.graph.invoke(state)
 
         # print(graph)

@@ -1,5 +1,8 @@
 import style from "../util/Styles";
 import { FaRegLightbulb } from "react-icons/fa";
+import { getHint } from "../util/util";
+import Markdown from "react-markdown";
+import { useState } from "react";
 
 interface Props {
   exerciseId: string;
@@ -7,15 +10,25 @@ interface Props {
 }
 
 function HintBox({ exerciseId, studentCode }: Props) {
+  const [hintText, setHintText] = useState(
+    "Click here to reveal a helpful hint for solving this exercise"
+  );
+
+  const generateHint = async () => {
+    console.log(exerciseId);
+    const hint = await getHint(exerciseId, studentCode);
+    setHintText(hint);
+  };
+
   return (
-    <div className={style(styles, "ctn")}>
+    <div className={style(styles, "ctn")} onClick={generateHint}>
       <div className={style(styles, "titleDiv")}>
         <FaRegLightbulb className={style(styles, "icon")} />
-        <div className={style(styles, "title")}>Need a hint?</div>
+        <div className={style(styles, "title")}>Need a hint? Click here</div>
       </div>
-      <p className={style(styles, "txt")}>
-        Click here to reveal a helpful hint for solving this exercise.
-      </p>
+      <div className={style(styles, "txt")}>
+        <Markdown>{hintText}</Markdown>
+      </div>
     </div>
   );
 }

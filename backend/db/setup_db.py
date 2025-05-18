@@ -74,7 +74,7 @@ def _get_exercise(exercise_key):
     if exercise:
         return exercise
 
-    print("=== Exercise no found ===")
+    print("=== Exercise not found ===")
 
     return None
 

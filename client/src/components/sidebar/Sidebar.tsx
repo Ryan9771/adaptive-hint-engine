@@ -8,8 +8,8 @@ function Sidebar() {
       <div className={style(styles, "profileCtn")}>
         <img className={style(styles, "pfp")} src={pfp} alt="pfp" />
         <div className={style(styles, "pfpTextCtn")}>
-          <p className={style(styles, "pfpText")}>Peter Griffin</p>
-          <p className={style(styles, "pfpShortCode")}>pgr21</p>
+          <p className={style(styles, "pfpText")}>Ryan Patel</p>
+          <p className={style(styles, "pfpShortCode")}>rkp21</p>
         </div>
         <div className={style(styles, "tabCtn")}>
           <Tab active={true} text="Exercises" />

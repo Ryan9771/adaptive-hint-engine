@@ -4,15 +4,29 @@ import CodeBox from "./CodeBox";
 interface Props {
   title: string;
   text: string;
-  code: string;
+  skelCode: string;
+  previousCode: string;
   language: string;
+  setStudentCode: (code: string) => void;
 }
-function InstructionCodeBox({ title, text, code, language }: Props) {
+function InstructionCodeBox({
+  title,
+  text,
+  skelCode,
+  previousCode,
+  language,
+  setStudentCode,
+}: Props) {
   return (
     <div className={style(styles, "ctn")}>
       <div className={style(styles, "title")}>{title}</div>
       <div className={style(styles, "txt")}>{text}</div>
-      <CodeBox code={code} language={language} />
+      <CodeBox
+        previousCode={previousCode}
+        skelCode={skelCode}
+        language={language}
+        setStudentCode={setStudentCode}
+      />
     </div>
   );
 }

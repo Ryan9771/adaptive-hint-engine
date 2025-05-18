@@ -25,8 +25,7 @@ from util.prompts import (
     hint_generator_prompt
 )
 
-from setup_db import (
-    add_exercise,
+from db.setup_db import (
     required_concepts_exists,
     set_required_concepts,
     get_required_concepts,
@@ -74,6 +73,7 @@ def decide_exercise_requirements_exists(state: GraphState):
         return "feature_extractor_agent"
 
     return "exercise_requirement_agent"
+
 
 # == Nodes ==
 
@@ -384,7 +384,7 @@ def hint_generator_agent(state: GraphState):
     hint_output: HintOutput = llm.with_structured_output(
         HintOutput).invoke(llm_input)
 
-    print(f"\n== FINAL HINT ==\n{hint_output.hint_text}\n")
+    # print(f"\n== FINAL HINT ==\n{hint_output.hint_text}\n")
 
     set_previous_hint(
         exercise_key=state['attempt_context'].exercise_key,
@@ -447,13 +447,6 @@ class HintEngine:
         skel_code = state['attempt_context'].skel_code
         language = state['attempt_context'].language
 
-        add_exercise(
-            exercise_key=exercise_key,
-            exercise_text=exercise_text,
-            skel_code=skel_code,
-            language=language
-        )
-
-        graph = self.graph.invoke(state)
+        return self.graph.invoke(state)
 
         # print(graph)

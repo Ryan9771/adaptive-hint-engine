@@ -2,14 +2,15 @@ import style from "../util/Styles";
 import { IoMdHome } from "react-icons/io";
 
 /* Will take in the exercise path from higher level component */
-function ExercisePath() {
+interface Props {
+  exerciseTitle: string;
+}
+function ExercisePath({ exerciseTitle }: Props) {
   return (
     <div className={style(styles, "ctn")}>
       <IoMdHome className={style(styles, "icon")} />
       <p className={style(styles, "txt")}>/</p>
-      <p className={style(styles, "txt") + "cursor-pointer"}>
-        Higher Order Functions
-      </p>
+      <p className={style(styles, "txt") + "cursor-pointer"}>{exerciseTitle}</p>
     </div>
   );
 }

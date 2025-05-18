@@ -10,7 +10,7 @@ from example_exercises.python.exercise_4 import exercise_4
 from example_exercises.python.exercise_5 import exercise_5
 
 # DB
-from setup_db import engine, Base, db_session
+from db.setup_db import engine, Base
 
 
 class Features:
@@ -24,21 +24,21 @@ if __name__ == "__main__":
     # Create the database
     Base.metadata.create_all(bind=engine)
 
-    print("== Initialising Agent ==")
-    agent = HintEngine()
+    # print("== Initialising Agent ==")
+    # agent = HintEngine()
 
-    exercise_key = exercise_2["exercise_key"]
-    student_code = exercise_2['student_code']
-    exercise_text = exercise_2['exercise_text']
-    skel_code = exercise_2['skel_code']
-    language = exercise_2['language']
+    # exercise_key = exercise_2["exercise_key"]
+    # student_code = exercise_2['student_code']
+    # exercise_text = exercise_2['exercise_text']
+    # skel_code = exercise_2['skel_code']
+    # language = exercise_2['language']
 
-    attempt_context: AttemptContext = AttemptContext(
-        exercise_key=exercise_key,
-        exercise_text=exercise_text,
-        skel_code=skel_code,
-        language=language,
-        student_code=student_code
-    )
+    # attempt_context: AttemptContext = AttemptContext(
+    #     exercise_key=exercise_key,
+    #     exercise_text=exercise_text,
+    #     skel_code=skel_code,
+    #     language=language,
+    #     student_code=student_code
+    # )
 
-    agent.run({"attempt_context": attempt_context})
+    # agent.run({"attempt_context": attempt_context})

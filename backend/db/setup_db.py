@@ -1,4 +1,3 @@
-from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine, Column, String, Text, Integer
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.orm.attributes import flag_modified
@@ -6,9 +5,8 @@ from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.mutable import MutableDict, MutableList
 from typing import List
-from util.types import StudentProfile
 
-engine = create_engine("sqlite:///new-exercise.db", echo=False)
+engine = create_engine("sqlite:///db/store.db", echo=False)
 db_session = scoped_session(sessionmaker(
     autocommit=False, autoflush=False, bind=engine))
 Base = declarative_base()
@@ -19,6 +17,7 @@ class ExerciseEntry(Base):
     __tablename__ = "exercises"
 
     exercise_title = Column(String(255), nullable=False)
+    exercise_background = Column(Text, nullable=False)
     exercise_key = Column(String(255), primary_key=True)
     exercise_text = Column(Text, nullable=False)
     skel_code = Column(Text, nullable=False)
@@ -26,17 +25,18 @@ class ExerciseEntry(Base):
 
     required_concepts = Column(MutableList.as_mutable(JSON), default=list)
 
-    # TODO: Migrate below to per student table
     previous_code = Column(Text, default="")
     student_profile = Column(MutableDict.as_mutable(
         JSON), default=lambda: MutableDict({"concepts": MutableDict()}))
     no_progress_count = Column(Integer, default=0)
     previous_hint = Column(Text, default="")
 
-    def __init__(self, exercise_key, exercise_text, skel_code, language):
+    def __init__(self, exercise_key, exercise_text, skel_code, language, exercise_title, exercise_background=""):
         """Initialise a question with empty attempts"""
         self.exercise_key = exercise_key
+        self.exercise_title = exercise_title
         self.exercise_text = exercise_text
+        self.exercise_background = exercise_background
         self.skel_code = skel_code
         self.language = language
         self.previous_code = skel_code
@@ -56,7 +56,9 @@ class ExerciseEntry(Base):
         return {
             "exercise_title": self.exercise_title,
             "exercise_text": self.exercise_text,
-            "skel_code": self.skel_code
+            "skel_code": self.skel_code,
+            "exercise_background": self.exercise_background,
+            "previous_code": self.previous_code
         }
 
 
@@ -72,7 +74,7 @@ def _get_exercise(exercise_key):
     if exercise:
         return exercise
 
-    print("=== Exercise no found ===")
+    print("=== Exercise not found ===")
 
     return None
 
@@ -88,7 +90,7 @@ def get_exercise_details(exercise_key: str):
         return None
 
 
-def add_exercise(exercise_key, exercise_text, skel_code, language):
+def add_exercise(exercise_key, exercise_background, exercise_text, skel_code, exercise_title, language="python"):
     """
     Adds an exercise to the database with:
         exercise_key: primary key
@@ -97,9 +99,53 @@ def add_exercise(exercise_key, exercise_text, skel_code, language):
     """
     if not _exercise_exists(exercise_key=exercise_key):
         exercise = ExerciseEntry(
-            exercise_key, exercise_text, skel_code, language)
-        db_session.add(exercise)
+            exercise_key, exercise_text, skel_code, language, exercise_title, exercise_background=exercise_background)
+        try:
+            db_session.add(exercise)
+            db_session.commit()
+            print(f"Exercise {exercise_key} Added!")
+        except Exception as e:
+            print(f"\n== Unable to add exercise ==\n{e}")
+
+
+def delete_exercise(exercise_key: str):
+    """Deletes an exercise using the exercise key"""
+    exercise = _get_exercise(exercise_key=exercise_key)
+
+    if exercise:
+        db_session.delete(exercise)
         db_session.commit()
+        print(f"Exercise {exercise_key} Deleted!")
+    else:
+        print("\n=== Exercise doesn't exist ===\n")
+
+
+def modify_exercise(exercise_key: str, exercise_text="", exercise_background="", skel_code="", exercise_title="", previous_code=""):
+    exercise = _get_exercise(exercise_key=exercise_key)
+    if exercise:
+        if exercise_text:
+            exercise.exercise_text = exercise_text
+        if exercise_background:
+            exercise.exercise_background = exercise_background
+        if skel_code:
+            exercise.skel_code = skel_code
+        if exercise_title:
+            exercise.exercise_title = exercise_title
+        if previous_code:
+            exercise.previous_code = previous_code
+
+        db_session.commit()
+        print("\n== Modified exercise! ==\n")
+
+    else:
+        print("\n=== Exercise doesn't exist ===\n")
+
+
+def list_all_exercises():
+    """Lists all exercise titles with their exercise keys"""
+    exercises = db_session.query(
+        ExerciseEntry.exercise_title, ExerciseEntry.exercise_key).all()
+    return [{"title": exercise.exercise_title, "key": exercise.exercise_key} for exercise in exercises]
 
 
 def required_concepts_exists(exercise_key: str) -> bool:

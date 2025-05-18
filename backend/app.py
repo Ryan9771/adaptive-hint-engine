@@ -3,38 +3,114 @@ from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.dialects.postgresql import JSON
 import os
-from setup_db import get_exercise_details
+from db.setup_db import get_exercise_details, modify_exercise
+from flask_cors import CORS
+from agent_trials.agents.multi_agent import HintEngine
+from util.types import AttemptContext
 
 # Load Secrets
 load_dotenv()
 
-print(os.environ["SQLALCHEMY_DATABASE_URI"])
 # Setup App
 app = Flask(__name__)
+CORS(app, resources={
+     r"/exercise/*": {"origins": "http://localhost:5173"}}, supports_credentials=True)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["SQLALCHEMY_DATABASE_URI"]
-db = SQLAlchemy(app)
 
 # Database
+db = SQLAlchemy(app)
+
+# Agent
+agent = HintEngine()
 
 
 @app.route("/")
 def home():
-    return "Flask app really really works on reloading!"
+    return "Flask app is active!"
 
 
-@app.route("/exercise/<string:language>/<string:exercise>", methods=["GET"])
-def exercise(language, exercise):
-    language = language.lower()
-    exercise = exercise.lower()
+@app.route("/exercise/<exercise_id>", methods=["POST"])
+def get_exercise(exercise_id):
+    try:
+        print(f"\n== RETRIEVING EXERCISE ==\n{exercise_id}")
+        exercise = exercise_id.lower()
 
-    exercise_details = get_exercise_details(
-        exercise_key="_".join([language, exercise])
-    )
+        exercise_details = get_exercise_details(
+            exercise_key=exercise
+        )
 
-    print(exercise_details)
+        if exercise_details:
+            return jsonify(exercise_details), 200
 
-    return f"Exercise: {exercise} in {language}"
+        return jsonify({"message": "Exercise not found"}), 404
+    except Exception as e:
+        print("ERROR:", str(e))
+        return jsonify({"message": "Cant get exercise", "details": str(e)}), 500
 
 
+@app.route("/exercise/reset/<exercise_id>", methods=["POST"])
+def get_reset_exercise(exercise_id):
+    try:
+        print(f"\n== RESETTING EXERCISE ==\n{exercise_id}")
+        exercise_key = exercise_id.lower()
+        exercise = get_exercise_details(exercise_key=exercise_key)
+
+        if exercise:
+            modify_exercise(exercise_key=exercise_key,
+                            previous_code=exercise["skel_code"])
+
+            return jsonify({}), 200
+
+        print(f"\n== No exercise found with {exercise_id} ==\n")
+
+        return jsonify({"message": f"Exercise {exercise_id} not found"}), 404
+
+    except Exception as e:
+        print(f"\n== ERROR ==\n{e}")
+        return jsonify({"message": "Can't reset exercise", "details": str(e)}), 500
+
+
+@app.route("/exercise/hint/<exercise_id>", methods=["POST"])
+def get_exercise_hint(exercise_id):
+    data = request.get_json()
+    """
+    Request Type:
+    {
+        "studentCode": string 
+    }
+    """
+    try:
+        print(f"\n== GETTING HINT ==\n")
+        exercise_key = exercise_id.lower()
+
+        exercise = get_exercise_details(exercise_key=exercise_key)
+
+        if exercise:
+            # Update previous_code to current code
+            modify_exercise(exercise_key=exercise_id,
+                            previous_code=data["studentCode"])
+
+            initial_graph_state = AttemptContext(
+                exercise_key=exercise_key,
+                exercise_text=exercise["exercise_text"],
+                skel_code=exercise["skel_code"],
+                language="python",
+                student_code=data["studentCode"]
+            )
+
+            # Get hint
+            graph = agent.run(state={"attempt_context": initial_graph_state})
+            print(f"\n == HINT ==\n{graph["hint_output"].hint_text}")
+
+            return jsonify({"hint": graph["hint_output"].hint_text}), 200
+
+        print(f"\n== Exercise {exercise_key} not found ==\n")
+
+        return jsonify({"message": "Exercise not found"}), 404
+
+    except Exception as e:
+        print(f"\n== ERROR ==\n{e}"), 500
+
+    # Get hint
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5001, debug=True)

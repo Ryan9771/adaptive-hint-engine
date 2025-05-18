@@ -5,53 +5,72 @@ import BasicTextBox from "../components/textboxes/BasicTextBox";
 import InstructionCodeBox from "../components/textboxes/InstructionCodeBox";
 import HintBox from "../components/HintBox";
 import Sidebar from "../components/sidebar/Sidebar";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { getExerciseDetails } from "../util/util";
 
 /* Would eventually need to pass in exercise data */
 function Exercise() {
+  const { lang, exercise } = useParams();
+  const [exerciseTitle, setExerciseTitle] = useState("");
+  const [exerciseDescription, setExerciseDescription] = useState("");
+  const [exerciseText, setExerciseText] = useState("");
+  const [skelCode, setSkelCode] = useState("");
+  const [previousCode, setPreviousCode] = useState("");
+  const [studentCode, setStudentCode] = useState(previousCode);
 
-    type ExerciseParams = { language: string; exercise: string };
-    const { language, exercise } = useParams<ExerciseParams>();
+  const exerciseId = `${lang}_${exercise}`;
 
-    if (!language || !exercise) return <p>404 - bad link</p>;
+  const navigate = useNavigate();
 
-    console.log(`${language}, ${exercise}`)
+  useEffect(() => {
+    const fetchExerciseDetails = async () => {
+      const exerciseDetails = await getExerciseDetails(exerciseId);
+      if (exerciseDetails.exerciseExists) {
+        setExerciseTitle(exerciseDetails.exerciseTitle);
+        setExerciseDescription(exerciseDetails.exerciseDescription);
+        setExerciseText(exerciseDetails.exerciseText);
+        setSkelCode(exerciseDetails.skelCode);
+        setPreviousCode(exerciseDetails.previousCode);
+      } else {
+        console.log("Exercise does not exist");
+        navigate("/404");
+      }
+    };
 
-    
+    fetchExerciseDetails();
+  }, [lang, exercise]);
+
   return (
     <div className={style(styles, "ctn")}>
       <Navbar />
       <Sidebar />
       <div className={style(styles, "bodyCtn")}>
         <div className={style(styles, "exerciseBody")}>
-          <ExercisePath />
-          <p className={style(styles, "title")}>
-            Higher Order Functions in Kotlin
-          </p>
+          <ExercisePath
+            exerciseTitle={exerciseTitle.toLowerCase().replace(/ /g, "_")}
+          />
+          <p className={style(styles, "title")}>{exerciseTitle}</p>
 
-          <BasicTextBox text={basicTextBoxText} />
+          <BasicTextBox text={exerciseDescription} />
 
           <InstructionCodeBox
             title="Instructions"
-            text={instructionCodeBoxText}
-            code={skelCode}
+            text={exerciseText}
+            skelCode={skelCode}
+            previousCode={previousCode}
             language={language}
+            setStudentCode={setStudentCode}
           />
 
-          <HintBox />
+          <HintBox exerciseId={exerciseId} studentCode={studentCode} />
         </div>
       </div>
     </div>
   );
 }
 
-const basicTextBoxText =
-  "Kotlin includes a lot of powerful features from functional languages like Haskell. One of the main features that we think of being characteristic of a functional language is the ability to use higher-order functions. Try this out in the exercises below. ";
-
-const instructionCodeBoxText =
-  "Add a method 'includes' to class Circle to determine whether a certain point is inside or outside the circle.";
-
-const skelCode = "def fizzbuzz(n: int):\n\tpass";
+const language = "python";
 
 const styles = {
   ctn: ["flex", "w-full", "flex-col", "h-full", "items-center", "lg:flex-row"],
@@ -65,7 +84,6 @@ const styles = {
     "border",
     "border-border",
     "gap-5",
-    // "lg:items-start",
   ],
   exerciseBody: [
     "w-full",

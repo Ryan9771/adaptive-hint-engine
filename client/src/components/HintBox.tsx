@@ -32,7 +32,7 @@ function HintBox({ exerciseId, studentCode }: Props) {
     <div className={style(styles, "ctn")} onClick={generateHint}>
       <div className={style(styles, "titleDiv")}>
         {isLoading ? (
-          <FaSpinner className="animate-spin h-4 w-4 text-hint-title" />
+          <FaSpinner className={style(styles, "spinner")} />
         ) : (
           <FaRegLightbulb className={style(styles, "icon")} />
         )}

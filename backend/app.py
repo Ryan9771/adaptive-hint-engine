@@ -137,7 +137,6 @@ def get_test(exercise_id):
         result = piston_response.json()
 
         stdout = result.get("run", {}).get("stdout", "")
-        stderr = result.get("run", {}).get("stderr", "")
 
         # Parse only lines prefixed with the marker
         test_results = []
@@ -150,8 +149,6 @@ def get_test(exercise_id):
                     pass
 
         return jsonify({
-            "stdout": stdout,
-            "stderr": stderr,
             "testResults": test_results
         }), 200
     except Exception as e:

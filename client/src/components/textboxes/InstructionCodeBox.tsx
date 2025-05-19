@@ -2,6 +2,14 @@ import style from "../../util/Styles";
 import CodeBox from "./CodeBox";
 import { useState } from "react";
 
+export interface TestResult {
+  name: string;
+  input: any;
+  expected: any;
+  actual: any;
+  passed: boolean;
+}
+
 interface Props {
   title: string;
   text: string;
@@ -22,6 +30,7 @@ function InstructionCodeBox({
 }: Props) {
   const [output, setOutput] = useState("");
   const [error, setError] = useState("");
+  const [testResults, setTestResults] = useState<TestResult[]>([]);
 
   return (
     <div className={style(styles, "ctn")}>
@@ -35,7 +44,38 @@ function InstructionCodeBox({
         setStudentCode={setStudentCode}
         setOutput={setOutput}
         setError={setError}
+        setTestResults={setTestResults}
       />
+
+      {testResults.length > 0 && (
+        <div className="mt-4 space-y-3">
+          {testResults.map((t, idx) => (
+            <div
+              key={idx}
+              className={`p-4 rounded-md border ${
+                t.passed
+                  ? "bg-green-100 border-green-400 text-green-800"
+                  : "bg-red-100 border-red-400 text-red-800"
+              }`}
+            >
+              <div className="font-semibold">{t.name}</div>
+              <div className="text-sm font-mono mt-1">
+                <div>
+                  <b>Input:</b> {JSON.stringify(t.input)}
+                </div>
+                <div>
+                  <b>Expected:</b> {JSON.stringify(t.expected)}
+                </div>
+                <div>
+                  <b>Actual:</b> {JSON.stringify(t.actual)}
+                </div>
+                {!t.passed && <div className="font-bold">❌ Test Failed</div>}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
       {output && (
         <div className={style(styles, "outputBox")}>
           <div className={style(styles, "outputErrorTitles")}>Output:</div>

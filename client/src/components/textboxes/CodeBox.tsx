@@ -8,6 +8,7 @@ import {
   testStudentCode,
 } from "../../util/util";
 import { useParams } from "react-router-dom";
+import { TestResult } from "./InstructionCodeBox";
 
 interface Props {
   skelCode: string;
@@ -17,6 +18,7 @@ interface Props {
   setStudentCode: (code: string) => void;
   setOutput: (output: string) => void;
   setError: (error: string) => void;
+  setTestResults: (results: TestResult[]) => void;
 }
 function CodeBox({
   skelCode,
@@ -26,6 +28,7 @@ function CodeBox({
   setStudentCode,
   setOutput,
   setError,
+  setTestResults,
 }: Props) {
   const MIN_HEIGHT = 150;
   const MAX_HEIGHT = 400;
@@ -81,6 +84,13 @@ function CodeBox({
     }
   };
 
+  const testCode = async () => {
+    setOutput("");
+    setError("");
+    const data = await testStudentCode(exerciseId, studentCode);
+    setTestResults(data.testResults);
+  };
+
   return (
     <div className={style(styles, "ctn")}>
       <div className={style(styles, "btnCtn")}>
@@ -89,9 +99,7 @@ function CodeBox({
             executePythonCode(studentCode, setOutput, setError)
           }
         />
-        <TestBtn
-          handleBtn={async () => testStudentCode(exerciseId, studentCode)}
-        />
+        <TestBtn handleBtn={testCode} />
         <ResetBtn handleBtn={resetCode} />
       </div>
       <div

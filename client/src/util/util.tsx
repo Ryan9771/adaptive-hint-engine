@@ -118,10 +118,27 @@ const executePythonCode = async (
   }
 };
 
+const testStudentCode = async (exerciseId: string, studentCode: string) => {
+  try {
+    const response = await post(`/exercise/test/${exerciseId}`, {
+      studentCode: studentCode,
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+
+      console.log(data);
+    }
+  } catch (error) {
+    console.error("Error executing tests:", error);
+  }
+};
+
 export {
   post,
   getExerciseDetails,
   resetPreviousCode,
   getHint,
   executePythonCode,
+  testStudentCode,
 };

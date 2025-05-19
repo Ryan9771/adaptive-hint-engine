@@ -1,6 +1,7 @@
 import style from "../util/Styles";
 import { FaPlay } from "react-icons/fa";
 import { RiResetLeftFill } from "react-icons/ri";
+import { GrTest } from "react-icons/gr";
 
 interface Props {
   handleBtn: () => void;
@@ -24,6 +25,15 @@ export function ResetBtn({ handleBtn }: Props) {
   );
 }
 
+export function TestBtn({ handleBtn }: Props) {
+  return (
+    <div className={style(styles, "testBtnCtn")} onClick={() => handleBtn()}>
+      <GrTest className="h-3.5 text-white" />
+      <p className="text-sm text-white">Test</p>
+    </div>
+  );
+}
+
 const styles = {
   runBtnCtn: [
     "flex",
@@ -36,10 +46,21 @@ const styles = {
     "rounded-md",
     "cursor-pointer",
   ],
-  resetBtnCtn: [
+  testBtnCtn: [
     "flex",
     "items-center",
     "px-2",
+    "py-1",
+    "bg-green-600",
+    "justify-center",
+    "gap-2",
+    "rounded-md",
+    "cursor-pointer",
+  ],
+  resetBtnCtn: [
+    "flex",
+    "items-center",
+    // "px-2",
     "py-1",
     "justify-center",
     "gap-2",

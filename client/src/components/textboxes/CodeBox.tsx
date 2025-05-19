@@ -1,8 +1,12 @@
 import { useRef, useState } from "react";
 import { Editor, OnMount } from "@monaco-editor/react";
 import style from "../../util/Styles";
-import { RunBtn, ResetBtn } from "../Buttons";
-import { resetPreviousCode, executePythonCode } from "../../util/util";
+import { RunBtn, ResetBtn, TestBtn } from "../Buttons";
+import {
+  resetPreviousCode,
+  executePythonCode,
+  testStudentCode,
+} from "../../util/util";
 import { useParams } from "react-router-dom";
 
 interface Props {
@@ -84,6 +88,9 @@ function CodeBox({
           handleBtn={async () =>
             executePythonCode(studentCode, setOutput, setError)
           }
+        />
+        <TestBtn
+          handleBtn={async () => testStudentCode(exerciseId, studentCode)}
         />
         <ResetBtn handleBtn={resetCode} />
       </div>

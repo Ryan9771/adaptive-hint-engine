@@ -51,3 +51,35 @@ Think about how you can keep track of numbers you've already seen as you go thro
 hint_2 = """
 Think about how you can go through each number in the list and check if it's already in your `list_without_duplicates` before adding it. What Python structure allows you to repeat actions for each item in a list? How can you use a conditional statement to decide whether or not to add a number to your list? Try implementing these steps to build up your function.
 """
+
+test_ex_2 = """
+import unittest, json
+
+class TestLengths(unittest.TestCase):
+    def test_empty(self): self._run("emptyList", [], [])
+    def test_single(self): self._run("singletonList", [5], [5])
+    def test_pair(self): self._run("listOfNumbers", [4, 4], [4])
+    def test_multiple(self): self._run("listOfNumbers", [4, 5, 6, 6], [4, 5, 6])
+    
+    def _run(self, name, input_val, expected):
+        try:
+            actual = remove_duplicates(input_val)
+            print("@@TEST_RESULT@@", json.dumps({
+                "name": name,
+                "input": input_val,
+                "expected": expected,
+                "actual": actual,
+                "passed": actual == expected
+            }))
+        except Exception as e:
+            print("@@TEST_RESULT@@", json.dumps({
+                "name": name,
+                "input": input_val,
+                "expected": expected,
+                "actual": str(e),
+                "passed": False
+            }))
+
+if __name__ == "__main__":
+    unittest.main()
+"""

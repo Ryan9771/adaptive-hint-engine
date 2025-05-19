@@ -1,3 +1,5 @@
+import axios from "axios";
+
 async function post(url = "", data = {}, token = "") {
   const response = await fetch(`http://localhost:5001${url}`, {
     method: "POST",
@@ -77,4 +79,45 @@ async function getHint(exerciseId: string, studentCode: string) {
   return "Seems like unable to generate a hint. Please try again";
 }
 
-export { post, getExerciseDetails, resetPreviousCode, getHint };
+const executePythonCode = async (code: string) => {
+  try {
+    const response = await axios.post(
+      "https://emkc.org/api/v2/piston/execute",
+      {
+        language: "python",
+        version: "3.10.0",
+        files: [
+          {
+            name: "main.py",
+            content: code,
+          },
+        ],
+      }
+    );
+
+    const { run } = response.data;
+
+    console.log("\n== RUN DETAILS ==");
+    console.log(run.stdout);
+    console.log(run.stderr);
+
+    return {
+      output: run.stdout,
+      error: run.stderr,
+    };
+  } catch (error) {
+    console.error("Error executing code:", error);
+    return {
+      output: "",
+      error: "An error occurred while executing the code.",
+    };
+  }
+};
+
+export {
+  post,
+  getExerciseDetails,
+  resetPreviousCode,
+  getHint,
+  executePythonCode,
+};

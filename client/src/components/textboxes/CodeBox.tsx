@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { Editor, OnMount } from "@monaco-editor/react";
 import style from "../../util/Styles";
 import { RunBtn, ResetBtn } from "../Buttons";
-import { resetPreviousCode } from "../../util/util";
+import { resetPreviousCode, executePythonCode } from "../../util/util";
 import { useParams } from "react-router-dom";
 
 interface Props {
@@ -66,10 +66,15 @@ function CodeBox({ skelCode, previousCode, language, setStudentCode }: Props) {
     }
   };
 
+  const dummyCode = `def is_palindrome():
+	print("hi there")
+
+is_palindrome()`;
+
   return (
     <div className={style(styles, "ctn")}>
       <div className={style(styles, "btnCtn")}>
-        <RunBtn handleBtn={resetCode} />
+        <RunBtn handleBtn={async () => executePythonCode(dummyCode)} />
         <ResetBtn handleBtn={resetCode} />
       </div>
       <div

@@ -9,7 +9,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getExerciseDetails } from "../util/util";
 
-/* Would eventually need to pass in exercise data */
 function Exercise() {
   const { lang, exercise } = useParams();
   const [exerciseTitle, setExerciseTitle] = useState("");

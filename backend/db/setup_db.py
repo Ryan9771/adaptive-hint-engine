@@ -330,6 +330,21 @@ def get_previous_hint(exercise_key: str):
         print("\n=== Exercise doesn't exist ===\n")
 
 
+def reset_exercise(exercise_key: str):
+    exercise = _get_exercise(exercise_key=exercise_key)
+
+    if exercise:
+        exercise.student_profile["concepts"] = MutableDict()
+        exercise.previous_hint = ""
+        exercise.previous_code = exercise.skel_code
+        exercise.no_progress_count = 0
+        exercise.required_concepts = MutableList([])
+    else:
+        print("\n=== Exercise doesn't exist ===\n")
+
+    db_session.commit()
+
+
 if __name__ == "__main__":
     # Delete the database
     Base.metadata.drop_all(bind=engine)

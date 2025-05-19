@@ -7,11 +7,22 @@ import { useParams } from "react-router-dom";
 
 interface Props {
   skelCode: string;
+  studentCode: string;
   previousCode: string;
   language: string;
   setStudentCode: (code: string) => void;
+  setOutput: (output: string) => void;
+  setError: (error: string) => void;
 }
-function CodeBox({ skelCode, previousCode, language, setStudentCode }: Props) {
+function CodeBox({
+  skelCode,
+  previousCode,
+  language,
+  studentCode,
+  setStudentCode,
+  setOutput,
+  setError,
+}: Props) {
   const MIN_HEIGHT = 150;
   const MAX_HEIGHT = 400;
   const LINE_HEIGHT = 20;
@@ -66,15 +77,14 @@ function CodeBox({ skelCode, previousCode, language, setStudentCode }: Props) {
     }
   };
 
-  const dummyCode = `def is_palindrome():
-	print("hi there")
-
-is_palindrome()`;
-
   return (
     <div className={style(styles, "ctn")}>
       <div className={style(styles, "btnCtn")}>
-        <RunBtn handleBtn={async () => executePythonCode(dummyCode)} />
+        <RunBtn
+          handleBtn={async () =>
+            executePythonCode(studentCode, setOutput, setError)
+          }
+        />
         <ResetBtn handleBtn={resetCode} />
       </div>
       <div

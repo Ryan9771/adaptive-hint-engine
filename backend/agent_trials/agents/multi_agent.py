@@ -439,13 +439,7 @@ class HintEngine:
         self.graph = builder.compile()
 
     def run(self, state: GraphState):
-        config = {"configurable": {"thread_id": "1"}}
-
-        # == Add Exercise ==
-        exercise_key = state['attempt_context'].exercise_key
-        exercise_text = state['attempt_context'].exercise_text
-        skel_code = state['attempt_context'].skel_code
-        language = state['attempt_context'].language
+        # config = {"configurable": {"thread_id": "1"}}
 
         return self.graph.invoke(state)
 

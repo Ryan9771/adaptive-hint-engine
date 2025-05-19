@@ -57,6 +57,7 @@ function Exercise() {
             title="Instructions"
             text={exerciseText}
             skelCode={skelCode}
+            studentCode={studentCode}
             previousCode={previousCode}
             language={language}
             setStudentCode={setStudentCode}
@@ -83,6 +84,7 @@ const styles = {
     "border",
     "border-border",
     "gap-5",
+    "overflow-y-scroll",
   ],
   exerciseBody: [
     "w-full",
@@ -90,6 +92,7 @@ const styles = {
     "flex-col",
     "gap-6",
     "max-w-screen-lg",
+    "pb-12",
     "lg:gap-8",
   ],
   title: ["text-2xl", "font-bold", "leading-7"],

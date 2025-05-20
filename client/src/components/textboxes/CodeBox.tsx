@@ -110,13 +110,14 @@ function CodeBox({
     setError("");
     const data = await testStudentCode(exerciseId, studentCode);
     setTestResults(data.testResults);
-
-    if (data.stderr) {
-      setError(data.stderr);
-    }
     setHintTitle(
       "Tried running tests? Click here for a hint on why specific tests may be failing"
     );
+
+    if (data.stderr) {
+      setError(data.stderr);
+      setHintTitle("Ran into an error? Click for a hint");
+    }
   };
 
   return (

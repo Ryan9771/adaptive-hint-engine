@@ -82,6 +82,9 @@ function CodeBox({
       setEditorHeight(MIN_HEIGHT);
       resetPreviousCode(exerciseId, defaultCode);
     }
+    setOutput("");
+    setError("");
+    setTestResults([]);
   };
 
   const testCode = async () => {
@@ -95,9 +98,10 @@ function CodeBox({
     <div className={style(styles, "ctn")}>
       <div className={style(styles, "btnCtn")}>
         <RunBtn
-          handleBtn={async () =>
-            executePythonCode(studentCode, setOutput, setError)
-          }
+          handleBtn={async () => {
+            executePythonCode(studentCode, setOutput, setError);
+            setTestResults([]);
+          }}
         />
         <TestBtn handleBtn={testCode} />
         <ResetBtn handleBtn={resetCode} />

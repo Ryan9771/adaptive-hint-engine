@@ -65,7 +65,6 @@ class TestLengths(unittest.TestCase):
         try:
             actual = remove_duplicates(input_val)
             print("@@TEST_RESULT@@", json.dumps({
-                "name": name,
                 "input": input_val,
                 "expected": expected,
                 "actual": actual,
@@ -73,7 +72,6 @@ class TestLengths(unittest.TestCase):
             }))
         except Exception as e:
             print("@@TEST_RESULT@@", json.dumps({
-                "name": name,
                 "input": input_val,
                 "expected": expected,
                 "actual": str(e),

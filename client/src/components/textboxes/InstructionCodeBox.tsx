@@ -3,7 +3,6 @@ import CodeBox from "./CodeBox";
 import { useState } from "react";
 
 export interface TestResult {
-  name: string;
   input: any;
   expected: any;
   actual: any;
@@ -58,7 +57,6 @@ function InstructionCodeBox({
                   : "bg-red-100 border-red-400 text-red-800"
               }`}
             >
-              <div className="font-semibold">{t.name}</div>
               <div className="text-sm font-mono mt-1">
                 <div>
                   <b>Input:</b> {JSON.stringify(t.input)}

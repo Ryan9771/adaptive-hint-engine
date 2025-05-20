@@ -5,11 +5,12 @@ import Markdown from "react-markdown";
 import { useState } from "react";
 
 interface Props {
+  hintTitle: string;
   exerciseId: string;
   studentCode: string;
 }
 
-function HintBox({ exerciseId, studentCode }: Props) {
+function HintBox({ hintTitle, exerciseId, studentCode }: Props) {
   const [hintText, setHintText] = useState(
     "Click here to reveal a helpful hint for solving this exercise"
   );
@@ -36,7 +37,7 @@ function HintBox({ exerciseId, studentCode }: Props) {
         ) : (
           <FaRegLightbulb className={style(styles, "icon")} />
         )}
-        <div className={style(styles, "title")}>Need a hint? Click here</div>
+        <div className={style(styles, "title")}>{hintTitle}.</div>
       </div>
       <div className={style(styles, "txt")}>
         <Markdown>{isLoading ? "Generating a hint..." : hintText}</Markdown>

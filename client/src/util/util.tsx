@@ -79,11 +79,7 @@ async function getHint(exerciseId: string, studentCode: string) {
   return "Seems like unable to generate a hint. Please try again";
 }
 
-const executePythonCode = async (
-  code: string,
-  setOutput: (output: string) => void,
-  setError: (error: string) => void
-) => {
+const executePythonCode = async (code: string) => {
   try {
     const response = await axios.post(
       "https://emkc.org/api/v2/piston/execute",
@@ -111,10 +107,17 @@ const executePythonCode = async (
       error = run.stderr;
     }
 
-    setOutput(output);
-    setError(error);
+    return {
+      output: output,
+      error: error,
+    };
   } catch (error) {
     console.error("Error executing code:", error);
+
+    return {
+      output: "I was not able to execute this code, please try again.",
+      error: "",
+    };
   }
 };
 

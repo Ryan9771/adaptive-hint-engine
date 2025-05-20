@@ -1,6 +1,7 @@
 import style from "../../util/Styles";
 import CodeBox from "./CodeBox";
 import { useState } from "react";
+import Markdown from "react-markdown";
 
 export interface TestResult {
   input: any;
@@ -17,6 +18,7 @@ interface Props {
   studentCode: string;
   language: string;
   setStudentCode: (code: string) => void;
+  setHintTitle: (title: string) => void;
 }
 function InstructionCodeBox({
   title,
@@ -26,6 +28,7 @@ function InstructionCodeBox({
   previousCode,
   language,
   setStudentCode,
+  setHintTitle,
 }: Props) {
   const [output, setOutput] = useState("");
   const [error, setError] = useState("");
@@ -35,6 +38,12 @@ function InstructionCodeBox({
     <div className={style(styles, "ctn")}>
       <div className={style(styles, "title")}>{title}</div>
       <div className={style(styles, "txt")}>{text}</div>
+      <div className={style(styles, "txt")}>
+        <Markdown>
+          Click the `Run` button to run your code or the `Test` button to test
+          your code with our test cases!
+        </Markdown>
+      </div>
       <CodeBox
         previousCode={previousCode}
         skelCode={skelCode}
@@ -44,6 +53,7 @@ function InstructionCodeBox({
         setOutput={setOutput}
         setError={setError}
         setTestResults={setTestResults}
+        setHintTitle={setHintTitle}
       />
 
       {testResults.length > 0 && (

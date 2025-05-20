@@ -17,6 +17,7 @@ function Exercise() {
   const [skelCode, setSkelCode] = useState("");
   const [previousCode, setPreviousCode] = useState("");
   const [studentCode, setStudentCode] = useState(previousCode);
+  const [hintTitle, setHintTitle] = useState(defaultHintTitle);
 
   const exerciseId = `${lang}_${exercise}`;
 
@@ -61,14 +62,22 @@ function Exercise() {
             previousCode={previousCode}
             language={language}
             setStudentCode={setStudentCode}
+            setHintTitle={setHintTitle}
           />
 
-          <HintBox exerciseId={exerciseId} studentCode={studentCode} />
+          <HintBox
+            hintTitle={hintTitle}
+            exerciseId={exerciseId}
+            studentCode={studentCode}
+          />
         </div>
       </div>
     </div>
   );
 }
+
+export const defaultHintTitle =
+  "This hint adapts — click anytime to get help based on what you've done so far.";
 
 const language = "python";
 

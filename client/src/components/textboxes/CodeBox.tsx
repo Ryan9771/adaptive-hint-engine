@@ -9,6 +9,7 @@ import {
 } from "../../util/util";
 import { useParams } from "react-router-dom";
 import { TestResult } from "./InstructionCodeBox";
+import { defaultHintTitle } from "../../pages/Exercise";
 
 interface Props {
   skelCode: string;
@@ -19,6 +20,7 @@ interface Props {
   setOutput: (output: string) => void;
   setError: (error: string) => void;
   setTestResults: (results: TestResult[]) => void;
+  setHintTitle: (title: string) => void;
 }
 function CodeBox({
   skelCode,
@@ -29,6 +31,7 @@ function CodeBox({
   setOutput,
   setError,
   setTestResults,
+  setHintTitle,
 }: Props) {
   const MIN_HEIGHT = 150;
   const MAX_HEIGHT = 400;
@@ -85,6 +88,21 @@ function CodeBox({
     setOutput("");
     setError("");
     setTestResults([]);
+    setHintTitle(defaultHintTitle);
+  };
+
+  const runCode = async () => {
+    const runOutput = await executePythonCode(studentCode);
+    if (runOutput.output) {
+      setOutput(runOutput.output);
+    }
+    if (runOutput.error) {
+      setError(runOutput.error);
+      setHintTitle("Ran into an error? Click for a hint");
+    } else {
+      setHintTitle(defaultHintTitle);
+    }
+    setTestResults([]);
   };
 
   const testCode = async () => {
@@ -92,17 +110,19 @@ function CodeBox({
     setError("");
     const data = await testStudentCode(exerciseId, studentCode);
     setTestResults(data.testResults);
+
+    if (data.stderr) {
+      setError(data.stderr);
+    }
+    setHintTitle(
+      "Tried running tests? Click here for a hint on why specific tests may be failing"
+    );
   };
 
   return (
     <div className={style(styles, "ctn")}>
       <div className={style(styles, "btnCtn")}>
-        <RunBtn
-          handleBtn={async () => {
-            executePythonCode(studentCode, setOutput, setError);
-            setTestResults([]);
-          }}
-        />
+        <RunBtn handleBtn={runCode} />
         <TestBtn handleBtn={testCode} />
         <ResetBtn handleBtn={resetCode} />
       </div>

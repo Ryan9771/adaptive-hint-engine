@@ -1,4 +1,3 @@
-from example_exercises.kotlin.exercise_1 import exercise_1
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage
 from util.types import AttemptContext

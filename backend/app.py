@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.dialects.postgresql import JSON
 import os
-from db.setup_db import get_exercise_details, modify_exercise
+from db.setup_db import get_exercise_details, modify_exercise, Base, engine
 from flask_cors import CORS
 from agent_trials.agents.multi_agent import HintEngine
 from util.types import AttemptContext
@@ -163,4 +163,6 @@ def get_test(exercise_id):
 
 
 if __name__ == "__main__":
+    with app.app_context():
+        Base.metadata.create_all(bind=engine)
     app.run(host="0.0.0.0", port=5001, debug=True)

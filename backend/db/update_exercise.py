@@ -18,29 +18,30 @@ if __name__ == "__main__":
     # Create the exercises
 
     # Exercise 2 == Remove Duplicates
-    exercise_key = "python_exercise1"
+    exercise_key = "python_exercise2"
 
     exercise_title = "Palindromes"
 
     exercise_background = """A palindrome is something that reads the same 
-    forward and backward. You may have seen palindromes in words like "level" or 
-    "racecar", but numbers and lists can be palindromes too. For example, the 
-    list [1, 2, 3, 2, 1] is a palindrome because it is the same when read from 
+    forward and backward. You may have seen palindromes in words like **level** or 
+    **racecar**, but numbers and lists can be palindromes too. For example, the 
+    list `[1, 2, 3, 2, 1]` is a palindrome because it is the same when read from 
     left to right and from right to left.
     """
 
     exercise_text = """Write a program that checks if a list of numbers is a 
-    palindrome. The program should return true if the list is the same forwards 
-    and backwards, and false otherwise. You should not use any built-in 
+    palindrome. The program should return `True` if the list is the *same* forwards 
+    and backwards, and `False` otherwise. You should **not** use any built-in 
     functions that reverse the list. Use loops and if statements to compare the 
     elements from both ends of the list. 
     """
 
-    skel_code = """def fizzbuzz(n: int):
+    skel_code = """def palindrome_list(numbers):
     pass
     """
 
-    modify_exercise(exercise_key=exercise_key, skel_code=skel_code)
+    modify_exercise(exercise_key=exercise_key,
+                    exercise_text=exercise_text)
 
     # delete_exercise(exercise_key)
 

@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, String, Text, Integer
+from sqlalchemy import create_engine, Column, String, Text, Integer, inspect
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.orm.attributes import flag_modified
 from sqlalchemy.dialects.postgresql import JSON
@@ -6,7 +6,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.mutable import MutableDict, MutableList
 from typing import List
 
-engine = create_engine("sqlite:///db/store.db", echo=False)
+engine = create_engine("sqlite:///store.db", echo=False)
 db_session = scoped_session(sessionmaker(
     autocommit=False, autoflush=False, bind=engine))
 Base = declarative_base()
@@ -347,4 +347,6 @@ def reset_exercise(exercise_key: str):
 
 if __name__ == "__main__":
     # Delete the database
-    Base.metadata.drop_all(bind=engine)
+    # Base.metadata.drop_all(bind=engine)
+    # print(list_all_exercises())
+    pass

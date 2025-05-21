@@ -8,7 +8,7 @@ import {
   testStudentCode,
 } from "../../util/util";
 import { useParams } from "react-router-dom";
-import { TestResult } from "./InstructionCodeBox";
+import { TestResult } from "../../util/Types";
 import { defaultHintTitle } from "../../pages/Exercise";
 
 interface Props {

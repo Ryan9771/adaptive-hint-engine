@@ -1,4 +1,5 @@
 import axios from "axios";
+import { TestResult } from "./Types";
 
 async function post(url = "", data = {}, token = "") {
   const response = await fetch(`http://localhost:5001${url}`, {
@@ -63,9 +64,16 @@ async function resetPreviousCode(exerciseId: string, skelCode: string) {
   }
 }
 
-async function getHint(exerciseId: string, studentCode: string) {
+async function getHint(
+  exerciseId: string,
+  studentCode: string,
+  error: string,
+  testResults: TestResult[]
+) {
   const response = await post(`/exercise/hint/${exerciseId}`, {
     studentCode: studentCode,
+    error: error,
+    testResults: testResults,
   });
 
   if (response.ok) {

@@ -2,13 +2,7 @@ import style from "../../util/Styles";
 import CodeBox from "./CodeBox";
 import { useState } from "react";
 import Markdown from "react-markdown";
-
-export interface TestResult {
-  input: any;
-  expected: any;
-  actual: any;
-  passed: boolean;
-}
+import { TestResult } from "../../util/Types";
 
 interface Props {
   title: string;
@@ -19,6 +13,12 @@ interface Props {
   language: string;
   setStudentCode: (code: string) => void;
   setHintTitle: (title: string) => void;
+  output: string;
+  setOutput: (output: string) => void;
+  error: string;
+  setError: (error: string) => void;
+  testResults: TestResult[];
+  setTestResults: (results: TestResult[]) => void;
 }
 function InstructionCodeBox({
   title,
@@ -29,11 +29,13 @@ function InstructionCodeBox({
   language,
   setStudentCode,
   setHintTitle,
+  output,
+  setOutput,
+  error,
+  setError,
+  testResults,
+  setTestResults,
 }: Props) {
-  const [output, setOutput] = useState("");
-  const [error, setError] = useState("");
-  const [testResults, setTestResults] = useState<TestResult[]>([]);
-
   return (
     <div className={style(styles, "ctn")}>
       <div className={style(styles, "title")}>{title}</div>

@@ -10,6 +10,8 @@ class AttemptContext(BaseModel):
     skel_code: str
     language: str
     student_code: str
+    error: str
+    test_results: str
 
 
 class FeatureDetail(BaseModel):

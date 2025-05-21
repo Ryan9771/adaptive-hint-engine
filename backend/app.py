@@ -80,6 +80,16 @@ def get_exercise_hint(exercise_id):
     Request Type:
     {
         "studentCode": string
+        "error": string
+        "testResults": [
+            {
+                "input": string
+                "expected": string
+                "actual": string
+                "passed": string
+            },
+            ...
+        ]
     }
     """
     try:
@@ -93,12 +103,21 @@ def get_exercise_hint(exercise_id):
             modify_exercise(exercise_key=exercise_id,
                             previous_code=data["studentCode"])
 
+            test_results = "\n".join(
+                [
+                    f"Input: {test['input']}, Expected: {test['expected']}, Actual: {test['actual']}, Passed: {test['passed']}"
+                    for test in data["testResults"]
+                ]
+            )
+
             initial_graph_state = AttemptContext(
                 exercise_key=exercise_key,
                 exercise_text=exercise["exercise_text"],
                 skel_code=exercise["skel_code"],
                 language="python",
-                student_code=data["studentCode"]
+                student_code=data["studentCode"],
+                error=data["error"],
+                test_results=test_results
             )
 
             # Get hint
@@ -131,6 +150,12 @@ def get_test(exercise_id):
         "files": [{"name": "main.py", "content": full_code}],
     }
 
+    # TEST GOOGLE SHEETS PAYLOAD
+    # sheets_payload = {
+    #     "studentId": "ryan",
+    #     "exerciseId": "patel"
+    # }
+
     try:
         piston_response = requests.post(
             "https://emkc.org/api/v2/piston/execute", json=piston_payload)
@@ -158,6 +183,11 @@ def get_test(exercise_id):
                 or "Exception" in stderr
             )
         )
+
+        # # TEST GOOGLE SHEETS
+        # response = requests.post(
+        #     "https://script.google.com/macros/s/AKfycbwsJAKjKJpydZzq271dRU3vTgYXQzDh7WypQNvs1M7OXXmWpbFbDdpPXsRRuQgbRsX4TA/exec", json=sheets_payload
+        # )
 
         return jsonify({
             "stderr": stderr if is_real_error else "",

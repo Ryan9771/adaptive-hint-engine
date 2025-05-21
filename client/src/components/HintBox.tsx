@@ -3,14 +3,23 @@ import { FaRegLightbulb, FaSpinner } from "react-icons/fa";
 import { getHint } from "../util/util";
 import Markdown from "react-markdown";
 import { useState } from "react";
+import { TestResult } from "../util/Types";
 
 interface Props {
   hintTitle: string;
   exerciseId: string;
   studentCode: string;
+  error: string;
+  testResults: TestResult[];
 }
 
-function HintBox({ hintTitle, exerciseId, studentCode }: Props) {
+function HintBox({
+  hintTitle,
+  exerciseId,
+  studentCode,
+  error,
+  testResults,
+}: Props) {
   const [hintText, setHintText] = useState(
     "Click here to reveal a helpful hint for solving this exercise"
   );
@@ -23,7 +32,7 @@ function HintBox({ hintTitle, exerciseId, studentCode }: Props) {
     setIsLoading(true);
 
     try {
-      const hint = await getHint(exerciseId, studentCode);
+      const hint = await getHint(exerciseId, studentCode, error, testResults);
       setHintText(hint);
       setShowRating(true);
     } catch (e) {
@@ -37,6 +46,7 @@ function HintBox({ hintTitle, exerciseId, studentCode }: Props) {
     setSelectedRating(rating);
     setShowRating(false);
     // TODO: Send to backend
+    console.log(selectedRating);
   };
 
   return (
@@ -53,18 +63,18 @@ function HintBox({ hintTitle, exerciseId, studentCode }: Props) {
         <Markdown>{isLoading ? "Generating a hint..." : hintText}</Markdown>
       </div>
       {showRating && (
-        <div className="flex gap-2 pt-2 items-center">
+        <div className={style(styles, "ratingCtn")}>
           <p className={style(styles, "txt")}>
-            How effective was this hint in adapting to your skills?
+            How helpful was this hint based on your progress so far?
           </p>
           {[1, 2, 3, 4, 5].map((num) => (
             <button
               key={num}
               onClick={(e) => {
-                e.stopPropagation(); // Prevent triggering generateHint
+                e.stopPropagation();
                 handleRatingClick(num);
               }}
-              className="w-6 h-6 rounded-full border border-hint-title text-hint-title hover:bg-hint-title hover:text-white transition-all duration-150 text-sm"
+              className={style(styles, "rating")}
             >
               {num}
             </button>
@@ -93,6 +103,20 @@ const styles = {
   icon: ["h-4", "fill-hint-title"],
   spinner: ["animate-spin", "h-4", "w-4", "text-hint-title"],
   txt: ["text-hint-text", "text-sm"],
+  rating: [
+    "w-6",
+    "h-6",
+    "rounded-full",
+    "border",
+    "border-hint-title",
+    "text-hint-title",
+    "hover:bg-hint-title",
+    "hover:text-white",
+    "transition-all",
+    "duration-150",
+    "text-sm",
+  ],
+  ratingCtn: ["flex", "gap-2", "pt-2", "items-center"],
 };
 
 export default HintBox;

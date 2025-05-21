@@ -189,7 +189,10 @@ def student_profile_agent(state: GraphState):
 
         concept_emas[concept] = round(ema, 2)
 
-    average_ema = sum(concept_emas.values()) / len(concept_emas)
+    if concept_emas:
+        average_ema = sum(concept_emas.values()) / len(concept_emas)
+    else:
+        average_ema = 0.0
 
     # Update student profile with new scores
     update_student_profile(

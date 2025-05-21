@@ -16,6 +16,8 @@ function HintBox({ hintTitle, exerciseId, studentCode }: Props) {
   );
 
   const [isLoading, setIsLoading] = useState(false);
+  const [showRating, setShowRating] = useState(false);
+  const [selectedRating, setSelectedRating] = useState<number | null>(null);
 
   const generateHint = async () => {
     setIsLoading(true);
@@ -23,10 +25,18 @@ function HintBox({ hintTitle, exerciseId, studentCode }: Props) {
     try {
       const hint = await getHint(exerciseId, studentCode);
       setHintText(hint);
+      setShowRating(true);
     } catch (e) {
       setHintText("I wasn't able to generate a hint. Please try again!");
+      setShowRating(false);
     }
     setIsLoading(false);
+  };
+
+  const handleRatingClick = (rating: number) => {
+    setSelectedRating(rating);
+    setShowRating(false);
+    // TODO: Send to backend
   };
 
   return (
@@ -42,6 +52,25 @@ function HintBox({ hintTitle, exerciseId, studentCode }: Props) {
       <div className={style(styles, "txt")}>
         <Markdown>{isLoading ? "Generating a hint..." : hintText}</Markdown>
       </div>
+      {showRating && (
+        <div className="flex gap-2 pt-2 items-center">
+          <p className={style(styles, "txt")}>
+            How effective was this hint in adapting to your skills?
+          </p>
+          {[1, 2, 3, 4, 5].map((num) => (
+            <button
+              key={num}
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent triggering generateHint
+                handleRatingClick(num);
+              }}
+              className="w-6 h-6 rounded-full border border-hint-title text-hint-title hover:bg-hint-title hover:text-white transition-all duration-150 text-sm"
+            >
+              {num}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

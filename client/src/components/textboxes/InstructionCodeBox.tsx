@@ -37,7 +37,9 @@ function InstructionCodeBox({
   return (
     <div className={style(styles, "ctn")}>
       <div className={style(styles, "title")}>{title}</div>
-      <div className={style(styles, "txt")}>{text}</div>
+      <div className={style(styles, "txt")}>
+        <Markdown>{text}</Markdown>
+      </div>
       <div className={style(styles, "txt")}>
         <Markdown>
           Click the `Run` button to run your code or the `Test` button to test
@@ -56,18 +58,32 @@ function InstructionCodeBox({
         setHintTitle={setHintTitle}
       />
 
+      {output && (
+        <div className={style(styles, "outputBox")}>
+          <div className={style(styles, "outputErrorTitles")}>Output:</div>
+          <pre>{output}</pre>
+        </div>
+      )}
+
+      {error && (
+        <div className={style(styles, "errorBox")}>
+          <div className={style(styles, "outputErrorTitles")}>Error:</div>
+          <pre>{error}</pre>
+        </div>
+      )}
+
       {testResults.length > 0 && (
-        <div className="mt-4 space-y-3">
+        <div className={style(styles, "testResultWrapper")}>
           {testResults.map((t, idx) => (
             <div
               key={idx}
-              className={`p-4 rounded-md border ${
+              className={`${style(styles, "testResultBox")} ${
                 t.passed
-                  ? "bg-green-100 border-green-400 text-green-800"
-                  : "bg-red-100 border-red-400 text-red-800"
+                  ? style(styles, "testResultPassed")
+                  : style(styles, "testResultFailed")
               }`}
             >
-              <div className="text-sm font-mono mt-1">
+              <div className={style(styles, "testResultText")}>
                 <div>
                   <b>Input:</b> {JSON.stringify(t.input)}
                 </div>
@@ -81,20 +97,6 @@ function InstructionCodeBox({
               </div>
             </div>
           ))}
-        </div>
-      )}
-
-      {output && (
-        <div className={style(styles, "outputBox")}>
-          <div className={style(styles, "outputErrorTitles")}>Output:</div>
-          <pre>{output}</pre>
-        </div>
-      )}
-
-      {error && (
-        <div className={style(styles, "errorBox")}>
-          <div className={style(styles, "outputErrorTitles")}>Error:</div>
-          <pre>{error}</pre>
         </div>
       )}
     </div>
@@ -135,6 +137,11 @@ const styles = {
   outputErrorTitles: ["font-bold", "mb-2"],
   txt: ["text-text-default", "leading-5", "md:leading-6"],
   title: ["font-semibold", "lg:text-lg"],
+  testResultWrapper: ["mt-4", "space-y-3"],
+  testResultBox: ["p-4", "rounded-md", "border"],
+  testResultText: ["text-sm", "font-mono", "mt-1"],
+  testResultPassed: ["bg-green-100", "border-green-400", "text-green-800"],
+  testResultFailed: ["bg-red-100", "border-red-400", "text-red-800"],
 };
 
 export default InstructionCodeBox;

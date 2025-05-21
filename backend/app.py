@@ -149,8 +149,18 @@ def get_test(exercise_id):
                 except:
                     pass
 
+        is_real_error = (
+            stderr
+            and not stderr.strip().startswith("...")
+            and (
+                "Traceback" in stderr
+                or "SyntaxError" in stderr
+                or "Exception" in stderr
+            )
+        )
+
         return jsonify({
-            "stderr": stderr,
+            "stderr": stderr if is_real_error else "",
             "testResults": test_results
         }), 200
     except Exception as e:

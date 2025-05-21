@@ -1,4 +1,5 @@
 import style from "../../util/Styles";
+import Markdown from "react-markdown";
 
 interface Props {
   text: string;
@@ -6,7 +7,9 @@ interface Props {
 function BasicTextBox({ text }: Props) {
   return (
     <div className={style(styles, "ctn")}>
-      <div className={style(styles, "txt")}>{text}</div>
+      <div className={style(styles, "txt")}>
+        <Markdown>{text}</Markdown>
+      </div>
     </div>
   );
 }

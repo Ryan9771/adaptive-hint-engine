@@ -56,14 +56,14 @@ test_ex_2 = """
 import unittest, json
 
 class TestLengths(unittest.TestCase):
-    def test_empty(self): self._run("emptyList", [], [])
-    def test_single(self): self._run("singletonList", [5], [5])
-    def test_pair(self): self._run("listOfNumbers", [4, 4], [4])
-    def test_multiple(self): self._run("listOfNumbers", [4, 5, 6, 6], [4, 5, 6])
+    def test_empty(self): self._run("emptyList", [], True)
+    def test_single(self): self._run("singletonList", [5], True)
+    def test_pair(self): self._run("listOfNumbers", [4, 3, 4], True)
+    def test_multiple(self): self._run("listOfNumbers", [4, 5, 6, 6], False)
     
     def _run(self, name, input_val, expected):
         try:
-            actual = remove_duplicates(input_val)
+            actual = palindrome_list(input_val)
             print("@@TEST_RESULT@@", json.dumps({
                 "input": input_val,
                 "expected": expected,

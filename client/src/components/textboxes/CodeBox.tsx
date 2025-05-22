@@ -40,7 +40,7 @@ function CodeBox({
   const editorRef = useRef<any>(null);
   const [editorHeight, setEditorHeight] = useState(MIN_HEIGHT);
 
-  const { lang, exercise } = useParams();
+  const { studentName, lang, exercise } = useParams();
   const exerciseId = `${lang}_${exercise}`;
 
   // Define a custom theme
@@ -83,7 +83,7 @@ function CodeBox({
     if (editorRef.current) {
       editorRef.current.setValue(defaultCode);
       setEditorHeight(MIN_HEIGHT);
-      resetPreviousCode(exerciseId, defaultCode);
+      resetPreviousCode(studentName!, exerciseId, defaultCode);
     }
     setOutput("");
     setError("");
@@ -108,7 +108,7 @@ function CodeBox({
   const testCode = async () => {
     setOutput("");
     setError("");
-    const data = await testStudentCode(exerciseId, studentCode);
+    const data = await testStudentCode(studentName!, exerciseId, studentCode);
     setTestResults(data.testResults);
     setHintTitle(
       "Tried running tests? Click here for a hint on why specific tests may be failing"

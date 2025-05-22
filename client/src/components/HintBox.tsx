@@ -7,6 +7,7 @@ import { TestResult } from "../util/Types";
 
 interface Props {
   hintTitle: string;
+  studentName: string;
   exerciseId: string;
   studentCode: string;
   error: string;
@@ -17,6 +18,7 @@ interface Props {
 }
 
 function HintBox({
+  studentName,
   hintTitle,
   exerciseId,
   studentCode,
@@ -41,7 +43,13 @@ function HintBox({
       setTestResults([]);
       setError("");
       setOutput("");
-      const hint = await getHint(exerciseId, studentCode, error, testResults);
+      const hint = await getHint(
+        studentName,
+        exerciseId,
+        studentCode,
+        error,
+        testResults
+      );
       setHintText(hint);
       setShowRating(true);
     } catch (e) {

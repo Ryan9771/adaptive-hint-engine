@@ -14,8 +14,8 @@ async function post(url = "", data = {}, token = "") {
   return response;
 }
 
-async function getExerciseDetails(exerciseId: string) {
-  const response = await post(`/exercise/${exerciseId}`);
+async function getExerciseDetails(studentName: string, exerciseId: string) {
+  const response = await post(`/exercise/${studentName}/${exerciseId}`);
 
   const exerciseDetails = {
     exerciseExists: false,
@@ -52,8 +52,12 @@ async function getExerciseDetails(exerciseId: string) {
   return exerciseDetails;
 }
 
-async function resetPreviousCode(exerciseId: string, skelCode: string) {
-  const response = await post(`/exercise/reset/${exerciseId}`, {
+async function resetPreviousCode(
+  studentName: string,
+  exerciseId: string,
+  skelCode: string
+) {
+  const response = await post(`/exercise/reset/${studentName}/${exerciseId}`, {
     skel_code: skelCode,
   });
 
@@ -65,12 +69,13 @@ async function resetPreviousCode(exerciseId: string, skelCode: string) {
 }
 
 async function getHint(
+  studentName: string,
   exerciseId: string,
   studentCode: string,
   error: string,
   testResults: TestResult[]
 ) {
-  const response = await post(`/exercise/hint/${exerciseId}`, {
+  const response = await post(`/exercise/hint/${studentName}/${exerciseId}`, {
     studentCode: studentCode,
     error: error,
     testResults: testResults,
@@ -129,9 +134,13 @@ const executePythonCode = async (code: string) => {
   }
 };
 
-const testStudentCode = async (exerciseId: string, studentCode: string) => {
+const testStudentCode = async (
+  studentName: string,
+  exerciseId: string,
+  studentCode: string
+) => {
   try {
-    const response = await post(`/exercise/test/${exerciseId}`, {
+    const response = await post(`/exercise/test/${studentName}/${exerciseId}`, {
       studentCode: studentCode,
     });
 

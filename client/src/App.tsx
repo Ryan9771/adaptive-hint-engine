@@ -6,7 +6,10 @@ function App() {
     <HashRouter>
       <Routes>
         <Route path="/" element={<p>Home page</p>} />
-        <Route path="/exercise/:lang/:exercise" element={<Exercise />} />
+        <Route
+          path="/exercise/:studentName/:lang/:exercise"
+          element={<Exercise />}
+        />
         <Route path="*" element={<p>404</p>} />
       </Routes>
     </HashRouter>

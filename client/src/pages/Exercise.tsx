@@ -11,7 +11,7 @@ import { getExerciseDetails } from "../util/util";
 import { TestResult } from "../util/Types";
 
 function Exercise() {
-  const { lang, exercise } = useParams();
+  const { studentName, lang, exercise } = useParams();
   const [exerciseTitle, setExerciseTitle] = useState("");
   const [exerciseDescription, setExerciseDescription] = useState("");
   const [exerciseText, setExerciseText] = useState("");
@@ -28,8 +28,14 @@ function Exercise() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (!studentName || !lang || !exercise) {
+      console.error("Missing required parameters");
+      navigate("/404");
+      return;
+    }
+
     const fetchExerciseDetails = async () => {
-      const exerciseDetails = await getExerciseDetails(exerciseId);
+      const exerciseDetails = await getExerciseDetails(studentName, exerciseId);
       if (exerciseDetails.exerciseExists) {
         setExerciseTitle(exerciseDetails.exerciseTitle);
         setExerciseDescription(exerciseDetails.exerciseDescription);
@@ -77,6 +83,7 @@ function Exercise() {
 
           <HintBox
             hintTitle={hintTitle}
+            studentName={studentName!}
             exerciseId={exerciseId}
             studentCode={studentCode}
             error={error}

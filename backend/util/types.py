@@ -5,6 +5,7 @@ from typing_extensions import TypedDict
 
 class AttemptContext(BaseModel):
     """Context from an exercise"""
+    student_name: str
     exercise_key: str
     exercise_text: str
     skel_code: str

@@ -100,6 +100,7 @@ def exercise_requirement_agent(state: GraphState):
     )
 
     initialise_student_profile(
+        student_name=state['attempt_context'].student_name,
         exercise_key=exercise_key,
         concepts=requirements.exercise_requirements
     )
@@ -147,6 +148,7 @@ def student_profile_agent(state: GraphState):
 
     # Get the past concepts scores
     past_concepts_scores = get_past_concept_scores(
+        student_name=state['attempt_context'].student_name,
         exercise_key=state['attempt_context'].exercise_key,
         last_n=HISTORY_WINDOW
     )
@@ -196,6 +198,7 @@ def student_profile_agent(state: GraphState):
 
     # Update student profile with new scores
     update_student_profile(
+        student_name=state['attempt_context'].student_name,
         exercise_key=state['attempt_context'].exercise_key,
         updated_scores=implemented_concepts,
         updated_emas=concept_emas
@@ -272,6 +275,7 @@ def code_comparison_agent(state: GraphState):
     # print(f"\n== code comparison output ==\n{code_comparison_output}\n")
 
     set_previous_code(
+        student_name=state['attempt_context'].student_name,
         exercise_key=state['attempt_context'].exercise_key,
         previous_code=state['attempt_context'].student_code
     )
@@ -279,10 +283,12 @@ def code_comparison_agent(state: GraphState):
     # Update the no progress count if the logic is identical
     if code_comparison_output.identical_logic == "true":
         increment_no_progress_count(
+            student_name=state['attempt_context'].student_name,
             exercise_key=state['attempt_context'].exercise_key
         )
     else:
         reset_no_progress_count(
+            student_name=state['attempt_context'].student_name,
             exercise_key=state['attempt_context'].exercise_key
         )
 
@@ -294,6 +300,7 @@ def hint_directive_agent(state: GraphState):
     print("\n== Hint Directive Agent ==\n")
 
     stuck_count = get_no_progress_count(
+        student_name=state['attempt_context'].student_name,
         exercise_key=state['attempt_context'].exercise_key
     )
 
@@ -382,6 +389,7 @@ def hint_generator_agent(state: GraphState):
     print("\n== Hint Generator Agent ==\n")
 
     previous_hint = get_previous_hint(
+        student_name=state['attempt_context'].student_name,
         exercise_key=state['attempt_context'].exercise_key
     )
     print(f"\n== Previous hint ==\n{previous_hint}\n")
@@ -400,6 +408,7 @@ def hint_generator_agent(state: GraphState):
     # print(f"\n== FINAL HINT ==\n{hint_output.hint_text}\n")
 
     set_previous_hint(
+        student_name=state['attempt_context'].student_name,
         exercise_key=state['attempt_context'].exercise_key,
         previous_hint=hint_output.hint_text
     )

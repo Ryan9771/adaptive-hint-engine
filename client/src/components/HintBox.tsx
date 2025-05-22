@@ -10,7 +10,10 @@ interface Props {
   exerciseId: string;
   studentCode: string;
   error: string;
+  setError: (error: string) => void;
+  setOutput: (output: string) => void;
   testResults: TestResult[];
+  setTestResults: (results: TestResult[]) => void;
 }
 
 function HintBox({
@@ -19,6 +22,9 @@ function HintBox({
   studentCode,
   error,
   testResults,
+  setError,
+  setOutput,
+  setTestResults,
 }: Props) {
   const [hintText, setHintText] = useState(
     "Click here to reveal a helpful hint for solving this exercise"
@@ -32,6 +38,9 @@ function HintBox({
     setIsLoading(true);
 
     try {
+      setTestResults([]);
+      setError("");
+      setOutput("");
       const hint = await getHint(exerciseId, studentCode, error, testResults);
       setHintText(hint);
       setShowRating(true);

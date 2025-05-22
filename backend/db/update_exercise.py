@@ -16,41 +16,36 @@ if __name__ == "__main__":
     Base.metadata.create_all(bind=engine)
 
     # Create the exercises
+    exercise_key = "python_exercise1"
 
-    # Exercise 2 == Remove Duplicates
-    exercise_key = "python_exercise2"
+    exercise_title = "Is it Even?"
 
-    exercise_title = "Palindromes"
-
-    exercise_background = """A palindrome is something that reads the same 
-    forward and backward. You may have seen palindromes in words like **level** or 
-    **racecar**, but numbers and lists can be palindromes too. For example, the 
-    list `[1, 2, 3, 2, 1]` is a palindrome because it is the same when read from 
-    left to right and from right to left.
+    exercise_background = """Imagine you're building a game where players take turns based on whether their score is even or odd. You need a quick way to check that!
     """
 
-    exercise_text = """Write a program that checks if a list of numbers is a 
-    palindrome. The program should return `True` if the list is the *same* forwards 
-    and backwards, and `False` otherwise. You should **not** use any built-in 
-    functions that reverse the list. Use loops and if statements to compare the 
-    elements from both ends of the list. 
+    exercise_text = """Write a function called is_even that takes an integer and returns True if it’s even and False if it’s odd.
+
+    For Example:
+    `isEven(4) = True`
+    `isEven(0) = True`
+    `isEven(3) = False`
     """
 
-    skel_code = """def palindrome_list(numbers):
+    skel_code = """def isEven(n):
     pass
     """
 
-    modify_exercise(exercise_key=exercise_key,
-                    exercise_text=exercise_text)
+    # modify_exercise(exercise_key=exercise_key,
+    #                 exercise_text=exercise_text)
 
-    # delete_exercise(exercise_key)
+    # delete_exercise("python_exercise2")
 
-    # add_exercise(
-    #     exercise_key=exercise_key,
-    #     exercise_background=exercise_background,
-    #     exercise_text=exercise_text,
-    #     skel_code=skel_code,
-    #     exercise_title=exercise_title
-    # )
+    add_exercise(
+        exercise_key=exercise_key,
+        exercise_background=exercise_background,
+        exercise_text=exercise_text,
+        skel_code=skel_code,
+        exercise_title=exercise_title
+    )
 
     print(f"\n== All Exercises: ==\n{list_all_exercises()}")

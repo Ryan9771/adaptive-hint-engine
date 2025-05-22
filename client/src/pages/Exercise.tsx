@@ -8,6 +8,7 @@ import Sidebar from "../components/sidebar/Sidebar";
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getExerciseDetails } from "../util/util";
+import { TestResult } from "../util/Types";
 
 function Exercise() {
   const { lang, exercise } = useParams();
@@ -18,6 +19,9 @@ function Exercise() {
   const [previousCode, setPreviousCode] = useState("");
   const [studentCode, setStudentCode] = useState(previousCode);
   const [hintTitle, setHintTitle] = useState(defaultHintTitle);
+  const [output, setOutput] = useState("");
+  const [error, setError] = useState("");
+  const [testResults, setTestResults] = useState<TestResult[]>([]);
 
   const exerciseId = `${lang}_${exercise}`;
 
@@ -63,12 +67,23 @@ function Exercise() {
             language={language}
             setStudentCode={setStudentCode}
             setHintTitle={setHintTitle}
+            output={output}
+            setOutput={setOutput}
+            error={error}
+            setError={setError}
+            testResults={testResults}
+            setTestResults={setTestResults}
           />
 
           <HintBox
             hintTitle={hintTitle}
             exerciseId={exerciseId}
             studentCode={studentCode}
+            error={error}
+            setError={setError}
+            setOutput={setOutput}
+            testResults={testResults}
+            setTestResults={setTestResults}
           />
         </div>
       </div>

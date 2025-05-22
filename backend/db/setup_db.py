@@ -22,7 +22,7 @@ class ExerciseEntry(Base):
     exercise_text = Column(Text, nullable=False)
     skel_code = Column(Text, nullable=False)
     language = Column(String(255), nullable=False)
-
+    test_cases = Column(Text, nullable=False)
     required_concepts = Column(MutableList.as_mutable(JSON), default=list)
 
     previous_code = Column(Text, default="")
@@ -31,7 +31,7 @@ class ExerciseEntry(Base):
     no_progress_count = Column(Integer, default=0)
     previous_hint = Column(Text, default="")
 
-    def __init__(self, exercise_key, exercise_text, skel_code, language, exercise_title, exercise_background=""):
+    def __init__(self, exercise_key, exercise_text, skel_code, language, exercise_title, exercise_background, test_cases):
         """Initialise a question with empty attempts"""
         self.exercise_key = exercise_key
         self.exercise_title = exercise_title
@@ -41,6 +41,7 @@ class ExerciseEntry(Base):
         self.language = language
         self.previous_code = skel_code
         self.previous_hint = ""
+        self.test_cases = test_cases
 
     def set_required_concepts(self, required_concepts: List[str]):
         self.required_concepts = required_concepts

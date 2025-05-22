@@ -54,7 +54,7 @@ MAX_SCORE = 4.0
 STRUGGLE_EMA_THRESHOLD = 0.55
 IMPROVE_DELTA = 0.15
 MAX_ISSUES = 3
-STUCK_ESCALATE = 2
+STUCK_ESCALATE = 1
 PROFICIENT_THRESHOLD = 0.9
 HIGH_CONCEPT_COVERAGE = 0.8
 
@@ -297,7 +297,7 @@ def hint_directive_agent(state: GraphState):
         exercise_key=state['attempt_context'].exercise_key
     )
 
-    # print(f"\n== stuck count ==\n{stuck_count}\n")
+    print(f"\n== stuck count ==\n{stuck_count}\n")
 
     average_ema = state['student_profile_output'].average_ema
     feature_output = state['feature_output']
@@ -311,12 +311,10 @@ def hint_directive_agent(state: GraphState):
     # Set the tone based on whether the student is stuck or struggling
     if stuck_count > STUCK_ESCALATE and average_ema < STRUGGLE_EMA_THRESHOLD:
         tone = "beginner-friendly"
-        rationale = "Student is stuck and struggling. The last hint didn't help. A short parallel example will help. "
+        rationale = "Student is stuck and struggling. The last hint didn't help. A short parallel example of possible syntax of some functionality will help. "
     elif stuck_count > STUCK_ESCALATE:
         tone = "beginner-friendly"
         rationale = "Student is stuck. The last hint didn't help. A conceptual hint will help. "
-    elif average_ema < STRUGGLE_EMA_THRESHOLD:
-        tone = "clear"
     elif average_ema > PROFICIENT_THRESHOLD and (len(feature_output.implemented_concepts) / state['num_exercise_requirements']) > HIGH_CONCEPT_COVERAGE:
         tone = "technical"
         rationale = "Student seems proficient. Perhaps a question to prompt deeper thinking. "
@@ -336,24 +334,36 @@ def hint_directive_agent(state: GraphState):
                 issue_details[issue] = fd.detail
                 break
 
-    # Specify the issues
-    if issue_identifier_output.issues:
-        strategy = "conceptual" if average_ema < STRUGGLE_EMA_THRESHOLD else "reflective"
-        rationale += "Issues Based on Importance:\n" + "\n".join(
-            [f"{concept} - {detail}" for concept,
-                detail in list(issue_details.items())[:MAX_ISSUES]]
-        )
-    elif feature_output.missing_concepts:
-        strategy = "next_step" if average_ema < STRUGGLE_EMA_THRESHOLD else "reflective"
-        rationale += "Missing concepts:\n" + \
-            ", ".join(feature_output.missing_concepts[:MAX_ISSUES])
-    elif feature_output.redundant_concepts:
-        strategy = "cleanup"
-        rationale += f"Redundant concepts: {[f"{red.concept} - {red.detail}" for red in feature_output.redundant_concepts[:MAX_ISSUES]]}"
+    error = state["attempt_context"].error
+    test_results = state["attempt_context"].test_results
+
+    # Fix Error Immediately if present
+    if error:
+        strategy = "Fix"
+        rationale += f"Address the error at hand. Eg: 'seems like you have a syntax error'. Explain why the error exists, and a hint on how to fix it.\nError: {error}"
     else:
-        print(f"\n== Fallback case where no issues / redundancies / missing_concepts detected ==\n")
-        strategy = "reflective"
-        rationale += "No issues detected. Encourage self-reflection, or optimisation techniques"
+        if test_results:
+            rationale += f"Acknowledge the student that tests have been ran. Use the tests in conjunction with possible issues or missing concepts to provide a more contextual hint.\nTest Outcome: {test_results}"
+
+        # Specify the issues
+        if issue_identifier_output.issues:
+            strategy = "conceptual" if average_ema < STRUGGLE_EMA_THRESHOLD else "reflective"
+            rationale += "Issues Based on Importance:\n" + "\n".join(
+                [f"{concept} - {detail}" for concept,
+                    detail in list(issue_details.items())[:MAX_ISSUES]]
+            )
+        elif feature_output.missing_concepts:
+            strategy = "next_step" if average_ema < STRUGGLE_EMA_THRESHOLD else "reflective"
+            rationale += "Missing concepts:\n" + \
+                ", ".join(feature_output.missing_concepts[:MAX_ISSUES])
+        elif feature_output.redundant_concepts:
+            strategy = "cleanup"
+            rationale += f"Redundant concepts: {[f"{red.concept} - {red.detail}" for red in feature_output.redundant_concepts[:MAX_ISSUES]]}"
+        else:
+            print(
+                f"\n== Fallback case where no issues / redundancies / missing_concepts detected ==\n")
+            strategy = "reflective"
+            rationale += "No issues detected. Encourage self-reflection, or optimisation techniques"
 
     print(
         f"\n== Hint Directive Output ==\nStrategy: {strategy}\nTone: {tone}\nRationale: {rationale}\n")

@@ -119,10 +119,14 @@ def hint_generator_prompt(exercise_text, student_code, hint_directive, code_comp
     Rationale (Use as guidance; you need not address every concept listed): 
     {hint_directive.rationale}
 
-    Write a concise, encouraging hint (≤ 3 sentences). Do **NOT** reveal
+    Write a concise, encouraging hint (≤ 3 sentences) in markdown. Do **NOT** reveal
     solutions by explicitly writing what to do. Eg: Do not illustrate the
     sequents of steps to solve the exercise. Instead, provide an incremental
-    hint based on the directive and rationale and strategy.
+    hint based on the directive and rationale and strategy. If an example was instructed in the rationale,
+    to be given, provide it below the hint. However, you should not provide explicit code to solve the problem. If
+    the student is really stuck, at most provide an example of how you can use a piece of code
+    to achieve a part of the problem, in a different setting, so that the student can't copy
+    paste it into their solution directly.
 
     Stategy Guide:
     - conceptual: Briefly explain the concept and its relevance to the exercise / student code
@@ -130,6 +134,7 @@ def hint_generator_prompt(exercise_text, student_code, hint_directive, code_comp
     - reflective - thought-provoking questions to aid the students in the context
     of the exercise problem (eg: "Great progress, however, what happens if the list is empty?")
     - cleanup - subtly suggest removing / refactoring redundant parts
+    - Fix: Address the rationale
 
     Other Context:
     - Previous vs Current student submission:
@@ -145,6 +150,10 @@ def hint_generator_prompt(exercise_text, student_code, hint_directive, code_comp
 
     Student Code:
     {student_code}
+
+    The goal of your hints is produce a time-adaptive, contextual based hint. So 
+    wherever possible, make subtle acknowledgements - eg: 'you did well trying to 
+    implement the last hint, however' or 'you are getting better at loops' or 'you seem to have not changed anything'etc..
     """
 
     return prompt

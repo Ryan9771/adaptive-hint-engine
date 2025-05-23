@@ -132,7 +132,7 @@ def get_or_create_student(student_name: str):
     return student
 
 
-def get_or_create_exercise(exercise_key, exercise_background="", exercise_text="", skel_code="", exercise_title=""):
+def get_or_create_exercise(exercise_key, exercise_background="", exercise_text="", skel_code="", exercise_title="", test_cases=""):
     exercise = db_session.query(ExerciseEntry).filter_by(
         exercise_key=exercise_key).first()
 
@@ -142,7 +142,8 @@ def get_or_create_exercise(exercise_key, exercise_background="", exercise_text="
             exercise_background=exercise_background,
             exercise_text=exercise_text,
             skel_code=skel_code,
-            exercise_title=exercise_title
+            exercise_title=exercise_title,
+            test_cases=test_cases
         )
         db_session.add(exercise)
         db_session.commit()

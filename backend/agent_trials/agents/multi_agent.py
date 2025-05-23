@@ -131,6 +131,8 @@ def feature_extractor_agent(state: GraphState):
         student_code=state['attempt_context'].student_code
     )
 
+    print(f"\n== STUDENT CODE ==\n{state['attempt_context'].student_code}")
+
     llm_input = [HumanMessage(content=prompt)]
 
     feature_output: FeatureOutput = llm.with_structured_output(
@@ -260,6 +262,7 @@ def code_comparison_agent(state: GraphState):
     print("\n== Code Comparison Agent ==\n")
 
     previous_code = get_previous_code(
+        student_name=state['attempt_context'].student_name,
         exercise_key=state['attempt_context'].exercise_key
     )
     current_code = state['attempt_context'].student_code
@@ -350,7 +353,7 @@ def hint_directive_agent(state: GraphState):
         rationale += f"Address the error at hand. Eg: 'seems like you have a syntax error'. Explain why the error exists, and a hint on how to fix it.\nError: {error}"
     else:
         if test_results:
-            rationale += f"Acknowledge the student that tests have been ran. Use the tests in conjunction with possible issues or missing concepts to provide a more contextual hint.\nTest Outcome: {test_results}"
+            rationale += f"Acknowledge the student that tests have been ran. If tests fail, use it as context to provide a hint on why it is failing. \nTest Outcome: {test_results}"
 
         # Specify the issues
         if issue_identifier_output.issues:
@@ -399,7 +402,9 @@ def hint_generator_agent(state: GraphState):
         student_code=state['attempt_context'].student_code,
         hint_directive=state['hint_directive'],
         code_comparison_output=state['code_comparison_output'],
-        previous_hint=previous_hint
+        previous_hint=previous_hint,
+        improving_concepts=state['issue_identifier_output'].improving_concepts,
+        struggling_concepts=state['issue_identifier_output'].struggling_concepts,
     )
     llm_input = [HumanMessage(content=prompt)]
     hint_output: HintOutput = llm.with_structured_output(

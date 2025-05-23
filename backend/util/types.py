@@ -9,7 +9,6 @@ class AttemptContext(BaseModel):
     exercise_key: str
     exercise_text: str
     skel_code: str
-    language: str
     student_code: str
     error: str
     test_results: str

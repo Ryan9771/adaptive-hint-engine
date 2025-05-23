@@ -107,6 +107,7 @@ def get_exercise_hint(student_name, exercise_id):
         if exercise:
             # Update previous_code to current code
             set_previous_code(
+                student_name=student_name,
                 exercise_key=exercise_key,
                 previous_code=data["studentCode"]
             )
@@ -123,7 +124,6 @@ def get_exercise_hint(student_name, exercise_id):
                 exercise_key=exercise_key,
                 exercise_text=exercise["exercise_text"],
                 skel_code=exercise["skel_code"],
-                language="python",
                 student_code=data["studentCode"],
                 error=data["error"],
                 test_results=test_results
@@ -158,9 +158,6 @@ def get_test(student_name, exercise_id):
         "version": "3.10.0",
         "files": [{"name": "main.py", "content": full_code}],
     }
-
-    # set_previous_code(student_name=student_name,
-    #                   exercise_key=exercise_id, previous_code=data["studentCode"])
 
     # TEST GOOGLE SHEETS PAYLOAD
     # sheets_payload = {

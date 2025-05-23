@@ -8,7 +8,7 @@ import Sidebar from "../components/sidebar/Sidebar";
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getExerciseDetails } from "../util/util";
-import { TestResult } from "../util/Types";
+import { TestResult } from "../util/types";
 
 function Exercise() {
   const { studentName, lang, exercise } = useParams();
@@ -49,6 +49,8 @@ function Exercise() {
     };
 
     fetchExerciseDetails();
+
+    console.log(studentCode);
   }, [lang, exercise]);
 
   return (

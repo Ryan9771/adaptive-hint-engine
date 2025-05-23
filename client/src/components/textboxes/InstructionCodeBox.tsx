@@ -1,8 +1,7 @@
 import style from "../../util/Styles";
 import CodeBox from "./CodeBox";
-import { useState } from "react";
 import Markdown from "react-markdown";
-import { TestResult } from "../../util/Types";
+import { TestResult } from "../../util/types";
 
 interface Props {
   title: string;

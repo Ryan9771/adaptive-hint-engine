@@ -65,7 +65,7 @@ def get_reset_codebox(student_name, exercise_id):
 
         if student_exercise:
             set_previous_code(student_name=student_name, exercise_key=exercise_key,
-                              previous_code=exercise["skel_code"])
+                              previous_code=exercise.skel_code)
 
             return jsonify({}), 200
 

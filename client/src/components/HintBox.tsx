@@ -3,7 +3,7 @@ import { FaRegLightbulb, FaSpinner } from "react-icons/fa";
 import { getHint } from "../util/util";
 import Markdown from "react-markdown";
 import { useState } from "react";
-import { TestResult } from "../util/Types";
+import { TestResult } from "../util/types";
 
 interface Props {
   hintTitle: string;

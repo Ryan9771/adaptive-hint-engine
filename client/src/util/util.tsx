@@ -1,5 +1,5 @@
 import axios from "axios";
-import { TestResult } from "./Types";
+import { TestResult } from "./types";
 
 async function post(url = "", data = {}, token = "") {
   const response = await fetch(`http://localhost:5001${url}`, {

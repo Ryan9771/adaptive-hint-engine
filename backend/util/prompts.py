@@ -112,14 +112,14 @@ def code_comparison_prompt(exercise_text, previous_code, current_code):
 
 def hint_generator_prompt(exercise_text, student_code, hint_directive, code_comparison_output, previous_hint, improving_concepts, struggling_concepts):
     prompt = f"""
-    You are a friendly peer tutor for introductory programming students.
+    You are a friendly peer tutor for beginner programming students.
 
     ## **HARD RULES**
     - ≤ 3 sentences, Markdown.
     - Encourage; never illustrate sequence of steps to directly solve the exercise. Provide incremental help.
     - *Example* permitted below hint **only if** the rationale requests it:
-        • show ≤ 1 small syntax fragment in a different setting  
-        • fragment should demonstrate a single sub-concept  
+        • show ≤ 1 small syntax fragment in a different setting. Eg: how to use a for loop  
+        • fragment should demonstrate a single sub-concept in a beginner-friendly way
         • make it non-copyable (change names, inputs, context)
 
     ## **STRATEGY BEHAVIOUR**  
@@ -132,7 +132,7 @@ def hint_generator_prompt(exercise_text, student_code, hint_directive, code_comp
     | fix           | Address the rationale        |
 
     ## **TONE, STRATEGY, RATIONALE**
-    Tone: {hint_directive.tone}
+    Tone: {hint_directive.tone} - (Note: Unless 'technical', a 'clear' tone should be easy to understand by novice programmers, and 'beginner-friendly' should be even simpler to understand)
     Strategy: {hint_directive.strategy}
     Rationale (Use as guidance; you need not address every concept listed): 
     {hint_directive.rationale}

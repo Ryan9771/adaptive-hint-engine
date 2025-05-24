@@ -55,6 +55,7 @@ STRUGGLE_EMA_THRESHOLD = 0.55
 IMPROVE_DELTA = 0.15
 MAX_ISSUES = 3
 STUCK_ESCALATE = 1
+STUCK_DECAY = 0.6
 PROFICIENT_THRESHOLD = 0.9
 HIGH_CONCEPT_COVERAGE = 0.8
 
@@ -131,9 +132,6 @@ def feature_extractor_agent(state: GraphState):
         student_code=state['attempt_context'].student_code
     )
 
-    print(
-        f"\n== STUDENT CODE ==\n{"Empty" if not state['attempt_context'].student_code else "Not empty"}")
-
     llm_input = [HumanMessage(content=prompt)]
 
     feature_output: FeatureOutput = llm.with_structured_output(
@@ -198,6 +196,15 @@ def student_profile_agent(state: GraphState):
         average_ema = sum(concept_emas.values()) / len(concept_emas)
     else:
         average_ema = 0.0
+
+    no_progress_count = get_no_progress_count(
+        student_name=state["attempt_context"].student_name,
+        exercise_key=state["attempt_context"].exercise_key
+    )
+
+    # Decay average ema everytime the student is stuck
+    if no_progress_count > 0:
+        average_ema = average_ema * (STUCK_DECAY ** no_progress_count)
 
     # Update student profile with new scores
     update_student_profile(
@@ -313,6 +320,8 @@ def hint_directive_agent(state: GraphState):
     average_ema = state['student_profile_output'].average_ema
     feature_output = state['feature_output']
     issue_identifier_output = state['issue_identifier_output']
+
+    print(f"average_ema : {average_ema}")
 
     # Natural language directives
     tone = "clear"

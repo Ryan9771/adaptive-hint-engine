@@ -102,7 +102,7 @@ function Exercise() {
 }
 
 export const defaultHintTitle =
-  "This hint adapts — click anytime to get help based on what you've done so far.";
+  "This hint adapts — click here anytime to get help based on what you've done so far.";
 
 const language = "python";
 

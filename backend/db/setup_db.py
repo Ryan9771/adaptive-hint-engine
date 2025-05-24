@@ -333,7 +333,7 @@ def initialise_student_profile(student_name: str, exercise_key: str, concepts: l
         print("\n=== Student Exercise doesn't exist ===\n")
 
 
-def update_student_profile(student_name: str, exercise_key: str, updated_scores: dict = {}, updated_emas: dict = {}):
+def update_student_profile(student_name: str, exercise_key: str, updated_scores: dict = {}, updated_emas: dict = {}, average_ema=0.0):
     student_exercise = get_or_create_student_exercise(
         student_name=student_name, exercise_key=exercise_key
     )
@@ -359,6 +359,14 @@ def update_student_profile(student_name: str, exercise_key: str, updated_scores:
                         "scores": MutableList([]),
                         "ema": ema
                     })
+
+        if average_ema:
+            if "average_ema" in student_exercise.student_profile["concepts"]:
+                student_exercise.student_profile["concepts"]["average_ema"].append(
+                    average_ema)
+            else:
+                student_exercise.student_profile["concepts"]["average_ema"] = MutableList([
+                                                                                          average_ema])
 
         # print(
             # f"\n=== Updated student profile ===\n{exercise.student_profile}\n")

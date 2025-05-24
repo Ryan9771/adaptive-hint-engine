@@ -42,6 +42,8 @@ def get_exercise(student_name, exercise_id):
             student_name=student_name, exercise_key=exercise
         )
 
+        print(f"\n== EXERCISE DETAILS ==\n{exercise_details}")
+
         if exercise_details:
             return jsonify(exercise_details), 200
 
@@ -105,12 +107,6 @@ def get_exercise_hint(student_name, exercise_id):
             student_name=student_name, exercise_key=exercise_key)
 
         if exercise:
-            # Update previous_code to current code
-            set_previous_code(
-                student_name=student_name,
-                exercise_key=exercise_key,
-                previous_code=data["studentCode"]
-            )
 
             test_results = "\n".join(
                 [
@@ -118,6 +114,8 @@ def get_exercise_hint(student_name, exercise_id):
                     for test in data["testResults"]
                 ]
             )
+
+            print(f"\n== STUDENT CODE ==\n{data["studentCode"]}")
 
             initial_graph_state = AttemptContext(
                 student_name=student_name,
@@ -131,6 +129,13 @@ def get_exercise_hint(student_name, exercise_id):
 
             # Get hint
             graph = agent.run(state={"attempt_context": initial_graph_state})
+
+            # Update previous_code to current code
+            set_previous_code(
+                student_name=student_name,
+                exercise_key=exercise_key,
+                previous_code=data["studentCode"]
+            )
             print(f"\n == HINT ==\n{graph["hint_output"].hint_text}")
 
             return jsonify({"hint": graph["hint_output"].hint_text}), 200

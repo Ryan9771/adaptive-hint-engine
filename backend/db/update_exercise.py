@@ -1,4 +1,4 @@
-from setup_db import engine, Base, get_or_create_exercise, list_all_exercises, delete_exercise, modify_exercise
+from setup_db import engine, Base, get_or_create_exercise, list_all_exercises, delete_exercise, modify_exercise, reset_student_exercise
 
 """
 Exercise Detail Format:
@@ -59,8 +59,8 @@ if __name__ == "__main__":
         unittest.main()
     """
 
-    modify_exercise(exercise_key=exercise_key,
-                    exercise_text=exercise_text)
+    # modify_exercise(exercise_key=exercise_key,
+    #                 exercise_text=exercise_text)
 
     # delete_exercise("python_exercise2")
 
@@ -72,5 +72,7 @@ if __name__ == "__main__":
     #     exercise_title=exercise_title,
     #     test_cases=test_cases
     # )
+
+    reset_student_exercise(student_name="ryan")
 
     print(f"\n== All Exercises: ==\n{list_all_exercises()}")

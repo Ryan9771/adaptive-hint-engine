@@ -452,6 +452,30 @@ def get_previous_hint(student_name: str, exercise_key: str):
         print("\n=== Something went wrong in retrieving the previous code ===\n")
 
 
+def reset_student_exercise(student_name: str):
+    student = get_or_create_student(student_name=student_name)
+    student_id = student.student_id
+
+    student_exercises = db_session.query(
+        StudentExercise).filter_by(student_id=student_id).all()
+
+    if student_exercises:
+        for student_exercise in student_exercises:
+            exercise = _get_exercise(student_exercise.exercise_key)
+            if exercise:
+                student_exercise.previous_code = exercise.skel_code
+                student_exercise.previous_hint = ""
+                student_exercise.no_progress_count = 0
+                student_exercise.student_profile = MutableDict(
+                    {"concepts": MutableDict()})
+            else:
+                print(
+                    f"\n== Exercise {student_exercise.exercise_key} doesn't exist ==\n")
+        db_session.commit()
+    else:
+        print(f"\n== Exercises of {student_name} not found == \n")
+
+
 # def reset_exercise(exercise_key: str):
 #     exercise = _get_exercise(exercise_key=exercise_key)
 

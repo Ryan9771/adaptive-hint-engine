@@ -17,7 +17,7 @@ function Exercise() {
   const [exerciseText, setExerciseText] = useState("");
   const [skelCode, setSkelCode] = useState("");
   const [previousCode, setPreviousCode] = useState("");
-  const [studentCode, setStudentCode] = useState(previousCode);
+  const [studentCode, setStudentCode] = useState("");
   const [hintTitle, setHintTitle] = useState(defaultHintTitle);
   const [output, setOutput] = useState("");
   const [error, setError] = useState("");
@@ -42,6 +42,7 @@ function Exercise() {
         setExerciseText(exerciseDetails.exerciseText);
         setSkelCode(exerciseDetails.skelCode);
         setPreviousCode(exerciseDetails.previousCode);
+        setStudentCode(exerciseDetails.previousCode);
       } else {
         console.log("Exercise does not exist");
         navigate("/404");
@@ -50,7 +51,7 @@ function Exercise() {
 
     fetchExerciseDetails();
 
-    console.log(studentCode);
+    console.log("STUDENT CODE", studentCode);
   }, [lang, exercise]);
 
   return (

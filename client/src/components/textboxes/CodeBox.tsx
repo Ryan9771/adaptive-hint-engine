@@ -137,7 +137,7 @@ function CodeBox({
           height="100%"
           language={language}
           theme="vs-dark"
-          value={previousCode}
+          value={studentCode}
           onMount={handleEditorDidMount}
           onChange={(value) => setStudentCode(value || "")}
           options={{

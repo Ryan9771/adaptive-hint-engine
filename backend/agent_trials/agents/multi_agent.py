@@ -131,7 +131,8 @@ def feature_extractor_agent(state: GraphState):
         student_code=state['attempt_context'].student_code
     )
 
-    print(f"\n== STUDENT CODE ==\n{state['attempt_context'].student_code}")
+    print(
+        f"\n== STUDENT CODE ==\n{"Empty" if not state['attempt_context'].student_code else "Not empty"}")
 
     llm_input = [HumanMessage(content=prompt)]
 

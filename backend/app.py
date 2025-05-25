@@ -1,11 +1,11 @@
 from flask import Flask, jsonify, request
 from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.dialects.postgresql import JSON
 import os
 from db.setup_db import get_exercise_details, Base, engine, set_previous_code, get_or_create_student_exercise, get_or_create_exercise
 from flask_cors import CORS
-from agent_trials.agents.multi_agent import HintEngine
+from agents.multi_agent import HintEngine
+from agents.single_agent import SingleHintAgent
 from util.types import AttemptContext
 from example_exercises.python.exercise_2 import test_ex_2
 import requests
@@ -25,6 +25,7 @@ db = SQLAlchemy(app)
 
 # Agent
 agent = HintEngine()
+single_agent = SingleHintAgent()
 
 
 @app.route("/")
@@ -115,8 +116,6 @@ def get_exercise_hint(student_name, exercise_id):
                 ]
             )
 
-            print(f"\n== STUDENT CODE ==\n{data["studentCode"]}")
-
             initial_graph_state = AttemptContext(
                 student_name=student_name,
                 exercise_key=exercise_key,
@@ -127,7 +126,7 @@ def get_exercise_hint(student_name, exercise_id):
                 test_results=test_results
             )
 
-            # Get hint
+            # Get multi-agent hint
             graph = agent.run(state={"attempt_context": initial_graph_state})
 
             # Update previous_code to current code
@@ -136,9 +135,17 @@ def get_exercise_hint(student_name, exercise_id):
                 exercise_key=exercise_key,
                 previous_code=data["studentCode"]
             )
-            print(f"\n == HINT ==\n{graph["hint_output"].hint_text}")
 
-            return jsonify({"hint": graph["hint_output"].hint_text}), 200
+            # Get a single-invokated llm hint
+            simple_hint = single_agent.run(
+                state={
+                    "skel_code": exercise['skel_code'],
+                    "exercise_text": exercise["exercise_text"],
+                    "student_code": data["studentCode"]
+                }
+            )
+
+            return jsonify({"hint": graph["hint_output"].hint_text, "simpleHint": simple_hint['hint']}), 200
 
         print(f"\n== Exercise {exercise_key} not found ==\n")
 

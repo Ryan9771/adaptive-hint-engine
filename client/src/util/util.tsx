@@ -84,12 +84,18 @@ async function getHint(
   if (response.ok) {
     const data = await response.json();
 
-    return data.hint;
+    return {
+      hint: data.hint,
+      simpleHint: data.simpleHint,
+    };
   }
 
   console.log("Failed to retreive hint");
 
-  return "Seems like unable to generate a hint. Please try again";
+  return {
+    hint: "Seems like I was unable to generate a hint. Please try again.",
+    simpleHint: "",
+  };
 }
 
 const executePythonCode = async (code: string) => {

@@ -32,9 +32,13 @@ function HintBox({
     "Click here to reveal a helpful hint for solving this exercise"
   );
 
+  const [simpleHintText, setSimpleHintText] = useState("");
+
   const [isLoading, setIsLoading] = useState(false);
   const [showRating, setShowRating] = useState(false);
-  const [selectedRating, setSelectedRating] = useState<number | null>(null);
+
+  const [hintRating, setHintRating] = useState<number | null>(null);
+  const [simpleHintRating, setSimpleHintRating] = useState<number | null>(null);
 
   const generateHint = async () => {
     setIsLoading(true);
@@ -50,7 +54,9 @@ function HintBox({
         error,
         testResults
       );
-      setHintText(hint);
+      setHintText(hint.hint);
+      setSimpleHintText(hint.simpleHint);
+
       setShowRating(true);
     } catch (e) {
       setHintText("I wasn't able to generate a hint. Please try again!");
@@ -59,12 +65,34 @@ function HintBox({
     setIsLoading(false);
   };
 
-  const handleRatingClick = (rating: number) => {
-    setSelectedRating(rating);
-    setShowRating(false);
-    // TODO: Send to backend
-    console.log(selectedRating);
+  const sendRatings = () => {
+    console.log("Hint Rating:", hintRating);
+    console.log("Simple Hint Rating:", simpleHintRating);
   };
+
+  const handleHintRating = (rating: number) => {
+    setHintRating(rating);
+
+    if (rating && simpleHintRating) {
+      setShowRating(false);
+      sendRatings();
+    }
+  };
+
+  const handleSimpleHintRating = (rating: number) => {
+    setSimpleHintRating(rating);
+    if (rating && hintRating) {
+      setShowRating(false);
+      sendRatings();
+    }
+  };
+
+  const getRatingClass = (active: boolean) =>
+    `${style(styles, "rating")} ${
+      active
+        ? "bg-hint-title text-white"
+        : "text-hint-title hover:bg-hint-title hover:text-white"
+    }`;
 
   return (
     <div className={style(styles, "ctn")} onClick={generateHint}>
@@ -89,14 +117,40 @@ function HintBox({
               key={num}
               onClick={(e) => {
                 e.stopPropagation();
-                handleRatingClick(num);
+                handleHintRating(num);
               }}
-              className={style(styles, "rating")}
+              className={getRatingClass(hintRating === num)}
             >
               {num}
             </button>
           ))}
         </div>
+      )}
+
+      {simpleHintText && (
+        <>
+          <div className={style(styles, "txt")}>
+            <Markdown>{simpleHintText}</Markdown>
+          </div>
+
+          {showRating && (
+            <div className={style(styles, "ratingCtn")}>
+              <p className={style(styles, "txt")}>How helpful was this hint?</p>
+              {[1, 2, 3, 4, 5].map((num) => (
+                <div
+                  key={num}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleSimpleHintRating(num);
+                  }}
+                  className={getRatingClass(hintRating === num)}
+                >
+                  {num}
+                </div>
+              ))}
+            </div>
+          )}
+        </>
       )}
     </div>
   );
@@ -126,12 +180,14 @@ const styles = {
     "rounded-full",
     "border",
     "border-hint-title",
-    "text-hint-title",
-    "hover:bg-hint-title",
-    "hover:text-white",
     "transition-all",
     "duration-150",
     "text-sm",
+    "flex",
+    "items-center",
+    "justify-center",
+    "cursor-pointer",
+    "text-hint-title",
   ],
   ratingCtn: ["flex", "gap-2", "pt-2", "items-center"],
 };

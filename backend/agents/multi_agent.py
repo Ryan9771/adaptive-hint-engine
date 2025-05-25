@@ -476,8 +476,4 @@ class HintEngine:
         self.graph = builder.compile()
 
     def run(self, state: GraphState):
-        # config = {"configurable": {"thread_id": "1"}}
-
         return self.graph.invoke(state)
-
-        # print(graph)

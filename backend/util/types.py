@@ -115,3 +115,10 @@ class GraphState(TypedDict):
     code_comparison_output: CodeComparisonOutput
     hint_directive: HintDirective
     hint_output: HintOutput
+
+
+class SimpleGraphState(TypedDict):
+    skel_code: str
+    exercise_text: str
+    student_code: str
+    hint: str

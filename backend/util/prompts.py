@@ -162,12 +162,10 @@ def hint_generator_prompt(exercise_text, student_code, hint_directive, code_comp
 
 def single_agent_prompt(skel_code, exercise_text, student_code):
     prompt = f"""
-    You are an introductory Python tutor who uses the given exercise question along 
-    with the default skeleton code to provide a helpful hint to the student based on their
-    code attempt attached.
+    You are an introductory Python tutor who uses the given exercise question along with the default skeleton code to provide a helpful hint to the student based on their code attempt attached.
 
     You should:
-    - generate an incremental hint to solving the question. 
+    - generate an incremental hint for the student
     - 2 sentences max.
     - Return only the hint, no additional comments or syntax
     - Markdown is supported

@@ -253,14 +253,18 @@ def get_evaluation(student_name, exercise_id):
         student_name=student_name, exercise_key=exercise_id
     )
 
-    combined_data = {**data, **metrics}
+    combined_data = {"exerciseId": exercise_id, **data, **metrics}
 
     print(f"\n== EVALUATION DATA ==\n{combined_data}")
 
-    return jsonify({}), 200
-
-    # response = requests.post(
-    #     "https://script.google.com/macros/s/AKfycbwsJAKjKJpydZzq271dRU3vTgYXQzDh7WypQNvs1M7OXXmWpbFbDdpPXsRRuQgbRsX4TA/exec", json=combined_data)
+    try:
+        requests.post(
+            "https://script.google.com/macros/s/AKfycbwyG9CCZ4-ybTjdivbFiHyl_goa11oXKYv-MpzwkUFA9-EX1twMpn26E-qvrA-6nE6gTg/exec", json=combined_data)
+        print(f"\n== EVALUATION LOGGED SUCCESSFULLY ==\n")
+        return jsonify({}), 200
+    except Exception as e:
+        print(f"\n== ERROR LOGGING EVALUATION ==\n{e}")
+        return jsonify({"message": "Error logging evaluation", "details": str(e)}), 500
 
 
 if __name__ == "__main__":

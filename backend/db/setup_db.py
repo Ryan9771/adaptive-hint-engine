@@ -465,12 +465,13 @@ def get_evaluation_metrics(student_name: str, exercise_key: str):
 
     if student_exercise:
         return {
-            "attempt_count": student_exercise.attempt_count,
-            "no_progress_count": student_exercise.no_progress_count,
-            "average_ema": student_exercise.student_profile["concepts"]["average_ema"],
+            "studentId": student_exercise.student_id,
+            "attemptCount": student_exercise.attempt_count,
+            "noProgressCount": student_exercise.no_progress_count,
+            "averageEma": student_exercise.student_profile["concepts"]["average_ema"],
             "tone": student_exercise.latest_tone,
             "strategy": student_exercise.latest_strategy,
-            **concept_emas
+            "conceptEmas": concept_emas
         }
 
 

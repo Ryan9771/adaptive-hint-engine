@@ -26,7 +26,10 @@ if __name__ == "__main__":
     exercise_text = "Write a function called `reverse_list` that takes a list and returns a new list with the elements in reverse order. Don't use any in-built methods. For Example:\n\n`reverse_list([1,2,3)] = [1,2,3]`\n\n`reverse_list([]) = []`"
 
     skel_code = """def reverse_list(numbers):
-    pass
+    return []
+
+# Click Run to see what your function is doing. Try uncommenting below:
+# print(reverse_list([1,2,3]))
     """
 
     test_cases = """
@@ -64,15 +67,15 @@ if __name__ == "__main__":
 
     # delete_exercise("python_exercise2")
 
-    # get_or_create_exercise(
-    #     exercise_key=exercise_key,
-    #     exercise_background=exercise_background,
-    #     exercise_text=exercise_text,
-    #     skel_code=skel_code,
-    #     exercise_title=exercise_title,
-    #     test_cases=test_cases
-    # )
+    get_or_create_exercise(
+        exercise_key=exercise_key,
+        exercise_background=exercise_background,
+        exercise_text=exercise_text,
+        skel_code=skel_code,
+        exercise_title=exercise_title,
+        test_cases=test_cases
+    )
 
-    reset_student_exercise(student_name="ryan")
+    # reset_student_exercise(student_name="ryan")
 
     print(f"\n== All Exercises: ==\n{list_all_exercises()}")

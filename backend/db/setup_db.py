@@ -41,12 +41,6 @@ class ExerciseEntry(Base):
     test_cases = Column(Text, nullable=False)
     required_concepts = Column(MutableList.as_mutable(JSON), default=list)
 
-    # previous_code = Column(Text, default="")
-    # student_profile = Column(MutableDict.as_mutable(
-    #     JSON), default=lambda: MutableDict({"concepts": MutableDict()}))
-    # no_progress_count = Column(Integer, default=0)
-    # previous_hint = Column(Text, default="")
-
     def __init__(self, exercise_key, exercise_text, skel_code, exercise_title, exercise_background, test_cases):
         """Initialise a question with empty attempts"""
         self.exercise_key = exercise_key
@@ -55,9 +49,6 @@ class ExerciseEntry(Base):
         self.exercise_background = exercise_background
         self.skel_code = skel_code
         self.test_cases = test_cases
-
-        # self.previous_code = skel_code
-        # self.previous_hint = ""
 
     def set_required_concepts(self, required_concepts: List[str]):
         self.required_concepts = required_concepts
@@ -70,7 +61,6 @@ class ExerciseEntry(Base):
             "exercise_text": self.exercise_text,
             "skel_code": self.skel_code,
             "exercise_background": self.exercise_background,
-            # "previous_code": self.previous_code
         }
 
 
@@ -85,8 +75,11 @@ class StudentExercise(Base):
     previous_code = Column(Text, default="")
     student_profile = Column(MutableDict.as_mutable(
         JSON), default=lambda: MutableDict({"concepts": MutableDict()}))
+    attempt_count = Column(Integer, default=0)
     no_progress_count = Column(Integer, default=0)
     previous_hint = Column(Text, default="")
+    latest_tone = Column(Text, default="")
+    latest_strategy = Column(Text, default="")
 
     student = relationship("Student", backref="student_exercises")
     exercise = relationship("ExerciseEntry", backref="student_exercises")
@@ -193,24 +186,6 @@ def get_exercise_details(student_name: str, exercise_key: str):
 
     print("\n=== Exercise doesn't exist ===\n")
     return None
-
-
-# def add_exercise(exercise_key, exercise_background, exercise_text, skel_code, exercise_title, language="python"):
-#     """
-#     Adds an exercise to the database with:
-#         exercise_key: primary key
-#         exercise_text: The description / question
-#         skel_code: The skeleton code
-#     """
-#     if not _exercise_exists(exercise_key=exercise_key):
-#         exercise = ExerciseEntry(
-#             exercise_key, exercise_text, skel_code, language, exercise_title, exercise_background=exercise_background)
-#         try:
-#             db_session.add(exercise)
-#             db_session.commit()
-#             print(f"Exercise {exercise_key} Added!")
-#         except Exception as e:
-#             print(f"\n== Unable to add exercise ==\n{e}")
 
 
 def delete_exercise(exercise_key: str):
@@ -361,16 +336,7 @@ def update_student_profile(student_name: str, exercise_key: str, updated_scores:
                     })
 
         if average_ema:
-            if "average_ema" in student_exercise.student_profile["concepts"]:
-                student_exercise.student_profile["concepts"]["average_ema"].append(
-                    average_ema)
-            else:
-                student_exercise.student_profile["concepts"]["average_ema"] = MutableList([
-                                                                                          average_ema])
-
-        # print(
-            # f"\n=== Updated student profile ===\n{exercise.student_profile}\n")
-
+            student_exercise.student_profile["concepts"]["average_ema"] = average_ema
         flag_modified(student_exercise, "student_profile")
         db_session.commit()
 
@@ -383,7 +349,6 @@ def get_past_concept_scores(student_name: str, exercise_key: str, last_n: int = 
 
     if student_exercise:
         student_profile = student_exercise.student_profile
-        # print(f"\n=== Student profile ===\n{student_profile}\n")
         result = {}
 
         for concept, info in student_profile["concepts"].items():
@@ -392,22 +357,6 @@ def get_past_concept_scores(student_name: str, exercise_key: str, last_n: int = 
         print("\n=== Student Exercise doesn't exist ===\n")
 
     return result
-
-
-# def get_previous_concept_emas(student_name: str, exercise_key: str):
-#     exercise = _get_exercise(exercise_key=exercise_key)
-#     result = {}
-
-#     if exercise:
-#         student_profile = exercise.student_profile
-#         result = {}
-
-#         for concept, info in student_profile["concepts"].items():
-#             result[concept] = info["ema"]
-#     else:
-#         print("\n=== Exercise doesn't exist ===\n")
-
-#     return result
 
 
 def get_previous_code(student_name: str, exercise_key: str):
@@ -484,19 +433,73 @@ def reset_student_exercise(student_name: str):
         print(f"\n== Exercises of {student_name} not found == \n")
 
 
-# def reset_exercise(exercise_key: str):
-#     exercise = _get_exercise(exercise_key=exercise_key)
+def increment_attempt_count(student_name: str, exercise_key: str):
+    student_exercise = get_or_create_student_exercise(
+        student_name=student_name, exercise_key=exercise_key
+    )
+    if student_exercise:
+        student_exercise.attempt_count += 1
+        db_session.add(student_exercise)
+        db_session.commit()
+    else:
+        print("\n=== Student Exercise doesn't exist ===\n")
 
-#     if exercise:
-#         exercise.student_profile["concepts"] = MutableDict()
-#         exercise.previous_hint = ""
-#         exercise.previous_code = exercise.skel_code
-#         exercise.no_progress_count = 0
-#         exercise.required_concepts = MutableList([])
-#     else:
-#         print("\n=== Exercise doesn't exist ===\n")
 
-#     db_session.commit()
+def get_attempt_count(student_name: str, exercise_key: str):
+    student_exercise = get_or_create_student_exercise(
+        student_name=student_name, exercise_key=exercise_key
+    )
+    if student_exercise:
+        return student_exercise.attempt_count
+    else:
+        print("\n=== Student Exercise doesn't exist ===\n")
+
+
+def get_evaluation_metrics(student_name: str, exercise_key: str):
+    student_exercise = get_or_create_student_exercise(
+        student_name=student_name, exercise_key=exercise_key
+    )
+
+    concept_emas = {concept: info["ema"] for concept, info in student_exercise.student_profile["concepts"].items(
+    ) if concept != "average_ema"}
+
+    if student_exercise:
+        return {
+            "attempt_count": student_exercise.attempt_count,
+            "no_progress_count": student_exercise.no_progress_count,
+            "average_ema": student_exercise.student_profile["concepts"]["average_ema"],
+            "tone": student_exercise.latest_tone,
+            "strategy": student_exercise.latest_strategy,
+            **concept_emas
+        }
+
+
+def set_tone_strategy(student_name: str, exercise_key: str, tone: str, strategy: str):
+    student_exercise = get_or_create_student_exercise(
+        student_name=student_name, exercise_key=exercise_key
+    )
+
+    if student_exercise:
+        student_exercise.latest_tone = tone
+        student_exercise.latest_strategy = strategy
+        db_session.add(student_exercise)
+        db_session.commit()
+    else:
+        print("\n=== Something went wrong in setting the tone and strategy ===\n")
+
+
+def get_tone_strategy(student_name: str, exercise_key: str):
+    student_exercise = get_or_create_student_exercise(
+        student_name=student_name, exercise_key=exercise_key
+    )
+
+    if student_exercise:
+        return {
+            "latest_tone": student_exercise.latest_tone,
+            "latest_strategy": student_exercise.latest_strategy
+        }
+    else:
+        print("\n=== Something went wrong in retrieving the tone and strategy ===\n")
 
 
 if __name__ == "__main__":

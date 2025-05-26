@@ -4,6 +4,7 @@ import { getHint } from "../util/util";
 import Markdown from "react-markdown";
 import { useState } from "react";
 import { TestResult } from "../util/types";
+import { logEvaluation } from "../util/util";
 
 interface Props {
   hintTitle: string;
@@ -66,8 +67,16 @@ function HintBox({
   };
 
   const sendRatings = () => {
-    console.log("Hint Rating:", hintRating);
-    console.log("Simple Hint Rating:", simpleHintRating);
+    logEvaluation(
+      studentName,
+      exerciseId,
+      hintRating || 0,
+      simpleHintRating || 0,
+      hintText,
+      simpleHintText
+    );
+    setHintRating(null);
+    setSimpleHintRating(null);
   };
 
   const handleHintRating = (rating: number) => {
@@ -127,10 +136,12 @@ function HintBox({
         </div>
       )}
 
+      <div className={style(styles, "txt")}>{isLoading ? "" : "--------"}</div>
+
       {simpleHintText && (
         <>
           <div className={style(styles, "txt")}>
-            <Markdown>{simpleHintText}</Markdown>
+            <Markdown>{isLoading ? "" : simpleHintText}</Markdown>
           </div>
 
           {showRating && (
@@ -143,7 +154,7 @@ function HintBox({
                     e.stopPropagation();
                     handleSimpleHintRating(num);
                   }}
-                  className={getRatingClass(hintRating === num)}
+                  className={getRatingClass(simpleHintRating === num)}
                 >
                   {num}
                 </div>

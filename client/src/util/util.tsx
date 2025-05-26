@@ -163,6 +163,35 @@ const testStudentCode = async (
   }
 };
 
+const logEvaluation = async (
+  studentName: string,
+  exerciseId: string,
+  hintRating: number,
+  simpleHintRating: number,
+  hintText: string,
+  simpleHintText: string
+) => {
+  try {
+    const response = await post(
+      `/exercise/evaluation/${studentName}/${exerciseId}`,
+      {
+        hintRating: hintRating,
+        simpleHintRating: simpleHintRating,
+        hintText: hintText,
+        simpleHintText: simpleHintText,
+      }
+    );
+
+    if (response.ok) {
+      console.log("Evaluation logged successfully");
+    } else {
+      console.log("Failed to log evaluation");
+    }
+  } catch (error) {
+    console.error("Error logging evaluation:", error);
+  }
+};
+
 export {
   post,
   getExerciseDetails,
@@ -170,4 +199,5 @@ export {
   getHint,
   executePythonCode,
   testStudentCode,
+  logEvaluation,
 };

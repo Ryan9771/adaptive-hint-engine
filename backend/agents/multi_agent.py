@@ -38,7 +38,8 @@ from db.setup_db import (
     get_no_progress_count,
     reset_no_progress_count,
     get_previous_hint,
-    set_previous_hint
+    set_previous_hint,
+    increment_attempt_count
 )
 from langchain_core.messages import HumanMessage
 from langgraph.graph import START, END, StateGraph
@@ -136,6 +137,12 @@ def feature_extractor_agent(state: GraphState):
 
     feature_output: FeatureOutput = llm.with_structured_output(
         FeatureOutput).invoke(llm_input)
+
+    increment_attempt_count(
+        student_name=state['attempt_context'].student_name,
+        exercise_key=state['attempt_context'].exercise_key
+    )
+
     print(f"\n== feature output ==\n{feature_output}\n")
 
     return {"feature_output": feature_output, "num_exercise_requirements": len(exercise_requirements)}
@@ -211,7 +218,8 @@ def student_profile_agent(state: GraphState):
         student_name=state['attempt_context'].student_name,
         exercise_key=state['attempt_context'].exercise_key,
         updated_scores=implemented_concepts,
-        updated_emas=concept_emas
+        updated_emas=concept_emas,
+        average_ema=average_ema
     )
 
     # Holds the ema and scores for the implemented concepts

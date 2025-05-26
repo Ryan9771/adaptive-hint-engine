@@ -24,7 +24,6 @@ interface Props {
 }
 function CodeBox({
   skelCode,
-  previousCode,
   language,
   studentCode,
   setStudentCode,

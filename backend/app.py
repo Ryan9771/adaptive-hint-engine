@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request
 from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
 import os
-from db.setup_db import get_exercise_details, Base, engine, set_previous_code, get_or_create_student_exercise, get_or_create_exercise
+from db.setup_db import get_exercise_details, Base, engine, set_previous_code, get_or_create_student_exercise, get_or_create_exercise, get_evaluation_metrics
 from flask_cors import CORS
 from agents.multi_agent import HintEngine
 from agents.single_agent import SingleHintAgent
@@ -221,6 +221,46 @@ def get_test(student_name, exercise_id):
             "stdout": "",
             "testResults": []
         }), 500
+
+
+@app.route("/exercise/evaluation/<student_name>/<exercise_id>", methods=["POST"])
+def get_evaluation(student_name, exercise_id):
+    data = request.get_json()
+    """
+    Request Type:
+    {
+        hintRating: int
+        simpleHintRating: int
+        hintText: str,
+        simpleHintText: str
+
+    }
+
+    Things to log per sheet (1 sheet -> one exercise):
+    - student
+    - attempt num
+    - timestamp
+    - concept
+    - stuck count
+    - hint tone
+    - hint strategy
+    """
+
+    print(f"\n== GETTING EVALUATION ==\n")
+
+    # Get metrics from db
+    metrics = get_evaluation_metrics(
+        student_name=student_name, exercise_key=exercise_id
+    )
+
+    combined_data = {**data, **metrics}
+
+    print(f"\n== EVALUATION DATA ==\n{combined_data}")
+
+    return jsonify({}), 200
+
+    # response = requests.post(
+    #     "https://script.google.com/macros/s/AKfycbwsJAKjKJpydZzq271dRU3vTgYXQzDh7WypQNvs1M7OXXmWpbFbDdpPXsRRuQgbRsX4TA/exec", json=combined_data)
 
 
 if __name__ == "__main__":

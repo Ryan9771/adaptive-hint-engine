@@ -39,7 +39,8 @@ from db.setup_db import (
     reset_no_progress_count,
     get_previous_hint,
     set_previous_hint,
-    increment_attempt_count
+    increment_attempt_count,
+    set_tone_strategy
 )
 from langchain_core.messages import HumanMessage
 from langgraph.graph import START, END, StateGraph
@@ -395,6 +396,14 @@ def hint_directive_agent(state: GraphState):
 
     print(
         f"\n== Hint Directive Output ==\nStrategy: {strategy}\nTone: {tone}\nRationale: {rationale}\n")
+
+    # Update tone and strategy in db
+    set_tone_strategy(
+        student_name=state['attempt_context'].student_name,
+        exercise_key=state['attempt_context'].exercise_key,
+        tone=tone,
+        strategy=strategy
+    )
 
     return {
         "hint_directive": HintDirective(

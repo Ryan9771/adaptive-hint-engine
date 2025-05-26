@@ -489,20 +489,6 @@ def set_tone_strategy(student_name: str, exercise_key: str, tone: str, strategy:
         print("\n=== Something went wrong in setting the tone and strategy ===\n")
 
 
-def get_tone_strategy(student_name: str, exercise_key: str):
-    student_exercise = get_or_create_student_exercise(
-        student_name=student_name, exercise_key=exercise_key
-    )
-
-    if student_exercise:
-        return {
-            "latest_tone": student_exercise.latest_tone,
-            "latest_strategy": student_exercise.latest_strategy
-        }
-    else:
-        print("\n=== Something went wrong in retrieving the tone and strategy ===\n")
-
-
 if __name__ == "__main__":
     # Delete the database
     # Base.metadata.drop_all(bind=engine)

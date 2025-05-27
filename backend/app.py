@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory
 from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
 import os
@@ -16,7 +16,7 @@ load_dotenv()
 # Setup App
 app = Flask(__name__, static_folder="../client/dist", static_url_path="/")
 CORS(app, resources={
-     r"/exercise/*": {"origins": "http://localhost:5173"}}, supports_credentials=True)
+     r"/exercise/*": {"origins": ["http://localhost:5173", "https://adaptive-hint-generator-629e95ca5085.herokuapp.com/"]}}, supports_credentials=True)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["SQLALCHEMY_DATABASE_URI"]
 
 # Database
@@ -28,8 +28,8 @@ single_agent = SingleHintAgent()
 
 
 @app.route("/")
-def home():
-    return "Flask app is active!"
+def serve():
+    return send_from_directory(app.static_folder, "index.html")
 
 
 @app.route("/exercise/<student_name>/<exercise_id>", methods=["POST"])

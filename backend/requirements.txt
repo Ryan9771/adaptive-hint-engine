@@ -7,3 +7,4 @@ Flask-SQLAlchemy==3.1.1
 SQLAlchemy==2.0.31
 flask-cors==5.0.1
 gunicorn
+pydantic<2.0

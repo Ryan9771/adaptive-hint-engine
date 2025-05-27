@@ -14,7 +14,7 @@ import json
 load_dotenv()
 
 # Setup App
-app = Flask(__name__)
+app = Flask(__name__, static_folder="../client/dist", static_url_path="/")
 CORS(app, resources={
      r"/exercise/*": {"origins": "http://localhost:5173"}}, supports_credentials=True)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["SQLALCHEMY_DATABASE_URI"]

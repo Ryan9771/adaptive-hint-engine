@@ -2,7 +2,7 @@ import axios from "axios";
 import { TestResult } from "./types";
 
 async function post(url = "", data = {}, token = "") {
-  const response = await fetch(`http://localhost:5001${url}`, {
+  const response = await fetch(`http://api/${url}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

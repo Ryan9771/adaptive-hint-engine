@@ -94,12 +94,15 @@ function CodeBox({
     const runOutput = await executePythonCode(studentCode);
     if (runOutput.output) {
       setOutput(runOutput.output);
+    } else {
+      setOutput("# No output generated");
     }
     if (runOutput.error) {
       setError(runOutput.error);
       setHintTitle("Ran into an error? Click for a hint");
     } else {
       setHintTitle(defaultHintTitle);
+      setError("");
     }
     setTestResults([]);
   };

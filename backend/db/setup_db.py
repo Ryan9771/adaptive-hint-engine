@@ -198,7 +198,7 @@ def delete_exercise(exercise_key: str):
         print(f"Exercise {exercise_key} Deleted!")
 
 
-def modify_exercise(exercise_key: str, exercise_text="", exercise_background="", skel_code="", exercise_title=""):
+def modify_exercise(exercise_key: str, exercise_text="", exercise_background="", skel_code="", exercise_title="", test_cases=""):
     exercise = _get_exercise(exercise_key=exercise_key)
     if exercise:
         if exercise_text:
@@ -209,6 +209,8 @@ def modify_exercise(exercise_key: str, exercise_text="", exercise_background="",
             exercise.skel_code = skel_code
         if exercise_title:
             exercise.exercise_title = exercise_title
+        if test_cases:
+            exercise.test_cases = test_cases
 
         db_session.commit()
         print("\n== Modified exercise! ==\n")
@@ -352,7 +354,8 @@ def get_past_concept_scores(student_name: str, exercise_key: str, last_n: int = 
         result = {}
 
         for concept, info in student_profile["concepts"].items():
-            result[concept] = info["scores"][-last_n:]
+            if concept != "average_ema":
+                result[concept] = info["scores"][-last_n:]
     else:
         print("\n=== Student Exercise doesn't exist ===\n")
 
@@ -489,8 +492,19 @@ def set_tone_strategy(student_name: str, exercise_key: str, tone: str, strategy:
         print("\n=== Something went wrong in setting the tone and strategy ===\n")
 
 
+def get_test_cases(exercise_key: str):
+    """Gets the test cases for an exercise"""
+    exercise = _get_exercise(exercise_key=exercise_key)
+
+    if exercise:
+        return exercise.test_cases
+    else:
+        print("\n=== Exercise doesn't exist ===\n")
+        return None
+
+
 if __name__ == "__main__":
     # Delete the database
-    # Base.metadata.drop_all(bind=engine)
+    Base.metadata.drop_all(bind=engine)
     # print(list_all_exercises())
-    pass
+    # pass

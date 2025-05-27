@@ -155,12 +155,14 @@ def student_profile_agent(state: GraphState):
 
     print("\n== Student Profile Agent ==\n")
 
+    print(f"before error")
     # Get the past concepts scores
     past_concepts_scores = get_past_concept_scores(
         student_name=state['attempt_context'].student_name,
         exercise_key=state['attempt_context'].exercise_key,
         last_n=HISTORY_WINDOW
     )
+    print(f"after error")
 
     # print(f"\n== past concepts scores ==\n{past_concepts_scores}\n")
 

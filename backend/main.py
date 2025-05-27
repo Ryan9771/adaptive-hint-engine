@@ -1,12 +1,11 @@
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage
 from util.types import AttemptContext
-from agent_trials.agents.multi_agent import HintEngine
 from example_exercises.python.exercise_1 import exercise_1
-from example_exercises.python.exercise_2 import exercise_2
-from example_exercises.python.exercise_3 import exercise_3
-from example_exercises.python.exercise_4 import exercise_4
-from example_exercises.python.exercise_5 import exercise_5
+from backend.example_exercises.python.exercise_4 import exercise_2
+from backend.example_exercises.python.exercise_5 import exercise_3
+from backend.example_exercises.python.exercise_3 import exercise_4
+from backend.example_exercises.python.exercise_2 import exercise_5
 
 # DB
 from db.setup_db import engine, Base

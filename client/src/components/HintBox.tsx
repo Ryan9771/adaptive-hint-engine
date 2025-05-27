@@ -2,7 +2,7 @@ import style from "../util/Styles";
 import { FaRegLightbulb, FaSpinner } from "react-icons/fa";
 import { getHint } from "../util/util";
 import Markdown from "react-markdown";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TestResult } from "../util/types";
 import { logEvaluation } from "../util/util";
 
@@ -102,6 +102,16 @@ function HintBox({
         ? "bg-hint-title text-white"
         : "text-hint-title hover:bg-hint-title hover:text-white"
     }`;
+
+  useEffect(() => {
+    setHintText(
+      "Click here to reveal a helpful hint for solving this exercise"
+    );
+    setSimpleHintText("");
+    setShowRating(false);
+    setHintRating(null);
+    setSimpleHintRating(null);
+  }, [exerciseId, studentName]);
 
   return (
     <div className={style(styles, "ctn")} onClick={generateHint}>

@@ -43,6 +43,10 @@ function Exercise() {
         setSkelCode(exerciseDetails.skelCode);
         setPreviousCode(exerciseDetails.previousCode);
         setStudentCode(exerciseDetails.previousCode);
+        setTestResults([]);
+        setHintTitle(defaultHintTitle);
+        setOutput("");
+        setError("");
       } else {
         console.log("Exercise does not exist");
         navigate("/404");

@@ -2,12 +2,11 @@ from flask import Flask, jsonify, request
 from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
 import os
-from db.setup_db import get_exercise_details, Base, engine, set_previous_code, get_or_create_student_exercise, get_or_create_exercise, get_evaluation_metrics
+from db.setup_db import get_exercise_details, Base, engine, set_previous_code, get_or_create_student_exercise, get_or_create_exercise, get_evaluation_metrics, get_test_cases
 from flask_cors import CORS
 from agents.multi_agent import HintEngine
 from agents.single_agent import SingleHintAgent
 from util.types import AttemptContext
-from example_exercises.python.exercise_2 import test_ex_2
 import requests
 import json
 
@@ -164,18 +163,16 @@ def get_test(student_name, exercise_id):
         "studentCode": string
     }
     """
-    full_code = f"{data["studentCode"]}\n\n{test_ex_2}"
+    test_cases = get_test_cases(exercise_key=exercise_id.lower())
+    full_code = f"{data["studentCode"]}\n\n{test_cases}"
+
+    print(f"\n== TESTING CODE ==\n{full_code}")
+
     piston_payload = {
         "language": "python",
         "version": "3.10.0",
         "files": [{"name": "main.py", "content": full_code}],
     }
-
-    # TEST GOOGLE SHEETS PAYLOAD
-    # sheets_payload = {
-    #     "studentId": "ryan",
-    #     "exerciseId": "patel"
-    # }
 
     try:
         piston_response = requests.post(
@@ -204,11 +201,6 @@ def get_test(student_name, exercise_id):
                 or "Exception" in stderr
             )
         )
-
-        # # TEST GOOGLE SHEETS
-        # response = requests.post(
-        #     "https://script.google.com/macros/s/AKfycbwsJAKjKJpydZzq271dRU3vTgYXQzDh7WypQNvs1M7OXXmWpbFbDdpPXsRRuQgbRsX4TA/exec", json=sheets_payload
-        # )
 
         return jsonify({
             "stderr": stderr if is_real_error else "",

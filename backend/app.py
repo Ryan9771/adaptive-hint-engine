@@ -11,16 +11,12 @@ import requests
 import json
 
 # Load Secrets
-load_dotenv()
+# load_dotenv()
 
 # Setup App
 app = Flask(__name__, static_folder="../client/dist", static_url_path="/")
 CORS(app, resources={
      r"/exercise/*": {"origins": ["http://localhost:5173", "https://adaptive-hint-generator-629e95ca5085.herokuapp.com/"]}}, supports_credentials=True)
-# app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["SQLALCHEMY_DATABASE_URI"]
-
-# # Database
-# db = SQLAlchemy(app)
 
 # Agent
 agent = HintEngine()

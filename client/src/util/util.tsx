@@ -2,14 +2,17 @@ import axios from "axios";
 import { TestResult } from "./types";
 
 async function post(url = "", data = {}, token = "") {
-  const response = await fetch(`${url}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    },
-    body: JSON.stringify(data),
-  });
+  const response = await fetch(
+    `https://adaptive-hint-generator-629e95ca5085.herokuapp.com${url}`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify(data),
+    }
+  );
 
   return response;
 }

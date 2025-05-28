@@ -66,15 +66,7 @@ function HintBox({
     setIsLoading(false);
   };
 
-  const sendRatings = () => {
-    logEvaluation(
-      studentName,
-      exerciseId,
-      hintRating || 0,
-      simpleHintRating || 0,
-      hintText,
-      simpleHintText
-    );
+  const resetRatings = () => {
     setHintRating(null);
     setSimpleHintRating(null);
   };
@@ -84,7 +76,15 @@ function HintBox({
 
     if (rating && simpleHintRating) {
       setShowRating(false);
-      sendRatings();
+      logEvaluation(
+        studentName,
+        exerciseId,
+        rating,
+        simpleHintRating || 0,
+        hintText,
+        simpleHintText
+      );
+      resetRatings();
     }
   };
 
@@ -92,7 +92,15 @@ function HintBox({
     setSimpleHintRating(rating);
     if (rating && hintRating) {
       setShowRating(false);
-      sendRatings();
+      logEvaluation(
+        studentName,
+        exerciseId,
+        hintRating || 0,
+        rating,
+        hintText,
+        simpleHintText
+      );
+      resetRatings();
     }
   };
 

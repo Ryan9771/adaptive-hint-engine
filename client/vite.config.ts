@@ -9,9 +9,9 @@ export default defineConfig({
       plugins: [tailwindcss()],
     },
   },
-  server: {
-    proxy: {
-      "/api": "http://localhost:5001",
-    },
-  }
+  // server: {
+  //   proxy: {
+  //     "/api": "http://localhost:5001",
+  //   },
+  // }
 })

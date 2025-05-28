@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request, send_from_directory
 from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
 import os
-from db.setup_db import get_exercise_details, Base, engine, set_previous_code, get_or_create_student_exercise, get_or_create_exercise, get_evaluation_metrics, get_test_cases
+from db.setup_db import get_exercise_details, Base, engine, set_previous_code, get_or_create_student_exercise, get_or_create_exercise, get_evaluation_metrics, get_test_cases, create_engine
 from flask_cors import CORS
 from agents.multi_agent import HintEngine
 from agents.single_agent import SingleHintAgent
@@ -18,9 +18,13 @@ app = Flask(__name__, static_folder="../client/dist", static_url_path="/")
 CORS(app, resources={
      r"/exercise/*": {"origins": ["http://localhost:5173", "https://adaptive-hint-generator-629e95ca5085.herokuapp.com/"]}}, supports_credentials=True)
 
+
 # Agent
 agent = HintEngine()
 single_agent = SingleHintAgent()
+
+with app.app_context():
+    Base.metadata.create_all(bind=engine)
 
 
 @app.route("/")
@@ -256,6 +260,6 @@ def get_evaluation(student_name, exercise_id):
 
 
 if __name__ == "__main__":
-    with app.app_context():
-        Base.metadata.create_all(bind=engine)
+    # with app.app_context():
+    #     Base.metadata.create_all(bind=engine)
     app.run(host="0.0.0.0", port=5001, debug=True)

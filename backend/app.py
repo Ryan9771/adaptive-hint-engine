@@ -140,7 +140,9 @@ def get_exercise_hint(student_name, exercise_id):
                 state={
                     "skel_code": exercise['skel_code'],
                     "exercise_text": exercise["exercise_text"],
-                    "student_code": data["studentCode"]
+                    "student_code": data["studentCode"],
+                    'error': data["error"],
+                    'test_results': test_results
                 }
             )
 

@@ -160,7 +160,7 @@ def hint_generator_prompt(exercise_text, student_code, hint_directive, code_comp
     return prompt
 
 
-def single_agent_prompt(skel_code, exercise_text, student_code):
+def single_agent_prompt(skel_code, exercise_text, student_code, error, test_results):
     prompt = f"""
     You are an introductory Python peer tutor who uses the given exercise question along with the default skeleton code to provide a helpful encouraging hint to the student based on their code attempt attached.
 
@@ -180,4 +180,10 @@ def single_agent_prompt(skel_code, exercise_text, student_code):
     Student's attempt:
     {student_code}
     """
+
+    if error:
+        prompt += f"\n\nAddress the Error: {error}"
+    if test_results:
+        prompt += f"\n\nUse the test results as extra context: {test_results}"
+
     return prompt

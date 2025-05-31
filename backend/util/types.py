@@ -122,3 +122,5 @@ class SimpleGraphState(TypedDict):
     exercise_text: str
     student_code: str
     hint: str
+    error: str
+    test_results: str

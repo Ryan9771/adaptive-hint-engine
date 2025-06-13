@@ -164,7 +164,9 @@ function HintBox({
 
           {showRating && (
             <div className={style(styles, "ratingCtn")}>
-              <p className={style(styles, "txt")}>How helpful was this hint?</p>
+              <p className={style(styles, "txt")}>
+                How helpful was this hint based on your progress so far?
+              </p>
               {[1, 2, 3, 4, 5].map((num) => (
                 <div
                   key={num}
